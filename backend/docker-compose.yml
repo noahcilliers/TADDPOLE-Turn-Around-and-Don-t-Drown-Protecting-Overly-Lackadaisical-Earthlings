@@ -1,4 +1,4 @@
-# Production (EC2): API + Caddy (automatic HTTPS). Database is Tiger Data, via DATABASE_URL in .env.
+# Production (EC2): API + Caddy serving the frontend (automatic HTTPS). Database is Tiger Data, via TIGER_DB / DATABASE_URL in .env.
 services:
   api:
     build: .
@@ -12,7 +12,8 @@ services:
       retries: 3
 
   caddy:
-    image: caddy:2
+    # Caddy image with the built frontend baked into /srv (frontend/Dockerfile).
+    build: ../frontend
     restart: unless-stopped
     depends_on: [api]
     ports: ["80:80", "443:443"]

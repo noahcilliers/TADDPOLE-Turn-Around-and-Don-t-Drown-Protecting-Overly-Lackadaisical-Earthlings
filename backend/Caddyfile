@@ -1,6 +1,22 @@
-# SITE_ADDRESS = your domain (e.g. api.turnarounddontdrown.tech) for automatic HTTPS/WSS,
+# SITE_ADDRESS = your domain (e.g. turnarounddontdrown.tech) for automatic HTTPS/WSS,
 # or ":80" (default) for plain HTTP on the instance IP.
+#
+# One origin for everything: the frontend is served from /srv (built into the image),
+# API + WebSockets are proxied to the FastAPI container. No CORS, and wss:// works as
+# soon as the domain has a certificate.
 {$SITE_ADDRESS::80} {
 	encode gzip
-	reverse_proxy api:8000
+
+	@api path /v1/* /ws /health /config /sensors /sensors/* /events /route /admin/*
+	handle @api {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	header /assets/* Cache-Control "public, max-age=31536000, immutable"
 }

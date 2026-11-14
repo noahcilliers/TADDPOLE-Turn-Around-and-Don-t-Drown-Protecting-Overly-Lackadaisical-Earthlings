@@ -79,7 +79,7 @@ export function AlertOverlay({ alert }: { alert: DriveAlert }) {
       </div>
     )
   }
-  const closing = alert.closing_s != null ? `closing · ~${Math.max(1, Math.round(alert.closing_s))} s` : 'ahead'
+  const closing = alert.closing_s != null ? `closing · ~${Math.max(1, Math.round(alert.closing_s))} s` : 'stopped'
   return (
     <div className="alert-red" role="alert" aria-live="assertive">
       <div className="kicker">
@@ -119,6 +119,7 @@ export function ToastView() {
 export function RouteCard() {
   const drive = useDrive()
   const look = useStore((s) => s.settings.lookahead_m)
+  const sensors = useStore((s) => s.sensors)
   const r = drive.active
   if (!r || !drive.destination) return null
   if (drive.mode === 'watch') {
@@ -133,14 +134,20 @@ export function RouteCard() {
     )
   }
   const remaining = drive.remaining ? Math.max(0, r.distance_m - drive.traveled_m) : r.distance_m
-  const unsafe = r.crosses.filter((c) => c.status === 'flooded' || c.status === 'offline')
-  const label = !r.safe ? `Route · ${unsafe.length ? `crosses ${STATUS_LABEL[unsafe[0].status].toLowerCase()} sensor` : 'hazard on route'}`
-    : r.kind === 'safer' ? `Safer route · +${Math.max(1, Math.round((r.delta_vs_fastest_s ?? 0) / 60))} min` : r.crosses.length ? 'Route · all sensors clear' : 'Route · no sensors on route'
+  // live statuses of the sensors this route crosses (the route object is a snapshot)
+  const live = r.crosses.map((c) => sensors[c.sensor_id]?.current.status ?? c.status)
+  const bad = live.find((st) => st === 'flooded' || st === 'offline')
+  const rising = live.includes('caution')
+  const safe = r.safe && !bad
+  const label = !safe ? `Route · crosses ${bad ? STATUS_LABEL[bad].toLowerCase() : 'a hazard'} sensor`
+    : r.kind === 'safer' ? `Safer route · +${Math.max(1, Math.round((r.delta_vs_fastest_s ?? 0) / 60))} min`
+    : rising ? 'Route · water rising ahead' : r.crosses.length ? 'Route · all sensors clear' : 'Route · no sensors on route'
+  const tone = !safe ? 'st-flooded' : rising ? 'st-caution' : 'st-clear'
   return (
     <div className="card route-card">
-      <div className="ic" style={!r.safe ? { background: 'var(--red-soft)', color: 'var(--red)' } : undefined}><Icon.Broadcast size={24} /></div>
+      <div className="ic" style={!safe ? { background: 'var(--red-soft)', color: 'var(--red)' } : undefined}><Icon.Broadcast size={24} /></div>
       <div className="grow">
-        <div className={`k ${r.safe ? 'st-clear' : 'st-flooded'}`}>{label}</div>
+        <div className={`k ${tone}`}>{label}</div>
         <div className="d ellipsis">To {drive.destination.name}</div>
       </div>
       <div className="n">{fmtMiles(remaining)} mi</div>
@@ -225,10 +232,10 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
       <div className="demo-row" aria-label="Demo controls">
         <span className="tag-demo">DEMO</span>
         <button className="btn btn-dark btn-sm grow" style={{ height: 46 }} onClick={toggle}>{playing ? <Icon.Pause size={18} /> : <Icon.Play size={18} />}{label}</button>
-        <button className="btn btn-ghost btn-sm" style={{ height: 46, width: 52 }} onClick={() => run(() => api.demo.speed(demo.speed >= 4 ? 1 : demo.speed * 2))} aria-label="Change speed">{demo.speed}×</button>
-        <button className="btn btn-ghost btn-sm" style={{ height: 46, width: 46 }} onClick={() => run(api.demo.reset)} aria-label="Reset demo"><Icon.Reset size={18} /></button>
-        <label className="btn btn-ghost btn-sm" style={{ height: 46, gap: 8 }}>
-          <span className="switch danger" style={{ width: 42, height: 26 }}><input type="checkbox" checked={demo.stall} onChange={(e) => run(() => api.demo.stall(e.target.checked))} /><span /></span>Stall
+        <button className="btn btn-ghost btn-sm sq" onClick={() => run(() => api.demo.speed(demo.speed >= 4 ? 1 : demo.speed * 2))} aria-label={`Speed ${demo.speed}×, tap to change`}>{demo.speed}×</button>
+        <button className="btn btn-ghost btn-sm sq" onClick={() => run(api.demo.reset)} aria-label="Reset demo"><Icon.Reset size={18} /></button>
+        <label className="btn btn-ghost btn-sm stall">
+          <span className="switch danger mini"><input type="checkbox" checked={demo.stall} onChange={(e) => run(() => api.demo.stall(e.target.checked))} aria-label="Car stalled in the flood" /><span /></span>Stall
         </label>
         {err && <span className="st-flooded" style={{ fontSize: 12 }}>{err}</span>}
       </div>

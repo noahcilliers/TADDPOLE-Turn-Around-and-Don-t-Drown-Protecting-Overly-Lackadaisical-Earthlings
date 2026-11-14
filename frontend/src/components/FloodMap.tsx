@@ -90,6 +90,7 @@ export default function FloodMap(p: Props) {
       m.stop(); m.off()
       ;(m as unknown as { _animatingZoom: boolean })._animatingZoom = false
       m.remove(); map.current = null
+      carMarker.current = null // it belonged to the map we just removed
     }
   }, [])
 

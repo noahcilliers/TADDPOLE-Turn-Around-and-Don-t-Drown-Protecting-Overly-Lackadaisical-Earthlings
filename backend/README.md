@@ -96,10 +96,11 @@ Changes are picked up within 30 s, no restart. `water_tank_1` is seeded with a *
 ## Deploy (single EC2 + docker compose + Caddy)
 
 One instance on purpose: a second copy would double-poll and split WebSocket clients.
+Caddy serves the built frontend (`../frontend/Dockerfile`) and proxies `/v1`, `/ws` and the legacy API to the `api` container on the **same origin**.
 
 1. Launch Amazon Linux 2023, t3.small, attach an Elastic IP. Security group: 22 (your IP), 80, 443.
 2. Copy `deploy/ec2-bootstrap.sh` up and run it (or paste it as user data).
-3. Optional domain: point an A record (e.g. `api.turnarounddontdrown.tech`) at the Elastic IP and set `SITE_ADDRESS` to it in `.env` — Caddy gets the TLS cert, so the frontend can use `wss://`. An HTTPS frontend **needs** this; browsers block `ws://` from `https://` pages.
-4. `scp .env ec2-user@<ip>:/opt/floodroute/.env`
-5. `HOST=ec2-user@<ip> KEY=~/.ssh/<key>.pem ./deploy/deploy.sh`
-6. Check `https://<domain>/health`.
+3. Domain: point an A record (e.g. `turnarounddontdrown.tech`) at the Elastic IP and set `SITE_ADDRESS` to it in `.env`; Caddy gets the TLS cert. Phones need HTTPS for GPS and `wss://`. Without a domain it serves plain HTTP on the IP.
+4. Set `ADMIN_TOKEN` in `.env` (demo controls), then `scp .env ec2-user@<ip>:/opt/floodroute/backend/.env`
+5. `HOST=ec2-user@<ip> KEY=~/.ssh/<key>.pem ./deploy/deploy.sh` (syncs `backend/` and `frontend/`, builds both images)
+6. Open `https://<domain>/?demo_key=<ADMIN_TOKEN>` on the presenter laptop; `https://<domain>/health` for status.

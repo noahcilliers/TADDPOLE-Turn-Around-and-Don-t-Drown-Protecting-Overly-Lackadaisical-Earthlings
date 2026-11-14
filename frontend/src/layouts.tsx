@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import FloodMap, { type MapRoute } from './components/FloodMap'
 import { AlertFeed, SensorList } from './components/Lists'
 import { AlertOverlay, ConnBanner, DemoPanel, Legend, LivePill, NavBanner, RouteCard, StatusChips, ToastView } from './components/Overlays'
@@ -32,6 +32,55 @@ function useMapData(showRoute: boolean) {
   return { sensors, hazards, routes, fitTo, drive }
 }
 
+
+// ---- resizable side panel (width remembered per device) ----
+const SIDE_KEY = 'floodroute.sideWidth'
+const SIDE_MIN = 320
+const sideMax = () => Math.max(SIDE_MIN, Math.round(window.innerWidth * 0.6))
+const clampSide = (w: number) => Math.min(sideMax(), Math.max(SIDE_MIN, Math.round(w)))
+
+function useSideWidth() {
+  const [w, setW] = useState<number>(() => {
+    try { const v = Number(localStorage.getItem(SIDE_KEY)); if (v) return clampSide(v) } catch { /* private mode */ }
+    return window.innerWidth <= 1280 ? 420 : 480
+  })
+  const save = (v: number) => { const c = clampSide(v); setW(c); try { localStorage.setItem(SIDE_KEY, String(c)) } catch { /* ignore */ } }
+  useEffect(() => {
+    const on = () => setW((cur) => clampSide(cur))
+    window.addEventListener('resize', on)
+    return () => window.removeEventListener('resize', on)
+  }, [])
+  return [w, save] as const
+}
+
+function Divider({ width, onChange }: { width: number; onChange: (w: number) => void }) {
+  const [dragging, setDragging] = useState(false)
+  const start = (e: React.PointerEvent) => {
+    e.preventDefault()
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+    setDragging(true)
+  }
+  return (
+    <div
+      className={`divider${dragging ? ' dragging' : ''}`}
+      role="separator" aria-orientation="vertical" aria-label="Resize panel"
+      aria-valuenow={width} aria-valuemin={SIDE_MIN} aria-valuemax={sideMax()} tabIndex={0}
+      style={{ left: width }}
+      onPointerDown={start}
+      onPointerMove={(e) => { if (dragging) onChange(e.clientX) }}
+      onPointerUp={() => setDragging(false)}
+      onPointerCancel={() => setDragging(false)}
+      onDoubleClick={() => onChange(480)}
+      onKeyDown={(e) => {
+        const step = e.shiftKey ? 80 : 20
+        if (e.key === 'ArrowLeft') { e.preventDefault(); onChange(width - step) }
+        if (e.key === 'ArrowRight') { e.preventDefault(); onChange(width + step) }
+      }}
+      title="Drag to resize · double-click to reset"
+    />
+  )
+}
+
 // =============================== STAGE ===============================
 type SideTab = 'sensor' | 'all' | 'alerts'
 
@@ -42,28 +91,16 @@ export function Stage() {
   const { sensors, hazards, routes, fitTo, drive } = useMapData(true)
   const sel = selected ?? config?.demo.sensor_id ?? sensors[0]?.id ?? null
   const select = (id: string | null) => { setSelected(id); if (id) setTab('sensor') }
+  const [sideW, setSideW] = useSideWidth()
 
   return (
-    <div className="stage">
-      <div className="stage-map">
-        <FloodMap
-          sensors={sensors} hazards={hazards} routes={routes} car={drive.car}
-          destination={drive.mode === 'nav' ? drive.destination?.lnglat ?? null : null}
-          selectedId={sel} onSelectSensor={select}
-          fitKey={`${sensors.length > 0}|${drive.mode}`} fitTo={fitTo}
-          padding={{ top: 170, right: 380, bottom: 40, left: 40 }} follow
-        />
-        <div className="overlay tl">
-          <div className="row" style={{ gap: 10 }}><Brand /><LivePill /></div>
-          <StatusChips />
-          {drive.toast ? <ToastView /> : <RouteCard />}
+    <div className="stage" style={{ gridTemplateColumns: `${sideW}px 1fr` }}>
+      <Divider width={sideW} onChange={setSideW} />
+      <aside className="stage-side" aria-label="Details">
+        <div className="side-head">
+          <Brand />
           <ConnBanner />
         </div>
-        <div className="overlay tr"><Legend /></div>
-        <div className="overlay br"><DemoPanel variant="stage" /></div>
-        {drive.alert && <div className="overlay alert-slot"><AlertOverlay alert={drive.alert} /></div>}
-      </div>
-      <aside className="stage-side" aria-label="Details">
         <div className="tabs">
           <div className="seg" role="tablist">
             <button role="tab" aria-pressed={tab === 'sensor'} aria-selected={tab === 'sensor'} onClick={() => setTab('sensor')}>Sensor</button>
@@ -77,6 +114,20 @@ export function Stage() {
           {tab === 'alerts' && <AlertFeed onSelect={select} />}
         </div>
       </aside>
+      <div className="stage-map">
+        <FloodMap
+          sensors={sensors} hazards={hazards} routes={routes} car={drive.car}
+          destination={drive.mode === 'nav' ? drive.destination?.lnglat ?? null : null}
+          selectedId={sel} onSelectSensor={select}
+          fitKey={`${sensors.length > 0}|${drive.mode}`} fitTo={fitTo}
+          padding={{ top: 80, right: 380, bottom: 40, left: 40 }} follow
+        />
+        <div className="overlay tr"><Legend /></div>
+        <div className="overlay br"><DemoPanel variant="stage" /></div>
+        {drive.alert
+          ? <div className="overlay alert-slot"><AlertOverlay alert={drive.alert} /></div>
+          : drive.toast && <div className="overlay alert-slot"><ToastView /></div>}
+      </div>
     </div>
   )
 }

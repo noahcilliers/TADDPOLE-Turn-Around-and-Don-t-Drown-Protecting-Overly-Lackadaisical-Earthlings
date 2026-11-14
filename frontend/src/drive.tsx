@@ -139,7 +139,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
   const [routeError, setRouteError] = useState<string | null>(null)
   const [gpsState, setGps] = useState<{ enabled: boolean; error: string | null; pos: LngLat | null; heading: number | null }>({ enabled: false, error: null, pos: null, heading: null })
-  const trip = useRef<{ startedS: number; reroutes: string[]; avoided: Map<string, number | null>; baseDuration: number | null; warned: Set<string> }>({ startedS: 0, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set() })
+  const trip = useRef<{ startedS: number; reroutes: string[]; avoided: Map<string, number | null>; baseDuration: number | null; warned: Set<string>; drivenBefore_m: number }>({ startedS: 0, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), drivenBefore_m: 0 })
   const lastDemoS = useRef(0)
   const toastId = useRef(0)
 
@@ -193,7 +193,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     let cancelled = false
     if (!origin || !destination) return
     setAbandoned(null); setArrived(null); setDismissed(new Set())
-    trip.current = { startedS: demoS, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set() }
+    trip.current = { startedS: demoS, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), drivenBefore_m: 0 }
     void fetchRoutes(origin, destination.lnglat).then((r) => {
       if (cancelled || !r) return
       setRoutes(r)
@@ -222,19 +222,20 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const pathLen = useMemo(() => (path ? lineLength(path) : 0), [path])
 
   // Where along the active path is the car?
-  const { car, traveled } = useMemo(() => {
-    if (!path || path.length < 2) return { car: null as DriveApi['car'], traveled: 0 }
+  const { car, traveled, moving } = useMemo(() => {
+    if (!path || path.length < 2) return { car: null as DriveApi['car'], traveled: 0, moving: false }
     if (!demoActive) {
       if (gpsState.pos) {
         const pr = project(path, gpsState.pos)
         const h = gpsState.heading ?? along(path, pr.along_m).heading
-        return { car: { pos: gpsState.pos, heading: h }, traveled: pr.along_m }
+        return { car: { pos: gpsState.pos, heading: h }, traveled: pr.along_m, moving: true }
       }
       const a = along(path, 0)
-      return { car: { pos: a.pos, heading: a.heading }, traveled: 0 }
+      return { car: { pos: a.pos, heading: a.heading }, traveled: 0, moving: false }
     }
     const v = mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S
-    let d = pathStart.offset_m + Math.max(0, demoS - pathStart.demoS) * v
+    const free = pathStart.offset_m + Math.max(0, demoS - pathStart.demoS) * v
+    let d = free
     // Watch car stops 0.25 mi before the demo dip (sim.js choreography).
     if (mode === 'watch' && config) {
       const s = sensorsMap[config.demo.sensor_id]
@@ -255,8 +256,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     }
     d = Math.min(d, pathLen)
     const a = along(path, d)
-    return { car: { pos: a.pos, heading: a.heading }, traveled: d }
-  }, [path, pathLen, demoActive, demoS, pathStart, mode, config, sensorsMap, hazardsMap, gpsState.pos, gpsState.heading])
+    return { car: { pos: a.pos, heading: a.heading }, traveled: d, moving: demo?.state === 'playing' && d >= free - 1 && d < pathLen }
+  }, [path, pathLen, demoActive, demoS, pathStart, mode, config, sensorsMap, hazardsMap, gpsState.pos, gpsState.heading, demo?.state])
 
   // ---------- reroute ----------
   const carRef = useRef(car); carRef.current = car
@@ -282,6 +283,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
         Math.abs(lineLength(next.geometry.coordinates) - (prevRemaining ? lineLength(prevRemaining) : 0)) > 25
       if (!changed && !forceToast) return
       setAbandoned(prevRemaining && changed ? prevRemaining : null)
+      trip.current.drivenBefore_m += traveledRef.current // the new route starts where the car is
       setActive(next)
       setPathStart({ demoS: demoSRef.current, offset_m: 0 })
       if (next.kind === 'safer' || !next.safe || forceToast) {
@@ -320,12 +322,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     if (!car) return null
     const sensors = Object.values(sensorsMap)
     const hazards = Object.values(hazardsMap)
-    const speed = demoActive && demo?.state === 'playing' ? (mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S) * (demo?.speed ?? 1) : null
+    const speed = demoActive && moving ? (mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S) * (demo?.speed ?? 1) : null
 
     const aheadDist = (p: LngLat): number | null => {
       if (path) {
         const pr = project(path, p)
         if (pr.off_m < ON_ROUTE_M && pr.along_m >= traveled - 5) return Math.max(0, pr.along_m - traveled)
+        // Navigating: the route check beats the heading cone (handoff logic §4), so a flood
+        // the route already goes around doesn't raise an alert.
+        if (mode === 'nav') return null
       }
       const d = dist(car.pos, p)
       if (d > 15 && angleDiff(bearing(car.pos, p), car.heading) <= CONE_DEG) return d
@@ -354,7 +359,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       if (!best || (cand.level === 'flooded' && best.level !== 'flooded') || (cand.level === best.level && d < best.distance_m)) best = cand
     }
     return best
-  }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, demo?.state, demo?.speed, mode])
+  }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, moving, demo?.speed, mode])
 
   const visibleAlert = alert && !dismissed.has(alert.key) ? alert : null
 
@@ -386,7 +391,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     const summary: TripSummary = {
       destination: destination?.name ?? 'Destination',
       duration_s: Math.max(active.duration_s, total),
-      distance_m: lineLength(active.geometry.coordinates) + (abandoned ? 0 : 0),
+      distance_m: trip.current.drivenBefore_m + lineLength(active.geometry.coordinates),
       delta_s: trip.current.baseDuration ? Math.max(0, Math.round((active.duration_s) - (fastest?.duration_s ?? active.duration_s))) : 0,
       avoided: [...trip.current.avoided.entries()].map(([id, d]) => ({ name: sensorsMap[id]?.name ?? id, depth_cm: sensorsMap[id]?.current.depth_cm ?? d })),
       passed: active.crosses.map((c) => ({ name: c.name, status: sensorsMap[c.sensor_id]?.current.status ?? c.status, depth_cm: sensorsMap[c.sensor_id]?.current.depth_cm ?? c.depth_cm })),
