@@ -89,7 +89,7 @@ UPDATE sensors SET baseline_cm = 33.2 * 2.54 WHERE sensor_id = 'water_tank_1';
 INSERT INTO sensors VALUES ('wash_hayden', 'Hayden Rd wash', 33.5..., -111.9..., 40 * 2.54);
 ```
 
-Changes are picked up within 30 s, no restart. `water_tank_1` is seeded with a **placeholder 26.7 in baseline** at 40th St just north of Camelback. Put sensors on the road at the dip, not the intersection centre; the log prints how far each snapped (warns > 75 m) and warns about `sensor_id`s in `water_levels` with no `sensors` row.
+Changes are picked up within 30 s, no restart. `water_tank_1` has a measured **24 in baseline** (dry distance; depth = 24 in − reading) and sits on 40th St just south of Camelback. Put sensors on the road at the dip, not the intersection centre; the log prints how far each snapped (warns > 75 m) and warns about `sensor_id`s in `water_levels` with no `sensors` row.
 
 `water_levels` primary key is `(sensor_id, time)` (changed from `time` alone on 2026-11-14 via `scripts/tiger/001_water_levels_pk.sql`, so multiple sensors can report at the same instant; the writer needed no change). Writer tip: send a reading every 1–2 s; with median-of-3 smoothing, latency is about 2 readings.
 

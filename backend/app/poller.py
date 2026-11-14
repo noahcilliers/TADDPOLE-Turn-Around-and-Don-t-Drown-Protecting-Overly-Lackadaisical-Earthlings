@@ -232,6 +232,11 @@ class Poller:
                 await self.hub.broadcast({"type": "sensor_update", "sensor": payload})
                 if self.live is not None:
                     self.live.queue_reading(sid)
+            elif (self.live is not None and old_payload is not None
+                  and old_payload.get("last_reading_at") != payload.get("last_reading_at")):
+                # Fresh reading at the same depth: still stream it (throttled to 1 per 2 s in
+                # live.py) so clients see "Updated 2 s ago" instead of a stalled sensor.
+                self.live.queue_reading(sid)
 
         self.last_tick = now
 

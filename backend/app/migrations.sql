@@ -55,11 +55,12 @@ SELECT add_continuous_aggregate_policy('water_levels_1m',
     schedule_interval => INTERVAL '1 minute',
     if_not_exists     => TRUE);
 
--- Demo sensor. Placeholder baseline 26.7 in (67.8 cm) until the dry distance is measured:
+-- Demo sensor. Measured dry distance (sensor to empty tub / dry road) = 24 in (61 cm).
+-- depth = baseline - reading, e.g. reading 15 in -> 24 - 15 = 9 in of water. To recalibrate:
 --   UPDATE sensors SET baseline_cm = <dry_inches> * 2.54 WHERE sensor_id = 'water_tank_1';
 -- DO NOTHING: never overwrites a location/baseline someone has already set.
 INSERT INTO sensors (sensor_id, name, lat, lon, baseline_cm)
-VALUES ('water_tank_1', '40th St & Camelback', 33.5110, -111.9953, 26.7 * 2.54)
+VALUES ('water_tank_1', '40th St & Camelback', 33.5110, -111.9953, 24 * 2.54)
 ON CONFLICT (sensor_id) DO NOTHING;
 
 -- ======================= v1 additions (frontend handoff) =======================
