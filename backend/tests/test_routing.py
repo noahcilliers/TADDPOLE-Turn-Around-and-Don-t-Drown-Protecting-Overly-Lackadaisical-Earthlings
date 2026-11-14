@@ -62,3 +62,11 @@ def test_no_route_when_cut_off(net):
     net.sensor_edges["s_ad"] = {(0, 3), (3, 0)}
     with pytest.raises(NoRoute):
         net.route(ll(0), ll(2), {"s_ab", "s_ad"})
+
+
+def test_block_radius_closes_neighbouring_segments(net):
+    # sensor sits on a-b; with a radius covering the whole top-left corner, a-d gets closed too
+    mid_ab = ((ll(0)[0] + ll(1)[0]) / 2, (ll(0)[1] + ll(1)[1]) / 2)
+    net.map_sensors([("s_ab", *mid_ab)], block_radius_m=150)
+    assert {(0, 1), (1, 0), (0, 3), (3, 0)} <= net.sensor_edges["s_ab"]
+    assert net.sensor_segment["s_ab"] in {(0, 1), (1, 0)}  # drawn segment stays the snapped edge

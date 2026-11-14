@@ -79,7 +79,8 @@ export function AlertOverlay({ alert }: { alert: DriveAlert }) {
       </div>
     )
   }
-  const closing = alert.closing_s != null ? `closing · ~${Math.max(1, Math.round(alert.closing_s))} s` : 'stopped'
+  const closing = alert.closing_s != null ? `closing · ~${Math.max(1, Math.round(alert.closing_s))} s`
+    : alert.distance_m > 150 ? 'car paused · choose below' : 'stopped'
   return (
     <div className="alert-red" role="alert" aria-live="assertive">
       <div className="kicker">

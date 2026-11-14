@@ -142,6 +142,9 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [activeVer, setActiveVer] = useState(0)
   const [prog, setProg] = useState<{ ver: number; d: number; s: number; stopped: boolean }>({ ver: -1, d: 0, s: 0, stopped: false })
   const pendingInit = useRef<'catchup' | 'here'>('catchup')
+  // While a red alert (flooded / stalled car ahead) waits for the driver, the car pulls over right
+  // where it got the warning instead of rolling on toward the water.
+  const holdRef = useRef(false)
   const lastFlooded = useRef<Record<string, number>>({})
   const [toast, setToast] = useState<Toast | null>(null)
   const [arrived, setArrived] = useState<TripSummary | null>(null)
@@ -197,6 +200,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     if (demoS + 0.5 < lastDemoS.current) setResetCounter((n) => n + 1) // demo reset / rewind
     lastDemoS.current = demoS
   }, [demoS])
+  // Pressing Play from the start re-plans with the sensor states as they are *now*.
+  const lastState = useRef(demo?.state)
+  useEffect(() => {
+    if (lastState.current !== 'playing' && demo?.state === 'playing' && demoS < 1) setResetCounter((n) => n + 1)
+    lastState.current = demo?.state
+  }, [demo?.state, demoS])
 
   useEffect(() => {
     let cancelled = false
@@ -261,6 +270,9 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const v = mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S
       const fresh = p.ver !== activeVer
       const prevD = fresh ? 0 : p.d
+      if (!fresh && holdRef.current) {
+        return p.s === demoS && p.stopped ? p : { ...p, s: demoS, stopped: true }
+      }
       let d = fresh ? (pendingInit.current === 'catchup' ? demoS * v : 0) : p.d + Math.max(0, demoS - p.s) * v
       let limit = pathLen
       // Watch car stops 0.25 mi before the demo dip (sim.js choreography).
@@ -282,7 +294,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   }, [demoS, activeVer, path, pathLen, demoActive, mode, config, sensorsMap, firstBlocker])
 
   // Demo reset/rewind: start over from the origin.
-  useEffect(() => { setProg({ ver: -1, d: 0, s: 0, stopped: false }) }, [resetCounter])
+  // Demo reset/rewind (or a re-plan before moving): start over, and forget recent floods from
+  // the previous run so the new trip doesn't start with a stale alert.
+  useEffect(() => {
+    setProg({ ver: -1, d: 0, s: 0, stopped: false })
+    lastFlooded.current = {}
+  }, [resetCounter])
 
   const { car, traveled, moving } = useMemo(() => {
     if (!path || path.length < 2) return { car: null as DriveApi['car'], traveled: 0, moving: false }
@@ -346,6 +363,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     } finally { rerouting.current = false }
   }, [destination, origin, fetchRoutes, showToast])
 
+  // Before the car has moved, the trip is just a plan: re-plan on any status change so a
+  // momentary state (e.g. a sensor briefly offline during a demo reset) doesn't stick.
+  useEffect(() => onDomainEvent((e) => {
+    if (e.kind === 'status_changed' && traveledRef.current < 1) setResetCounter((n) => n + 1)
+  }), [])
+
   // A new flood: if it's ahead on our route the red alert takes over (and the car holds);
   // otherwise just let the driver know. Rerouting is the driver's call (Reroute button).
   useEffect(() => onDomainEvent((e) => {
@@ -406,6 +429,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, moving, demo?.speed, mode, isFlooded])
 
   const visibleAlert = alert && !dismissed.has(alert.key) ? alert : null
+  holdRef.current = !!visibleAlert && visibleAlert.level !== 'caution' && demoActive
   const blocker = prog.stopped && demoActive ? firstBlocker(traveled) : null
   const blocked = !visibleAlert && blocker ? { sensor: blocker.sensor, hazard: blocker.hazard } : null
 

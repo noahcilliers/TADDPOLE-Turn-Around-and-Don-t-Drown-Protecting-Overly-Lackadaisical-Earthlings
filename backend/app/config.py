@@ -36,6 +36,7 @@ class Settings(BaseSettings):
 
     # Routing
     graph_path: str = "data/camelback.graphml"
+    flood_block_radius_m: float = 150.0   # a flooded sensor closes every road segment within this radius
 
     # Stage demo (handoff demo_scenario.json corridor: 40th St northbound through Camelback)
     demo_sensor_id: str = "water_tank_1"

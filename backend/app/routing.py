@@ -108,17 +108,37 @@ class RoadNetwork:
             edges.add((v, u))
         return edges, best_d
 
-    def map_sensors(self, sensors: list[tuple[str, float, float]]) -> dict[str, float]:
-        """sensors: [(sensor_id, lat, lon)]. Returns snap distance (m) per sensor."""
+    def edges_within(self, lat: float, lon: float, radius_m: float) -> set[Edge]:
+        """Every road segment (both directions) passing within radius_m of the point."""
+        px, py = self._proj(lon, lat)
+        out: set[Edge] = set()
+        for u, v, data in self.G.edges(data=True):
+            pts = [self._proj(x, y) for x, y in self._edge_points(u, v, data)]
+            if any(_point_seg_dist(px, py, ax, ay, bx, by) <= radius_m for (ax, ay), (bx, by) in zip(pts, pts[1:])):
+                out.add((u, v))
+                if self.G.has_edge(v, u):
+                    out.add((v, u))
+        return out
+
+    def map_sensors(self, sensors: list[tuple[str, float, float]], block_radius_m: float = 0.0) -> dict[str, float]:
+        """sensors: [(sensor_id, lat, lon)]. Returns snap distance (m) per sensor.
+
+        A sensor "owns" its snapped road segment plus, with block_radius_m > 0, every segment
+        within that radius: water at a dip floods the low area around it, so closing a single
+        150 m OSM edge would let routes slip past on the side street right next to the flood.
+        """
         dists: dict[str, float] = {}
         mapping: dict[str, set[Edge]] = {}
         seg: dict[str, Edge] = {}
         for sid, lat, lon in sensors:
             edges, d = self.nearest_segment(lat, lon)
+            if block_radius_m > 0 and edges:
+                edges = edges | self.edges_within(lat, lon, block_radius_m)
             mapping[sid] = edges
             dists[sid] = d
-            if edges:
-                seg[sid] = min(edges)  # deterministic; both directions share geometry
+            snapped, _ = self.nearest_segment(lat, lon) if block_radius_m > 0 else (edges, d)
+            if snapped:
+                seg[sid] = min(snapped)  # drawn segment = the snapped road edge (deterministic)
         self.sensor_edges = mapping
         self.sensor_segment = seg
         return dists

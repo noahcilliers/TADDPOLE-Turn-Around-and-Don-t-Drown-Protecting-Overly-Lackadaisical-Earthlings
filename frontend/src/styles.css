@@ -113,7 +113,12 @@ input { font: inherit; color: inherit; }
 /* ---------- map ---------- */
 .map { position: absolute; inset: 0; background: #EEF1F5; }
 .leaflet-container { font-family: var(--font); background: #EEF1F5; }
-.leaflet-tile-pane { filter: grayscale(1) contrast(0.82) brightness(1.1); }
+/* filter each tile, not the whole pane: a filtered pane is re-rasterized on every zoom frame */
+.leaflet-container img.leaflet-tile { filter: grayscale(1) contrast(0.82) brightness(1.1); }
+/* the car glides between position updates, but snaps during zoom animations */
+.fr-car { transition: transform 0.22s linear; }
+.fr-zooming .fr-car, .leaflet-zoom-anim .fr-car { transition: none; }
+.fr-car .dot svg { transition: transform 0.3s ease; }
 .leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.75) !important; }
 .leaflet-control-zoom { border: 0 !important; box-shadow: var(--shadow) !important; border-radius: 12px !important; overflow: hidden; }
 .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; color: var(--ink) !important; }
