@@ -49,6 +49,14 @@ class Settings(BaseSettings):
     def effective_sim_scale(self) -> float:
         return self.sim_depth_scale if self.sim_depth_scale else self.flooded_cm / 30.0
 
+    # Discord alerts (app/discord_alerts.py). Empty webhook URL = off.
+    discord_webhook_url: str = ""
+    discord_notify_on: str = "flooded,reopened"   # also: caution, clear, offline
+    discord_cooldown_s: float = 60.0              # min gap between identical alerts for one sensor
+    discord_include_simulated: bool = False       # simulated sensors replay 24 h profiles; noisy
+    discord_mention: str = ""                     # ping on `flooded`: everyone, here, or a role ID
+    discord_app_url: str = ""                     # link embeds to the live map
+
     # API
     cors_origins: str = "*"               # comma-separated
     admin_token: str = ""                 # required for /admin/*; empty disables admin endpoints

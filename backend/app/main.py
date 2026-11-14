@@ -16,6 +16,7 @@ from . import db
 from .config import Settings, get_settings
 from .hub import Hub, now_iso
 from .demo import DemoController
+from .discord_alerts import DiscordAlerts, build_message
 from .hazards import HazardStore
 from .live import Live
 from .poller import Poller, haversine_m
@@ -99,6 +100,12 @@ async def lifespan(app: FastAPI):
     poller.demo_sensor = cfg.demo_sensor_id
     poller.demo_scripted = lambda: demo.session.scripted
     poller.live, poller.hazards = live, hazards
+    discord = DiscordAlerts(
+        cfg.discord_webhook_url, notify_on=cfg.discord_notify_on, cooldown_s=cfg.discord_cooldown_s,
+        include_simulated=cfg.discord_include_simulated, app_url=cfg.discord_app_url,
+        mention=cfg.discord_mention,
+    )
+    poller.discord = discord
     await poller.start()
 
     sim = ProfileSimulator(pool, [(r.sensor_id, r.signal) for r in poller.sensor_rows.values() if r.simulated],
@@ -110,9 +117,11 @@ async def lifespan(app: FastAPI):
         asyncio.create_task(hazards.run(), name="hazards"),
         asyncio.create_task(demo.run(), name="demo"),
         asyncio.create_task(sim.run(), name="profile-sim"),
+        asyncio.create_task(discord.run(), name="discord"),
     ]
 
     app.state.cfg, app.state.hub, app.state.pool, app.state.poller = cfg, hub, pool, poller
+    app.state.discord = discord
     app.state.live, app.state.hazards, app.state.demo = live, hazards, demo
     try:
         yield
@@ -210,6 +219,25 @@ async def simulate(sensor_id: str, body: Simulate):
     if not await db.insert_simulated_reading(app.state.pool, sensor_id, body.depth_cm):
         raise HTTPException(404, "unknown sensor or sensor has no baseline_cm")
     return {"ok": True, "sensor_id": sensor_id, "depth_cm": body.depth_cm}
+
+
+@app.post("/admin/discord/test", dependencies=[Depends(require_admin)])
+async def discord_test(sensor_id: str | None = None):
+    """Post a sample `flooded` alert to the Discord webhook (skips filters and cooldown)."""
+    d: DiscordAlerts = app.state.discord
+    if not d.enabled:
+        raise HTTPException(409, "Discord alerts are off (set DISCORD_WEBHOOK_URL)")
+    rows = app.state.poller.sensor_rows
+    row = rows.get(sensor_id or app.state.cfg.demo_sensor_id) or next(iter(rows.values()), None)
+    if row is None:
+        raise HTTPException(404, "no sensors loaded")
+    body = build_message("flooded", row, 30.0, 2.5, app_url=d.app_url, mention=d.mention)
+    body["embeds"][0]["title"] = "[TEST] " + body["embeds"][0]["title"]
+    try:
+        await d.send_now(body)
+    except Exception as exc:
+        raise HTTPException(502, f"Discord rejected the test alert: {exc}")
+    return {"ok": True, "sensor_id": row.sensor_id}
 
 
 # ---------------- WebSocket ----------------

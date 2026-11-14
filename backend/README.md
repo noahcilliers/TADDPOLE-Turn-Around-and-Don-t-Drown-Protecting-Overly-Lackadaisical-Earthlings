@@ -57,6 +57,16 @@ Play/pause/speed/mode are shared by every connected screen. **Scripted flood** r
 
 For a tub-of-water demo, lower these (e.g. `CAUTION_CM=2 FLOODED_CM=5`) to match your tub depth.
 
+## Discord alerts
+
+Set `DISCORD_WEBHOOK_URL` (Server Settings → Integrations → Webhooks → New Webhook → Copy Webhook URL) and restart. The poller posts an embed when a road floods and when it reopens; add `caution`, `clear` or `offline` to `DISCORD_NOTIFY_ON` for more. Simulated sensors are skipped unless `DISCORD_INCLUDE_SIMULATED=true`. Repeat alerts for the same sensor and event are held back for `DISCORD_COOLDOWN_S` (60 s). Set `DISCORD_MENTION=everyone` (or `here`, or a role ID) to ping on flooded alerts so phones get a push notification.
+
+Send a test alert:
+
+```bash
+curl -X POST -H "X-Admin-Token: $ADMIN_TOKEN" http://localhost:8000/admin/discord/test
+```
+
 ## Run locally
 
 ```bash

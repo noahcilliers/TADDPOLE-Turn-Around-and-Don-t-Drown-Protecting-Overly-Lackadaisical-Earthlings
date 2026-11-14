@@ -53,6 +53,7 @@ class Poller:
         self.demo_scripted = lambda: False
         self.live = None           # app.live.Live
         self.hazards = None        # app.hazards.HazardStore
+        self.discord = None        # app.discord_alerts.DiscordAlerts
 
     @property
     def status(self) -> dict[str, Status]:
@@ -224,6 +225,8 @@ class Poller:
                 log.info("sensor %s: %s -> %s (depth=%s, rise=%s)", sid, prev.value, new.value, depth, rise)
                 await self.hub.broadcast({"type": "sensor_update", "sensor": payload})
                 await self.hub.on_status_change(payload, prev, new)
+                if self.discord is not None and known:
+                    self.discord.status_changed(self.sensor_rows[sid], prev, new, depth, rise)
                 if self.live is not None:
                     await self.live.status_changed(sid, prev.value, new.value, depth, self.v1_sensor(sid))
                 if new is Status.CLEAR and self.hazards is not None:
