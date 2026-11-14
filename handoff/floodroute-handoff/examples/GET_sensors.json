@@ -1,0 +1,243 @@
+{
+  "as_of": "2026-08-15T01:50:00.000Z",
+  "sensors": [
+    {
+      "id": "FR-07",
+      "name": "40th St & Camelback",
+      "road": "N 40th St dip, south of Camelback Rd",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -111.99532,
+          33.50941
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -111.99532,
+            33.512018
+          ],
+          [
+            -111.99532,
+            33.506222
+          ]
+        ]
+      },
+      "battery_pct": 86,
+      "signal": "strong",
+      "calibrated_at": "2026-06-12",
+      "current": {
+        "status": "flooded",
+        "depth_cm": 61.5,
+        "rate_cm_per_min": 9.02,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    },
+    {
+      "id": "FR-03",
+      "name": "32nd St & Indian School",
+      "road": "Indian School Rd low point at 32nd St",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -112.01266,
+          33.49492
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -112.016128,
+            33.49492
+          ],
+          [
+            -112.009192,
+            33.49492
+          ]
+        ]
+      },
+      "battery_pct": 74,
+      "signal": "good",
+      "calibrated_at": "2026-05-30",
+      "current": {
+        "status": "caution",
+        "depth_cm": 19,
+        "rate_cm_per_min": 0.06,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    },
+    {
+      "id": "FR-11",
+      "name": "44th St & Thomas",
+      "road": "Thomas Rd dip east of 44th St",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -111.98665,
+          33.48043
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -111.990118,
+            33.48043
+          ],
+          [
+            -111.983182,
+            33.48043
+          ]
+        ]
+      },
+      "battery_pct": 91,
+      "signal": "strong",
+      "calibrated_at": "2026-06-12",
+      "current": {
+        "status": "clear",
+        "depth_cm": 2.1,
+        "rate_cm_per_min": -0.12,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    },
+    {
+      "id": "FR-09",
+      "name": "36th St & Thomas",
+      "road": "Thomas Rd wash crossing at 36th St",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -112.00399,
+          33.48043
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -112.007458,
+            33.48043
+          ],
+          [
+            -112.000522,
+            33.48043
+          ]
+        ]
+      },
+      "battery_pct": 68,
+      "signal": "good",
+      "calibrated_at": "2026-05-30",
+      "current": {
+        "status": "clear",
+        "depth_cm": 1.3,
+        "rate_cm_per_min": 0.03,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    },
+    {
+      "id": "FR-02",
+      "name": "32nd St & Camelback",
+      "road": "32nd St dip north of Camelback Rd",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -112.01266,
+          33.50941
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -112.01266,
+            33.512308
+          ],
+          [
+            -112.01266,
+            33.506512
+          ]
+        ]
+      },
+      "battery_pct": 9,
+      "signal": "lost",
+      "calibrated_at": "2026-04-18",
+      "current": {
+        "status": "offline",
+        "depth_cm": null,
+        "rate_cm_per_min": null,
+        "last_reading_at": "2026-08-15T01:35:00.000Z"
+      }
+    },
+    {
+      "id": "FR-12",
+      "name": "44th St & Campbell",
+      "road": "44th St dip at Campbell Ave",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -111.98665,
+          33.502165
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -111.98665,
+            33.504773
+          ],
+          [
+            -111.98665,
+            33.499557
+          ]
+        ]
+      },
+      "battery_pct": 80,
+      "signal": "strong",
+      "calibrated_at": "2026-06-12",
+      "current": {
+        "status": "clear",
+        "depth_cm": 2.4,
+        "rate_cm_per_min": 0.08,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    },
+    {
+      "id": "FR-14",
+      "name": "40th St & McDowell",
+      "road": "McDowell Rd low point at 40th St",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -111.99532,
+          33.46594
+        ]
+      },
+      "segment": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -111.998788,
+            33.46594
+          ],
+          [
+            -111.991852,
+            33.46594
+          ]
+        ]
+      },
+      "battery_pct": 77,
+      "signal": "good",
+      "calibrated_at": "2026-06-02",
+      "current": {
+        "status": "clear",
+        "depth_cm": 3.1,
+        "rate_cm_per_min": -0.03,
+        "last_reading_at": "2026-08-15T01:50:00.000Z"
+      }
+    }
+  ]
+}

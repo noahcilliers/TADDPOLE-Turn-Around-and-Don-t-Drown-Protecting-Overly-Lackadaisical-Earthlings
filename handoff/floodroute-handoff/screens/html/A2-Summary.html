@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloodRoute: trip summary</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+@keyframes lfPulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.7);opacity:0}}
+.lf-pulse{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out infinite}
+.lf-pulse2{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out .9s infinite}
+@media (prefers-reduced-motion: reduce){.lf-pulse,.lf-pulse2{animation:none;opacity:.3}}
+</style>
+
+</head>
+<body>
+<div id="dc-mount"></div>
+<template id="dc-tpl">
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; font-family: Manrope, system-ui, sans-serif; color: #0F172A; font-variant-numeric: tabular-nums"><div style="position: absolute; inset: 0; padding: 18px 18px 24px; display: flex; flex-direction: column; gap: 16px; background: #FFFFFF">
+<div style="display: flex; align-items: center; gap: 10px"><div style="width: 48px; height: 48px; border-radius: 16px; background: #DCFCE7; color: #0B7A40; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M5 21V4M5 4h12l-2 4 2 4H5"></path></svg></div>
+<div><div style="font-size: 13px; font-weight: 700; color: #475569">7:01 PM · N 40th St &amp; E Stanford Dr</div><h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em">You arrived safely</h1></div></div>
+<div style="border-radius: 24px; border: 1px solid #E2E8F0; padding: 4px"><svg width="350" height="230" viewBox="0 0 350 230" role="img" aria-label="Map of east Phoenix with flood sensors" style="display: block; border-radius: 20px; display: block"><rect x="0" y="0" width="350" height="230" fill="#EDF0F4"></rect>
+<rect x="215.7" y="155.7" width="28.6" height="28.6" rx="6" fill="#DCEADF"></rect>
+<rect x="-8.7" y="208.5" width="37.4" height="28.6" rx="6" fill="#DCEADF"></rect>
+<rect x="103.5" y="-50.0" width="27.5" height="18.7" rx="6" fill="#DCEADF"></rect>
+<rect x="268.5" y="210.7" width="33.0" height="30.8" rx="6" fill="#DCEADF"></rect>
+<path d="M-3.8 0 L-3.8 230 M10.0 0 L10.0 230 M23.8 0 L23.8 230 M51.2 0 L51.2 230 M65.0 0 L65.0 230 M78.8 0 L78.8 230 M106.2 0 L106.2 230 M120.0 0 L120.0 230 M133.8 0 L133.8 230 M161.2 0 L161.2 230 M175.0 0 L175.0 230 M188.8 0 L188.8 230 M216.2 0 L216.2 230 M230.0 0 L230.0 230 M243.8 0 L243.8 230 M271.2 0 L271.2 230 M285.0 0 L285.0 230 M298.8 0 L298.8 230 M326.2 0 L326.2 230 M340.0 0 L340.0 230 M353.8 0 L353.8 230 M0 -8.8 L350 -8.8 M0 5.0 L350 5.0 M0 18.8 L350 18.8 M0 46.2 L350 46.2 M0 60.0 L350 60.0 M0 73.8 L350 73.8 M0 101.2 L350 101.2 M0 115.0 L350 115.0 M0 128.8 L350 128.8 M0 156.2 L350 156.2 M0 170.0 L350 170.0 M0 183.8 L350 183.8 M0 211.2 L350 211.2 M0 225.0 L350 225.0 M0 238.8 L350 238.8" stroke="#E2E6EB" stroke-width="1.2" fill="none"></path>
+<path d="M-182.5 -31.3 L-94.5 -44.5 L15.5 -59.9 L92.5 -44.5 L169.5 -24.7 L246.5 -40.1 L323.5 -57.7 L477.5 -72.0" stroke="#B8D3EF" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"></path>
+<path d="M-17.5 0 L-17.5 230 M92.5 0 L92.5 230 M202.5 0 L202.5 230 M312.5 0 L312.5 230 M422.5 0 L422.5 230 M0 -22.5 L350 -22.5 M0 87.5 L350 87.5 M0 197.5 L350 197.5 M0 307.5 L350 307.5" stroke="#D2D8E0" stroke-width="5" fill="none"></path>
+<path d="M-72.5 0 L-72.5 230 M37.5 0 L37.5 230 M147.5 0 L147.5 230 M257.5 0 L257.5 230 M367.5 0 L367.5 230 M0 -77.5 L350 -77.5 M0 32.5 L350 32.5 M0 142.5 L350 142.5 M0 252.5 L350 252.5" stroke="#D2D8E0" stroke-width="8.5" fill="none"></path>
+<path d="M-17.5 0 L-17.5 230 M92.5 0 L92.5 230 M202.5 0 L202.5 230 M312.5 0 L312.5 230 M422.5 0 L422.5 230 M0 -22.5 L350 -22.5 M0 87.5 L350 87.5 M0 197.5 L350 197.5 M0 307.5 L350 307.5" stroke="#FFFFFF" stroke-width="3" fill="none"></path>
+<path d="M-72.5 0 L-72.5 230 M37.5 0 L37.5 230 M147.5 0 L147.5 230 M257.5 0 L257.5 230 M367.5 0 L367.5 230 M0 -77.5 L350 -77.5 M0 32.5 L350 32.5 M0 142.5 L350 142.5 M0 252.5 L350 252.5" stroke="#FFFFFF" stroke-width="6" fill="none"></path><path d="M147.5 12.7 L147.5 56.7" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M147.5 12.7 L147.5 56.7" stroke="#E5243B" stroke-width="18" stroke-linecap="round" fill="none" opacity="0.18"></path><path d="M147.5 12.7 L147.5 56.7" stroke="#9C0F25" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M147.5 12.7 L147.5 56.7" stroke="#E5243B" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M15.5 142.5 L59.5 142.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M15.5 142.5 L59.5 142.5" stroke="#9A6E00" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M15.5 142.5 L59.5 142.5" stroke="#F2B300" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M180.5 252.5 L224.5 252.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M180.5 252.5 L224.5 252.5" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M180.5 252.5 L224.5 252.5" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M70.5 252.5 L114.5 252.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M70.5 252.5 L114.5 252.5" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M70.5 252.5 L114.5 252.5" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M37.5 10.5 L37.5 54.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M37.5 10.5 L37.5 54.5" stroke="#6B7380" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 6" fill="none"></path><path d="M202.5 67.7 L202.5 107.3" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M202.5 67.7 L202.5 107.3" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M202.5 67.7 L202.5 107.3" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M125.5 362.5 L169.5 362.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M125.5 362.5 L169.5 362.5" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M125.5 362.5 L169.5 362.5" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><g transform="translate(147.5 32.5)"><circle class="lf-pulse" cx="0" cy="0" r="8" fill="#E5243B" fill-opacity="0.25"></circle><circle class="lf-pulse2" cx="0" cy="0" r="8" fill="none" stroke="#E5243B" stroke-width="2"></circle><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><polygon points="8.1,3.4 3.4,8.1 -3.4,8.1 -8.1,3.4 -8.1,-3.4 -3.4,-8.1 3.4,-8.1 8.1,-3.4" fill="#E5243B" stroke="#FFFFFF" stroke-width="3"></polygon><path d="M-3.0 -3.0 L3.0 3.0 M3.0 -3.0 L-3.0 3.0" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></g><g transform="translate(37.5 142.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><path d="M0 -9.8 L10.0 7.6 L-10.0 7.6 Z" fill="#F2B300" stroke-linejoin="round" stroke="#FFFFFF" stroke-width="3"></path><path d="M0 -3.4 L0 1.4" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.0" r="1.2" fill="#2B1F00"></circle></g><g transform="translate(202.5 252.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><circle cx="0" cy="0" r="8" fill="#14A35A" stroke="#FFFFFF" stroke-width="3"></circle><path d="M-3.4 0.2 L-0.8 2.7 L3.7 -2.4" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><g transform="translate(92.5 252.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><circle cx="0" cy="0" r="8" fill="#14A35A" stroke="#FFFFFF" stroke-width="3"></circle><path d="M-3.4 0.2 L-0.8 2.7 L3.7 -2.4" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><g transform="translate(37.5 32.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><circle cx="0" cy="0" r="8" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="3"></circle><circle cx="0" cy="0" r="6.2" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.2 0 L3.2 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></g><g transform="translate(202.5 87.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><circle cx="0" cy="0" r="8" fill="#14A35A" stroke="#FFFFFF" stroke-width="3"></circle><path d="M-3.4 0.2 L-0.8 2.7 L3.7 -2.4" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><g transform="translate(147.5 362.5)"><circle cx="0" cy="2" r="11" fill="#0F172A" opacity="0.14"></circle><circle cx="0" cy="0" r="8" fill="#14A35A" stroke="#FFFFFF" stroke-width="3"></circle><path d="M-3.4 0.2 L-0.8 2.7 L3.7 -2.4" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></g><path d="M147.5 87.5 L147.5 -22.5" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="1"></path><path d="M147.5 87.5 L147.5 -22.5" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="1 8" opacity="1"></path><path d="M147.5 274.5 L147.5 87.5 L202.5 87.5 L202.5 -22.5 L147.5 -22.5" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="1"></path><path d="M147.5 274.5 L147.5 87.5 L202.5 87.5 L202.5 -22.5 L147.5 -22.5" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="1"></path><g transform="translate(147.5 -22.5)"><path d="M0 0 C-4 -8 -12 -13 -12 -22 A12 12 0 1 1 12 -22 C12 -13 4 -8 0 0 Z" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"></path><circle cx="0" cy="-22" r="4.5" fill="#FFFFFF"></circle></g></svg></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="padding: 12px; border-radius: 16px; background: #F5F7FA"><div style="font-size: 22px; font-weight: 800">9 min</div><div style="font-size: 12px; font-weight: 600; color: #475569">drive time</div></div><div style="padding: 12px; border-radius: 16px; background: #F5F7FA"><div style="font-size: 22px; font-weight: 800">3.0 mi</div><div style="font-size: 12px; font-weight: 600; color: #475569">distance</div></div><div style="padding: 12px; border-radius: 16px; background: #F5F7FA"><div style="font-size: 22px; font-weight: 800">+3 min</div><div style="font-size: 12px; font-weight: 600; color: #475569">for safety</div></div></div>
+<div><div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E2E8F0"><svg width="26" height="26" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg><div style="flex: 1"><div style="font-size: 15px; font-weight: 700">Avoided 40th St &amp; Camelback</div><div style="font-size: 13px; color: #475569">61 cm deep when you passed Campbell Ave</div></div></div><div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E2E8F0"><svg width="26" height="26" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="flex: 1"><div style="font-size: 15px; font-weight: 700">Passed 44th St &amp; Campbell</div><div style="font-size: 13px; color: #475569">2 cm · clear</div></div></div><div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E2E8F0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><div style="flex: 1"><div style="font-size: 15px; font-weight: 700">Rerouted at 6:47 PM</div><div style="font-size: 13px; color: #475569">1 alert, no hard stops</div></div></div></div>
+<div style="margin-top: auto; display: flex; gap: 10px"><button type="button" style="height: 54px; padding: 0 18px; border-radius: 16px; background: #F5F7FA; color: #0F172A; border: 1px solid #E2E8F0; font: 700 16px Manrope, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; flex: 1">Share route</button><button type="button" style="height: 54px; padding: 0 18px; border-radius: 16px; background: #2563EB; color: #FFFFFF; border: 0; font: 700 16px Manrope, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; flex: 1">Done</button></div></div></div>
+</template>
+<script>
+/* Minimal standalone runtime for FloodRoute design screens.
+   Renders the <template id="dc-tpl"> with values from Component.renderVals():
+   {{path}} holes, <sc-if value>, <sc-for list as>, onClick/onChange handlers.
+   Reference only: the production app should be rebuilt in your own frontend stack. */
+(function () {
+  class DCLogic {
+    constructor(props) { this.props = props || {}; this.state = {}; }
+    setState(p) { Object.assign(this.state, typeof p === 'function' ? p(this.state) : p); schedule(); }
+    forceUpdate() { schedule(); }
+  }
+  window.DCLogic = DCLogic;
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  const PURE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+  function lookup(path, scope) {
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (path === 'null') return null;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return parseFloat(path);
+    let cur = scope;
+    for (const part of path.split('.')) { if (cur == null) return undefined; cur = cur[part]; }
+    return cur;
+  }
+  const interp = (s, scope) => s.replace(HOLE, (_, p) => { const v = lookup(p, scope); return v == null ? '' : String(v); });
+  const EVENTS = { onclick: 'click', onchange: 'input', oninput: 'input' };
+  function build(nodes, scope, out) {
+    nodes.forEach((n) => {
+      if (n.nodeType === 3) { out.push(document.createTextNode(interp(n.data, scope))); return; }
+      if (n.nodeType !== 1) return;
+      const tag = n.localName.toLowerCase();
+      if (tag === 'sc-if') {
+        const m = (n.getAttribute('value') || '').match(PURE);
+        if (m && lookup(m[1], scope)) build(Array.from(n.childNodes), scope, out);
+        return;
+      }
+      if (tag === 'sc-for') {
+        const m = (n.getAttribute('list') || '').match(PURE);
+        const list = (m && lookup(m[1], scope)) || [];
+        const as = n.getAttribute('as') || 'item';
+        list.forEach((item, i) => { const sc = Object.create(scope); sc[as] = item; sc.$index = i; build(Array.from(n.childNodes), sc, out); });
+        return;
+      }
+      const el = n.namespaceURI && n.namespaceURI !== 'http://www.w3.org/1999/xhtml' ? document.createElementNS(n.namespaceURI, n.localName) : document.createElement(n.localName);
+      el.__h = {};
+      Array.from(n.attributes).forEach((a) => {
+        const name = a.name;
+        if (name.startsWith('hint-')) return;
+        const pm = a.value.match(PURE);
+        if (EVENTS[name.toLowerCase()]) { if (pm) el.__h[EVENTS[name.toLowerCase()]] = lookup(pm[1], scope); return; }
+        let v = pm ? lookup(pm[1], scope) : interp(a.value, scope);
+        if (v === false || v == null) return;
+        el.setAttribute(name, v === true ? '' : String(v));
+      });
+      const kids = [];
+      build(Array.from((n.content || n).childNodes), scope, kids);
+      kids.forEach((k) => el.appendChild(k));
+      out.push(el);
+    });
+    return out;
+  }
+  function morph(parent, next) {
+    const old = Array.from(parent.childNodes);
+    next.forEach((n, i) => {
+      const o = old[i];
+      if (!o) { parent.appendChild(n); return; }
+      if (o.nodeType !== n.nodeType || o.nodeName !== n.nodeName) { parent.replaceChild(n, o); return; }
+      if (o.nodeType === 3) { if (o.data !== n.data) o.data = n.data; return; }
+      Array.from(o.attributes).forEach((a) => { if (!n.hasAttribute(a.name)) o.removeAttribute(a.name); });
+      Array.from(n.attributes).forEach((a) => { if (o.getAttribute(a.name) !== a.value) o.setAttribute(a.name, a.value); });
+      if (o.tagName === 'INPUT' && n.hasAttribute('value') && document.activeElement !== o) o.value = n.getAttribute('value');
+      o.__h = n.__h;
+      morph(o, Array.from(n.childNodes));
+    });
+    for (let i = next.length; i < old.length; i++) parent.removeChild(old[i]);
+  }
+  let inst, mount, tpl, queued = false;
+  function render() { queued = false; morph(mount, build(Array.from(tpl.content.childNodes), inst.renderVals() || {}, [])); }
+  function schedule() { if (!queued && mount) { queued = true; Promise.resolve().then(render); } }
+  function dispatch(e) {
+    let el = e.target;
+    while (el && el !== mount) { const h = el.__h && el.__h[e.type]; if (h) { h(e); return; } el = el.parentNode; }
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    tpl = document.getElementById('dc-tpl');
+    mount = document.getElementById('dc-mount');
+    inst = new window.Component({});
+    window.__dc = inst;
+    ['click', 'input'].forEach((t) => mount.addEventListener(t, dispatch));
+    render();
+    if (inst.componentDidMount) inst.componentDidMount();
+  });
+})();
+
+</script>
+<script>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+window.Component = Component;
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "kind": "stalled_vehicle",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      -111.99532,
+      33.506947
+    ]
+  },
+  "source": "driver"
+}

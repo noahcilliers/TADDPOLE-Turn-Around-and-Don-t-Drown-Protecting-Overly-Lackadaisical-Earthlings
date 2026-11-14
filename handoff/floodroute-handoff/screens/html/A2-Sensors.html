@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloodRoute: all sensors</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+@keyframes lfPulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.7);opacity:0}}
+.lf-pulse{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out infinite}
+.lf-pulse2{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out .9s infinite}
+@media (prefers-reduced-motion: reduce){.lf-pulse,.lf-pulse2{animation:none;opacity:.3}}
+</style>
+
+</head>
+<body>
+<div id="dc-mount"></div>
+<template id="dc-tpl">
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; font-family: Manrope, system-ui, sans-serif; color: #0F172A; font-variant-numeric: tabular-nums"><div style="position: absolute; inset: 0; padding: 16px 18px 100px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF">
+<div style="display: flex; align-items: center; justify-content: space-between"><h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Sensors</h1><div style="display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 999px; background: #F5F7FA; border: 1px solid #E2E8F0; font-size: 13px; font-weight: 600; white-space: nowrap"><span style="width: 8px; height: 8px; border-radius: 50%; background: #14A35A; box-shadow: 0 0 0 4px rgba(20,163,90,0.18)"></span>Live<span style="color: #475569; font-weight: 500">2 s ago</span></div></div>
+<label style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border-radius: 16px; background: #F5F7FA; color: #475569"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5 21 21"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Search sensors</span>
+<input type="text" placeholder="Search a street or intersection" style="flex: 1; min-width: 0; border: 0; outline: none; background: none; font: 500 15px Manrope, system-ui, sans-serif; color: #0F172A"></label>
+<div role="group" aria-label="Sort" style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #EEF1F5">
+<button type="button" aria-pressed="true" style="flex: 1; height: 36px; border: 0; border-radius: 10px; background: #FFFFFF; font: 700 13px Manrope, system-ui, sans-serif; color: #0F172A; box-shadow: 0 1px 3px rgba(15,23,42,0.12)">Most at risk</button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 36px; border: 0; border-radius: 10px; background: transparent; font: 700 13px Manrope, system-ui, sans-serif; color: #475569">Nearest</button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 36px; border: 0; border-radius: 10px; background: transparent; font: 700 13px Manrope, system-ui, sans-serif; color: #475569">On my route</button></div>
+<div style="display: flex; flex-direction: column"><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">40th St &amp; Camelback</span><span style="font-size: 13px; font-weight: 600; color: #BE1230">Flooded · rising 4.2 cm/min</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">61 cm</span><span style="font-size: 12px; color: #475569">0.8 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">32nd St &amp; Indian School</span><span style="font-size: 13px; font-weight: 600; color: #7A5600">Rising · 0.4 cm/min</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">18 cm</span><span style="font-size: 12px; color: #475569">1.3 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">32nd St &amp; Camelback</span><span style="font-size: 13px; font-weight: 600; color: #535C69">Offline · no reading for 18 min</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">—</span><span style="font-size: 12px; color: #475569">1.1 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">40th St &amp; McDowell</span><span style="font-size: 13px; font-weight: 600; color: #475569">Clear · steady</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">3 cm</span><span style="font-size: 12px; color: #475569">1.4 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">44th St &amp; Thomas</span><span style="font-size: 13px; font-weight: 600; color: #475569">Clear · falling 0.4 cm/min</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">3 cm</span><span style="font-size: 12px; color: #475569">0.9 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">44th St &amp; Campbell</span><span style="font-size: 13px; font-weight: 600; color: #475569">Clear · steady</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">2 cm</span><span style="font-size: 12px; color: #475569">1.1 mi</span></span></button><button type="button" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 0; border: 0; border-bottom: 1px solid #E2E8F0; background: none; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 700">36th St &amp; Thomas</span><span style="font-size: 13px; font-weight: 600; color: #475569">Clear · steady</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 18px; font-weight: 800">1 cm</span><span style="font-size: 12px; color: #475569">0.6 mi</span></span></button></div></div><nav aria-label="Main" style="position: absolute; left: 12px; right: 12px; bottom: 14px; height: 64px; box-sizing: border-box; padding: 6px; border-radius: 24px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; gap: 4px"><button type="button" aria-current="page" style="flex: 1; height: 52px; border: 0; border-radius: 18px; background: #0F172A; color: #FFFFFF; font: 700 13px Manrope, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"></path><path d="M9 4v14M15 6v14"></path></svg>Map</button><button type="button" aria-current="false" style="flex: 1; height: 52px; border: 0; border-radius: 18px; background: transparent; color: #475569; font: 700 13px Manrope, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="2.2"></circle><path d="M3.5 10.5h6.3M14.2 10.5h6.3M12 14.2V21"></path></svg>Drive</button><button type="button" aria-current="false" style="flex: 1; height: 52px; border: 0; border-radius: 18px; background: transparent; color: #475569; font: 700 13px Manrope, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Alerts</button></nav></div>
+</template>
+<script>
+/* Minimal standalone runtime for FloodRoute design screens.
+   Renders the <template id="dc-tpl"> with values from Component.renderVals():
+   {{path}} holes, <sc-if value>, <sc-for list as>, onClick/onChange handlers.
+   Reference only: the production app should be rebuilt in your own frontend stack. */
+(function () {
+  class DCLogic {
+    constructor(props) { this.props = props || {}; this.state = {}; }
+    setState(p) { Object.assign(this.state, typeof p === 'function' ? p(this.state) : p); schedule(); }
+    forceUpdate() { schedule(); }
+  }
+  window.DCLogic = DCLogic;
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  const PURE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+  function lookup(path, scope) {
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (path === 'null') return null;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return parseFloat(path);
+    let cur = scope;
+    for (const part of path.split('.')) { if (cur == null) return undefined; cur = cur[part]; }
+    return cur;
+  }
+  const interp = (s, scope) => s.replace(HOLE, (_, p) => { const v = lookup(p, scope); return v == null ? '' : String(v); });
+  const EVENTS = { onclick: 'click', onchange: 'input', oninput: 'input' };
+  function build(nodes, scope, out) {
+    nodes.forEach((n) => {
+      if (n.nodeType === 3) { out.push(document.createTextNode(interp(n.data, scope))); return; }
+      if (n.nodeType !== 1) return;
+      const tag = n.localName.toLowerCase();
+      if (tag === 'sc-if') {
+        const m = (n.getAttribute('value') || '').match(PURE);
+        if (m && lookup(m[1], scope)) build(Array.from(n.childNodes), scope, out);
+        return;
+      }
+      if (tag === 'sc-for') {
+        const m = (n.getAttribute('list') || '').match(PURE);
+        const list = (m && lookup(m[1], scope)) || [];
+        const as = n.getAttribute('as') || 'item';
+        list.forEach((item, i) => { const sc = Object.create(scope); sc[as] = item; sc.$index = i; build(Array.from(n.childNodes), sc, out); });
+        return;
+      }
+      const el = n.namespaceURI && n.namespaceURI !== 'http://www.w3.org/1999/xhtml' ? document.createElementNS(n.namespaceURI, n.localName) : document.createElement(n.localName);
+      el.__h = {};
+      Array.from(n.attributes).forEach((a) => {
+        const name = a.name;
+        if (name.startsWith('hint-')) return;
+        const pm = a.value.match(PURE);
+        if (EVENTS[name.toLowerCase()]) { if (pm) el.__h[EVENTS[name.toLowerCase()]] = lookup(pm[1], scope); return; }
+        let v = pm ? lookup(pm[1], scope) : interp(a.value, scope);
+        if (v === false || v == null) return;
+        el.setAttribute(name, v === true ? '' : String(v));
+      });
+      const kids = [];
+      build(Array.from((n.content || n).childNodes), scope, kids);
+      kids.forEach((k) => el.appendChild(k));
+      out.push(el);
+    });
+    return out;
+  }
+  function morph(parent, next) {
+    const old = Array.from(parent.childNodes);
+    next.forEach((n, i) => {
+      const o = old[i];
+      if (!o) { parent.appendChild(n); return; }
+      if (o.nodeType !== n.nodeType || o.nodeName !== n.nodeName) { parent.replaceChild(n, o); return; }
+      if (o.nodeType === 3) { if (o.data !== n.data) o.data = n.data; return; }
+      Array.from(o.attributes).forEach((a) => { if (!n.hasAttribute(a.name)) o.removeAttribute(a.name); });
+      Array.from(n.attributes).forEach((a) => { if (o.getAttribute(a.name) !== a.value) o.setAttribute(a.name, a.value); });
+      if (o.tagName === 'INPUT' && n.hasAttribute('value') && document.activeElement !== o) o.value = n.getAttribute('value');
+      o.__h = n.__h;
+      morph(o, Array.from(n.childNodes));
+    });
+    for (let i = next.length; i < old.length; i++) parent.removeChild(old[i]);
+  }
+  let inst, mount, tpl, queued = false;
+  function render() { queued = false; morph(mount, build(Array.from(tpl.content.childNodes), inst.renderVals() || {}, [])); }
+  function schedule() { if (!queued && mount) { queued = true; Promise.resolve().then(render); } }
+  function dispatch(e) {
+    let el = e.target;
+    while (el && el !== mount) { const h = el.__h && el.__h[e.type]; if (h) { h(e); return; } el = el.parentNode; }
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    tpl = document.getElementById('dc-tpl');
+    mount = document.getElementById('dc-mount');
+    inst = new window.Component({});
+    window.__dc = inst;
+    ['click', 'input'].forEach((t) => mount.addEventListener(t, dispatch));
+    render();
+    if (inst.componentDidMount) inst.componentDidMount();
+  });
+})();
+
+</script>
+<script>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+window.Component = Component;
+</script>
+</body>
+</html>

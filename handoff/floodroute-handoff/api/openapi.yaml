@@ -1,0 +1,222 @@
+openapi: 3.1.0
+info:
+  title: FloodRoute API
+  version: 0.1.0
+  description: |
+    Live flooded-road sensors for Phoenix drivers. See docs/api.md and docs/logic.md.
+    Depth in cm, distance in metres, time in UTC ISO-8601, coordinates [lng, lat].
+servers:
+  - url: /v1
+components:
+  securitySchemes:
+    deviceKey: { type: http, scheme: bearer, description: Per-sensor device key (ingest only) }
+    operatorKey: { type: http, scheme: bearer, description: Operator key (demo + hazard clear) }
+  parameters:
+    SensorId: { name: id, in: path, required: true, schema: { type: string, example: FR-07 } }
+    Range: { name: range, in: query, required: true, schema: { type: string, enum: ['1h', '6h', '24h'] } }
+  schemas:
+    Status: { type: string, enum: [clear, caution, flooded, offline] }
+    Point:
+      type: object
+      required: [type, coordinates]
+      properties: { type: { const: Point }, coordinates: { type: array, items: { type: number }, minItems: 2, maxItems: 2 } }
+    LineString:
+      type: object
+      required: [type, coordinates]
+      properties: { type: { const: LineString }, coordinates: { type: array, items: { type: array, items: { type: number } } } }
+    SensorState:
+      type: object
+      required: [status, last_reading_at]
+      properties:
+        status: { $ref: '#/components/schemas/Status' }
+        depth_cm: { type: [number, 'null'] }
+        rate_cm_per_min: { type: [number, 'null'] }
+        last_reading_at: { type: string, format: date-time }
+        status_since: { type: string, format: date-time }
+    Sensor:
+      type: object
+      required: [id, name, road, location, segment, current]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        road: { type: string }
+        location: { $ref: '#/components/schemas/Point' }
+        segment: { $ref: '#/components/schemas/LineString' }
+        battery_pct: { type: [integer, 'null'] }
+        signal: { type: [string, 'null'], enum: [strong, good, weak, lost, null] }
+        calibrated_at: { type: [string, 'null'], format: date }
+        distance_m: { type: number, description: Only when near= is given }
+        current: { $ref: '#/components/schemas/SensorState' }
+    Series:
+      type: object
+      properties:
+        sensor_id: { type: string }
+        range: { type: string }
+        bucket_seconds: { type: number }
+        agg: { const: max }
+        thresholds: { type: object, properties: { caution_cm: { type: number }, flooded_cm: { type: number } } }
+        points: { type: array, items: { type: object, properties: { t: { type: string, format: date-time }, depth_cm: { type: [number, 'null'] } } } }
+    Stats:
+      type: object
+      properties:
+        sensor_id: { type: string }
+        range: { type: string }
+        peak_cm: { type: [number, 'null'] }
+        peak_at: { type: [string, 'null'], format: date-time }
+        fastest_rise_cm_per_min: { type: number }
+        minutes_above_caution: { type: integer }
+        minutes_flooded: { type: integer }
+    StatusChange:
+      type: object
+      properties:
+        time: { type: string, format: date-time }
+        from: { $ref: '#/components/schemas/Status' }
+        to: { $ref: '#/components/schemas/Status' }
+        depth_cm: { type: [number, 'null'] }
+    Event:
+      type: object
+      properties:
+        id: { type: string }
+        time: { type: string, format: date-time }
+        kind: { type: string, enum: [status_change, hazard] }
+        sensor_id: { type: [string, 'null'] }
+        title: { type: string }
+        from_status: { $ref: '#/components/schemas/Status' }
+        to_status: { $ref: '#/components/schemas/Status' }
+        depth_cm: { type: [number, 'null'] }
+        detail: { type: string }
+    Hazard:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        kind: { type: string, enum: [stalled_vehicle, road_closed, debris] }
+        location: { $ref: '#/components/schemas/Point' }
+        sensor_id: { type: [string, 'null'] }
+        source: { type: string, enum: [driver, operator, demo, device] }
+        created_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+    Crossing:
+      type: object
+      properties:
+        sensor_id: { type: string }
+        name: { type: string }
+        status: { $ref: '#/components/schemas/Status' }
+        depth_cm: { type: [number, 'null'] }
+        at_distance_m: { type: number }
+    Route:
+      type: object
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [fastest, safer] }
+        duration_s: { type: integer }
+        distance_m: { type: integer }
+        safe: { type: boolean }
+        delta_vs_fastest_s: { type: integer }
+        geometry: { $ref: '#/components/schemas/LineString' }
+        crosses: { type: array, items: { $ref: '#/components/schemas/Crossing' } }
+        steps: { type: array, items: { type: object, properties: { instruction: { type: string }, road: { type: string }, distance_m: { type: integer } } } }
+    Error:
+      type: object
+      properties: { error: { type: object, properties: { code: { type: string }, message: { type: string } } } }
+paths:
+  /sensors:
+    get:
+      summary: All sensors with current state
+      parameters:
+        - { name: near, in: query, schema: { type: string, example: '-111.99532,33.48767' } }
+        - { name: sort, in: query, schema: { type: string, enum: [risk, distance], default: risk } }
+        - { name: route_id, in: query, schema: { type: string } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: object, properties: { as_of: { type: string, format: date-time }, sensors: { type: array, items: { $ref: '#/components/schemas/Sensor' } } } } } } }
+  /sensors/{id}:
+    get:
+      parameters: [{ $ref: '#/components/parameters/SensorId' }]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Sensor' } } } }
+        '404': { description: Not found, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /sensors/{id}/series:
+    get:
+      parameters: [{ $ref: '#/components/parameters/SensorId' }, { $ref: '#/components/parameters/Range' }]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Series' } } } } }
+  /sensors/{id}/stats:
+    get:
+      parameters: [{ $ref: '#/components/parameters/SensorId' }, { $ref: '#/components/parameters/Range' }]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Stats' } } } } }
+  /sensors/{id}/status-changes:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/SensorId' }
+        - { name: since, in: query, schema: { type: string, default: 24h } }
+        - { name: limit, in: query, schema: { type: integer, default: 5 } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: object, properties: { sensor_id: { type: string }, changes: { type: array, items: { $ref: '#/components/schemas/StatusChange' } } } } } } } }
+  /events:
+    get:
+      parameters:
+        - { name: since, in: query, schema: { type: string, default: 2h } }
+        - { name: near, in: query, schema: { type: string } }
+        - { name: radius_m, in: query, schema: { type: integer, default: 3000 } }
+        - { name: sensor_ids, in: query, schema: { type: string } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: object, properties: { events: { type: array, items: { $ref: '#/components/schemas/Event' } } } } } } } }
+  /readings:
+    post:
+      security: [{ deviceKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                readings:
+                  type: array
+                  maxItems: 500
+                  items: { type: object, required: [sensor_id, time, depth_cm], properties: { sensor_id: { type: string }, time: { type: string, format: date-time }, depth_cm: { type: number, minimum: 0 }, battery_pct: { type: integer }, rssi_dbm: { type: integer } } }
+      responses: { '202': { description: Accepted }, '400': { description: Bad reading } }
+  /hazards:
+    post:
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind, location], properties: { kind: { type: string, enum: [stalled_vehicle, road_closed, debris] }, location: { $ref: '#/components/schemas/Point' }, source: { type: string, default: driver } } } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Hazard' } } } } }
+  /hazards/active:
+    get:
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: object, properties: { hazards: { type: array, items: { $ref: '#/components/schemas/Hazard' } } } } } } } }
+  /hazards/{hid}:
+    delete:
+      security: [{ operatorKey: [] }]
+      parameters: [{ name: hid, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses: { '204': { description: Cleared } }
+  /hazards/ahead:
+    post:
+      summary: What is ahead of a moving car
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [position, heading_deg], properties: { position: { type: array, items: { type: number } }, heading_deg: { type: number }, speed_mps: { type: number }, radius_m: { type: integer, default: 1000 }, route_id: { type: [string, 'null'] } } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  level: { type: [string, 'null'], enum: [caution, flooded, stalled, null] }
+                  nearest: { type: [object, 'null'] }
+                  hazards: { type: array, items: { $ref: '#/components/schemas/Hazard' } }
+  /routes:
+    post:
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [from, to], properties: { from: { type: array, items: { type: number } }, to: { type: array, items: { type: number } }, avoid_offline: { type: boolean, default: true } } } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: object, properties: { recommended: { type: string }, routes: { type: array, items: { $ref: '#/components/schemas/Route' } } } } } } } }
+  /demo:
+    get:
+      security: [{ operatorKey: [] }]
+      responses: { '200': { description: Demo session } }
+  /demo/start:
+    post:
+      security: [{ operatorKey: [] }]
+      requestBody: { content: { application/json: { schema: { type: object, properties: { mode: { type: string, enum: [nav, watch] }, speed: { type: number, minimum: 0.5, maximum: 4 } } } } } }
+      responses: { '200': { description: Started } }
+  /demo/pause: { post: { security: [{ operatorKey: [] }], responses: { '200': { description: Paused } } } }
+  /demo/speed: { post: { security: [{ operatorKey: [] }], requestBody: { content: { application/json: { schema: { type: object, properties: { speed: { type: number } } } } } }, responses: { '200': { description: OK } } } }
+  /demo/stall: { post: { security: [{ operatorKey: [] }], responses: { '201': { description: Stalled-car hazard created at FR-07 } } } }
+  /demo/reset: { post: { security: [{ operatorKey: [] }], responses: { '200': { description: Demo data removed } } } }

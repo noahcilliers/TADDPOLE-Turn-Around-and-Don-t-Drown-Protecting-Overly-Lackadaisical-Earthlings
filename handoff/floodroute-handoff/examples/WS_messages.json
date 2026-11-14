@@ -1,0 +1,51 @@
+[
+  {
+    "type": "heartbeat",
+    "time": "2026-08-15T01:50:00.000Z"
+  },
+  {
+    "type": "sensor.reading",
+    "time": "2026-08-15T01:50:00.000Z",
+    "sensor_id": "FR-07",
+    "depth_cm": 61,
+    "rate_cm_per_min": 4.2,
+    "status": "flooded"
+  },
+  {
+    "type": "sensor.status_changed",
+    "time": "2026-08-15T01:47:00.600Z",
+    "sensor_id": "FR-07",
+    "from": "caution",
+    "to": "flooded",
+    "depth_cm": 30
+  },
+  {
+    "type": "hazard.created",
+    "hazard": {
+      "id": "6f0c…",
+      "kind": "stalled_vehicle",
+      "sensor_id": "FR-07",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -111.99532,
+          33.506947
+        ]
+      },
+      "source": "driver",
+      "created_at": "2026-08-15T01:50:00.000Z",
+      "expires_at": "2026-08-15T02:20:00.000Z"
+    }
+  },
+  {
+    "type": "hazard.cleared",
+    "hazard_id": "6f0c…",
+    "reason": "sensor_clear"
+  },
+  {
+    "type": "demo.tick",
+    "demo_s": 60,
+    "mode": "watch",
+    "speed": 2
+  }
+]

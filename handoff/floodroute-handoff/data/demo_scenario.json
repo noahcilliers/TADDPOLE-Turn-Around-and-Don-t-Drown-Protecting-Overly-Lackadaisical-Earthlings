@@ -1,0 +1,3819 @@
+{
+  "description": "Stage demo: storm at 40th St & Camelback (FR-07). Readings for other sensors follow readings_24h.csv profiles.",
+  "demo_start": "2026-08-14T18:40:00-07:00",
+  "demo_time_scale": 10,
+  "key_moments_demo_s": {
+    "caution": 18.53,
+    "flooded": 42.05,
+    "nav_reroute": 42.05,
+    "watch_first_warning": 31.67,
+    "watch_car_stops": 62.5,
+    "nav_arrives": 123.3
+  },
+  "routes": {
+    "original": {
+      "coordinates": [
+        [
+          -111.99532,
+          33.477532
+        ],
+        [
+          -111.99532,
+          33.516655
+        ]
+      ]
+    },
+    "safer": {
+      "coordinates": [
+        [
+          -111.99532,
+          33.477532
+        ],
+        [
+          -111.99532,
+          33.502165
+        ],
+        [
+          -111.98665,
+          33.502165
+        ],
+        [
+          -111.98665,
+          33.516655
+        ],
+        [
+          -111.99532,
+          33.516655
+        ]
+      ],
+      "note": "via Campbell Ave and 44th St, about +3 min"
+    },
+    "destination": {
+      "name": "N 40th St & E Stanford Dr",
+      "lnglat": [
+        -111.99532,
+        33.516655
+      ]
+    }
+  },
+  "stalled_car_report": {
+    "lnglat": [
+      -111.99532,
+      33.506947
+    ],
+    "sensor_id": "FR-07",
+    "note": "Presenter toggles it any time; drivers behind are warned immediately, even outside the 1 km look-ahead."
+  },
+  "timeline": [
+    {
+      "demo_s": 0,
+      "real_time": "2026-08-15T01:40:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.477532
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3540
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.49492
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1609
+        }
+      }
+    },
+    {
+      "demo_s": 1,
+      "real_time": "2026-08-15T01:40:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.477967
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3492
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495094
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1590
+        }
+      }
+    },
+    {
+      "demo_s": 2,
+      "real_time": "2026-08-15T01:40:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.478401
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3443
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495268
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1570
+        }
+      }
+    },
+    {
+      "demo_s": 3,
+      "real_time": "2026-08-15T01:40:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.478836
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3395
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495442
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1551
+        }
+      }
+    },
+    {
+      "demo_s": 4,
+      "real_time": "2026-08-15T01:40:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.479271
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3347
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495616
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1532
+        }
+      }
+    },
+    {
+      "demo_s": 5,
+      "real_time": "2026-08-15T01:40:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.479705
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3298
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495789
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1512
+        }
+      }
+    },
+    {
+      "demo_s": 6,
+      "real_time": "2026-08-15T01:41:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.48014
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3250
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.495963
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1493
+        }
+      }
+    },
+    {
+      "demo_s": 7,
+      "real_time": "2026-08-15T01:41:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 3.6,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.480575
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3202
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.496137
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1474
+        }
+      }
+    },
+    {
+      "demo_s": 8,
+      "real_time": "2026-08-15T01:41:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 4.1,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.48101
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3154
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.496311
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1455
+        }
+      }
+    },
+    {
+      "demo_s": 9,
+      "real_time": "2026-08-15T01:41:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 4.7,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.481444
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3105
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.496485
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1435
+        }
+      }
+    },
+    {
+      "demo_s": 10,
+      "real_time": "2026-08-15T01:41:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 5.2,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.481879
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3057
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.496659
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1416
+        }
+      }
+    },
+    {
+      "demo_s": 11,
+      "real_time": "2026-08-15T01:41:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 5.8,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.482314
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 3009
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.496833
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1397
+        }
+      }
+    },
+    {
+      "demo_s": 12,
+      "real_time": "2026-08-15T01:42:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 6.4,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.482748
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2961
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.497007
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1377
+        }
+      }
+    },
+    {
+      "demo_s": 13,
+      "real_time": "2026-08-15T01:42:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 6.9,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.483183
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2912
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.49718
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1358
+        }
+      }
+    },
+    {
+      "demo_s": 14,
+      "real_time": "2026-08-15T01:42:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 7.5,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.483618
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2864
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.497354
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1339
+        }
+      }
+    },
+    {
+      "demo_s": 15,
+      "real_time": "2026-08-15T01:42:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 8,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.484052
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2816
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.497528
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1319
+        }
+      }
+    },
+    {
+      "demo_s": 16,
+      "real_time": "2026-08-15T01:42:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 8.6,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.484487
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2767
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.497702
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1300
+        }
+      }
+    },
+    {
+      "demo_s": 17,
+      "real_time": "2026-08-15T01:42:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 9.1,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.484922
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2719
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.497876
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1281
+        }
+      }
+    },
+    {
+      "demo_s": 18,
+      "real_time": "2026-08-15T01:43:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 9.7,
+      "status": "clear",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.485357
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2671
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.49805
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1261
+        }
+      }
+    },
+    {
+      "demo_s": 19,
+      "real_time": "2026-08-15T01:43:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 10.3,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.485791
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2623
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.498224
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1242
+        }
+      }
+    },
+    {
+      "demo_s": 20,
+      "real_time": "2026-08-15T01:43:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 10.8,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.486226
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2574
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.498398
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1223
+        }
+      }
+    },
+    {
+      "demo_s": 21,
+      "real_time": "2026-08-15T01:43:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 11.4,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.486661
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2526
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.498571
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1204
+        }
+      }
+    },
+    {
+      "demo_s": 22,
+      "real_time": "2026-08-15T01:43:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 11.9,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.487095
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2478
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.498745
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1184
+        }
+      }
+    },
+    {
+      "demo_s": 23,
+      "real_time": "2026-08-15T01:43:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 12.5,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.48753
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2430
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.498919
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1165
+        }
+      }
+    },
+    {
+      "demo_s": 24,
+      "real_time": "2026-08-15T01:44:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 13.1,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.487965
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2381
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499093
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1146
+        }
+      }
+    },
+    {
+      "demo_s": 25,
+      "real_time": "2026-08-15T01:44:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 13.6,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.488399
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2333
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499267
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1126
+        }
+      }
+    },
+    {
+      "demo_s": 26,
+      "real_time": "2026-08-15T01:44:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 14.2,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.488834
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2285
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499441
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1107
+        }
+      }
+    },
+    {
+      "demo_s": 27,
+      "real_time": "2026-08-15T01:44:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 14.7,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.489269
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2237
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499615
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1088
+        }
+      }
+    },
+    {
+      "demo_s": 28,
+      "real_time": "2026-08-15T01:44:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 15.3,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.489704
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2188
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499789
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1068
+        }
+      }
+    },
+    {
+      "demo_s": 29,
+      "real_time": "2026-08-15T01:44:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 15.9,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.490138
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2140
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.499963
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1049
+        }
+      }
+    },
+    {
+      "demo_s": 30,
+      "real_time": "2026-08-15T01:45:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 16.4,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.490573
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2092
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.500136
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1030
+        }
+      }
+    },
+    {
+      "demo_s": 31,
+      "real_time": "2026-08-15T01:45:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 17,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.491008
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 2043
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.50031
+        ],
+        "heading": 0,
+        "alert": {
+          "level": null,
+          "distance_m": 1010
+        }
+      }
+    },
+    {
+      "demo_s": 32,
+      "real_time": "2026-08-15T01:45:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 17.5,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.491442
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1995
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.500484
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 991
+        }
+      }
+    },
+    {
+      "demo_s": 33,
+      "real_time": "2026-08-15T01:45:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 18.1,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.491877
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1947
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.500658
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 972
+        }
+      }
+    },
+    {
+      "demo_s": 34,
+      "real_time": "2026-08-15T01:45:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 18.6,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.492312
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1899
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.500832
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 953
+        }
+      }
+    },
+    {
+      "demo_s": 35,
+      "real_time": "2026-08-15T01:45:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 19.2,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.492746
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1850
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.501006
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 933
+        }
+      }
+    },
+    {
+      "demo_s": 36,
+      "real_time": "2026-08-15T01:46:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 19.8,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.493181
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1802
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.50118
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 914
+        }
+      }
+    },
+    {
+      "demo_s": 37,
+      "real_time": "2026-08-15T01:46:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 20.3,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.493616
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1754
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.501354
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 895
+        }
+      }
+    },
+    {
+      "demo_s": 38,
+      "real_time": "2026-08-15T01:46:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 20.9,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.494051
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1706
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.501527
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 875
+        }
+      }
+    },
+    {
+      "demo_s": 39,
+      "real_time": "2026-08-15T01:46:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 21.4,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.494485
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1657
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.501701
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 856
+        }
+      }
+    },
+    {
+      "demo_s": 40,
+      "real_time": "2026-08-15T01:46:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 22,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.49492
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1609
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.501875
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 837
+        }
+      }
+    },
+    {
+      "demo_s": 41,
+      "real_time": "2026-08-15T01:46:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 25.9,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.495355
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1561
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502049
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 817
+        }
+      }
+    },
+    {
+      "demo_s": 42,
+      "real_time": "2026-08-15T01:47:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 29.8,
+      "status": "caution",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.495789
+        ],
+        "heading": 0,
+        "rerouted": false,
+        "alert": {
+          "level": null,
+          "distance_m": 1512
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502223
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "caution",
+          "distance_m": 798
+        }
+      }
+    },
+    {
+      "demo_s": 43,
+      "real_time": "2026-08-15T01:47:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 33.7,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.496224
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1464
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502397
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 779
+        }
+      }
+    },
+    {
+      "demo_s": 44,
+      "real_time": "2026-08-15T01:47:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 37.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.496659
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1416
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502571
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 759
+        }
+      }
+    },
+    {
+      "demo_s": 45,
+      "real_time": "2026-08-15T01:47:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 41.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.497093
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1368
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502745
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 740
+        }
+      }
+    },
+    {
+      "demo_s": 46,
+      "real_time": "2026-08-15T01:47:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 45.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.497528
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1319
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.502918
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 721
+        }
+      }
+    },
+    {
+      "demo_s": 47,
+      "real_time": "2026-08-15T01:47:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 49.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.497963
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1271
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.503092
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 702
+        }
+      }
+    },
+    {
+      "demo_s": 48,
+      "real_time": "2026-08-15T01:48:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 53.2,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.498398
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1223
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.503266
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 682
+        }
+      }
+    },
+    {
+      "demo_s": 49,
+      "real_time": "2026-08-15T01:48:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 57.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.498832
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1175
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.50344
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 663
+        }
+      }
+    },
+    {
+      "demo_s": 50,
+      "real_time": "2026-08-15T01:48:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.499267
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1126
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.503614
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 644
+        }
+      }
+    },
+    {
+      "demo_s": 51,
+      "real_time": "2026-08-15T01:48:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.499702
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1078
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.503788
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 624
+        }
+      }
+    },
+    {
+      "demo_s": 52,
+      "real_time": "2026-08-15T01:48:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.500136
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 1030
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.503962
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 605
+        }
+      }
+    },
+    {
+      "demo_s": 53,
+      "real_time": "2026-08-15T01:48:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.500571
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 981
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.504136
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 586
+        }
+      }
+    },
+    {
+      "demo_s": 54,
+      "real_time": "2026-08-15T01:49:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.2,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.501006
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 933
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.50431
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 566
+        }
+      }
+    },
+    {
+      "demo_s": 55,
+      "real_time": "2026-08-15T01:49:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.501441
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 885
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.504483
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 547
+        }
+      }
+    },
+    {
+      "demo_s": 56,
+      "real_time": "2026-08-15T01:49:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.501875
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 837
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.504657
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 528
+        }
+      }
+    },
+    {
+      "demo_s": 57,
+      "real_time": "2026-08-15T01:49:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.995147,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.504831
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 508
+        }
+      }
+    },
+    {
+      "demo_s": 58,
+      "real_time": "2026-08-15T01:49:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.994626,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505005
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 489
+        }
+      }
+    },
+    {
+      "demo_s": 59,
+      "real_time": "2026-08-15T01:49:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.994106,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505179
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 470
+        }
+      }
+    },
+    {
+      "demo_s": 60,
+      "real_time": "2026-08-15T01:50:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.993586,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505353
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 451
+        }
+      }
+    },
+    {
+      "demo_s": 61,
+      "real_time": "2026-08-15T01:50:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.993066,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505527
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 431
+        }
+      }
+    },
+    {
+      "demo_s": 62,
+      "real_time": "2026-08-15T01:50:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.992546,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505701
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 412
+        }
+      }
+    },
+    {
+      "demo_s": 63,
+      "real_time": "2026-08-15T01:50:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.992025,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 64,
+      "real_time": "2026-08-15T01:50:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.7,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.991505,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 65,
+      "real_time": "2026-08-15T01:50:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.990985,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 66,
+      "real_time": "2026-08-15T01:51:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.990465,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 67,
+      "real_time": "2026-08-15T01:51:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.989945,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 68,
+      "real_time": "2026-08-15T01:51:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 61.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.989424,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 69,
+      "real_time": "2026-08-15T01:51:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.988904,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 70,
+      "real_time": "2026-08-15T01:51:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.988384,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 71,
+      "real_time": "2026-08-15T01:51:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.987864,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 72,
+      "real_time": "2026-08-15T01:52:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.987344,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 73,
+      "real_time": "2026-08-15T01:52:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.986823,
+          33.502165
+        ],
+        "heading": 90,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 805
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 74,
+      "real_time": "2026-08-15T01:52:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.2,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.502455
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 772
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 75,
+      "real_time": "2026-08-15T01:52:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.502889
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 724
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 76,
+      "real_time": "2026-08-15T01:52:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.503324
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 676
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 77,
+      "real_time": "2026-08-15T01:52:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.503759
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 628
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 78,
+      "real_time": "2026-08-15T01:53:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.504194
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 579
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 79,
+      "real_time": "2026-08-15T01:53:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.504628
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 531
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 80,
+      "real_time": "2026-08-15T01:53:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.505063
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 483
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 81,
+      "real_time": "2026-08-15T01:53:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.505498
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 434
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 82,
+      "real_time": "2026-08-15T01:53:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.505932
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 386
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 83,
+      "real_time": "2026-08-15T01:53:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.506367
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 338
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 84,
+      "real_time": "2026-08-15T01:54:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.7,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.506802
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 290
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 85,
+      "real_time": "2026-08-15T01:54:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.507236
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 241
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 86,
+      "real_time": "2026-08-15T01:54:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.507671
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 193
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 87,
+      "real_time": "2026-08-15T01:54:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.508106
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 145
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 88,
+      "real_time": "2026-08-15T01:54:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 62.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.508541
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 97
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 89,
+      "real_time": "2026-08-15T01:54:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.508975
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 48
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 90,
+      "real_time": "2026-08-15T01:55:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.50941
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 91,
+      "real_time": "2026-08-15T01:55:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.509845
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 92,
+      "real_time": "2026-08-15T01:55:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.510279
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 93,
+      "real_time": "2026-08-15T01:55:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.1,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.510714
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 94,
+      "real_time": "2026-08-15T01:55:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.2,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.511149
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 95,
+      "real_time": "2026-08-15T01:55:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.511584
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 96,
+      "real_time": "2026-08-15T01:56:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.3,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.512018
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 97,
+      "real_time": "2026-08-15T01:56:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.512453
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 98,
+      "real_time": "2026-08-15T01:56:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.4,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.512888
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 99,
+      "real_time": "2026-08-15T01:56:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.513322
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 100,
+      "real_time": "2026-08-15T01:56:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.513757
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 101,
+      "real_time": "2026-08-15T01:56:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.5,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.514192
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 102,
+      "real_time": "2026-08-15T01:57:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.514626
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 103,
+      "real_time": "2026-08-15T01:57:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.6,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.515061
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 104,
+      "real_time": "2026-08-15T01:57:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.7,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.515496
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 105,
+      "real_time": "2026-08-15T01:57:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.51593
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 106,
+      "real_time": "2026-08-15T01:57:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.8,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.98665,
+          33.516365
+        ],
+        "heading": 0,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 107,
+      "real_time": "2026-08-15T01:57:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.986823,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 108,
+      "real_time": "2026-08-15T01:58:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 63.9,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.987344,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 109,
+      "real_time": "2026-08-15T01:58:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.987864,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 110,
+      "real_time": "2026-08-15T01:58:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.988384,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 111,
+      "real_time": "2026-08-15T01:58:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.988904,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 112,
+      "real_time": "2026-08-15T01:58:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.989424,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 113,
+      "real_time": "2026-08-15T01:58:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.989945,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 114,
+      "real_time": "2026-08-15T01:59:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.990465,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 115,
+      "real_time": "2026-08-15T01:59:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.990985,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 116,
+      "real_time": "2026-08-15T01:59:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.991505,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 117,
+      "real_time": "2026-08-15T01:59:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.992025,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 118,
+      "real_time": "2026-08-15T01:59:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.992546,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 119,
+      "real_time": "2026-08-15T01:59:50.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.993066,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 120,
+      "real_time": "2026-08-15T02:00:00.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.993586,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 121,
+      "real_time": "2026-08-15T02:00:10.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.994106,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 122,
+      "real_time": "2026-08-15T02:00:20.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.994626,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 123,
+      "real_time": "2026-08-15T02:00:30.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.995147,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    },
+    {
+      "demo_s": 124,
+      "real_time": "2026-08-15T02:00:40.000Z",
+      "sensor_id": "FR-07",
+      "depth_cm": 64,
+      "status": "flooded",
+      "nav_car": {
+        "lnglat": [
+          -111.99532,
+          33.516655
+        ],
+        "heading": 270,
+        "rerouted": true,
+        "alert": {
+          "level": null,
+          "distance_m": 0
+        }
+      },
+      "watch_car": {
+        "lnglat": [
+          -111.99532,
+          33.505787
+        ],
+        "heading": 0,
+        "alert": {
+          "level": "flooded",
+          "distance_m": 402
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Secrets (backend/.env holds the Tiger Data connection string)
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Backend runtime cache (OSMnx / HTTP responses)
+backend/cache/
+
+# Node / frontend build
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.log
+npm-debug.log*
+
+# Archives (the design handoff is already extracted in handoff/)
+*.zip
+
+# Claude Code local settings
+.claude/settings.local.json
+backend/data/

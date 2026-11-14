@@ -1,0 +1,34 @@
+{
+  "id": "FR-07",
+  "name": "40th St & Camelback",
+  "road": "N 40th St dip, south of Camelback Rd",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      -111.99532,
+      33.50941
+    ]
+  },
+  "segment": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -111.99532,
+        33.512018
+      ],
+      [
+        -111.99532,
+        33.506222
+      ]
+    ]
+  },
+  "battery_pct": 86,
+  "signal": "strong",
+  "calibrated_at": "2026-06-12",
+  "current": {
+    "status": "flooded",
+    "depth_cm": 61.5,
+    "rate_cm_per_min": 9.02,
+    "last_reading_at": "2026-08-15T01:50:00.000Z"
+  }
+}

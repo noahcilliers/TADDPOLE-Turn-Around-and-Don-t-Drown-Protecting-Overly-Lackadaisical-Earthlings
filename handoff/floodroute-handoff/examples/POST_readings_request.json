@@ -1,0 +1,11 @@
+{
+  "readings": [
+    {
+      "sensor_id": "FR-07",
+      "time": "2026-08-15T01:50:00.000Z",
+      "depth_cm": 61,
+      "battery_pct": 86,
+      "rssi_dbm": -71
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "level": "flooded",
+  "nearest": {
+    "kind": "sensor",
+    "sensor_id": "FR-07",
+    "name": "40th St & Camelback",
+    "status": "flooded",
+    "depth_cm": 61,
+    "rate_cm_per_min": 4.2,
+    "distance_m": 644,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -111.99532,
+        33.50941
+      ]
+    }
+  },
+  "hazards": []
+}

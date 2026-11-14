@@ -1,0 +1,65 @@
+[
+  {
+    "time": "2026-08-14T01:40:00.000Z",
+    "sensor_id": "FR-07",
+    "from": "clear",
+    "to": "caution",
+    "depth_cm": 10.1
+  },
+  {
+    "time": "2026-08-14T01:41:00.000Z",
+    "sensor_id": "FR-07",
+    "from": "caution",
+    "to": "clear",
+    "depth_cm": 9.7
+  },
+  {
+    "time": "2026-08-14T01:42:00.000Z",
+    "sensor_id": "FR-07",
+    "from": "clear",
+    "to": "caution",
+    "depth_cm": 10.2
+  },
+  {
+    "time": "2026-08-14T02:19:00.000Z",
+    "sensor_id": "FR-07",
+    "from": "caution",
+    "to": "clear",
+    "depth_cm": 9.6
+  },
+  {
+    "time": "2026-08-14T02:46:00.000Z",
+    "sensor_id": "FR-14",
+    "from": "caution",
+    "to": "clear",
+    "depth_cm": 9.6
+  },
+  {
+    "time": "2026-08-15T00:32:00.000Z",
+    "sensor_id": "FR-11",
+    "from": "clear",
+    "to": "caution",
+    "depth_cm": 10.3
+  },
+  {
+    "time": "2026-08-15T01:11:00.000Z",
+    "sensor_id": "FR-11",
+    "from": "caution",
+    "to": "clear",
+    "depth_cm": 9.7
+  },
+  {
+    "time": "2026-08-15T01:19:00.000Z",
+    "sensor_id": "FR-03",
+    "from": "clear",
+    "to": "caution",
+    "depth_cm": 10.2
+  },
+  {
+    "time": "2026-08-15T01:36:00.000Z",
+    "sensor_id": "FR-02",
+    "from": "clear",
+    "to": "offline",
+    "depth_cm": null
+  }
+]

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FloodRoute: stage demo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+@keyframes lfPulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.7);opacity:0}}
+.lf-pulse{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out infinite}
+.lf-pulse2{transform-box:fill-box;transform-origin:center;animation:lfPulse 1.8s ease-out .9s infinite}
+@media (prefers-reduced-motion: reduce){.lf-pulse,.lf-pulse2{animation:none;opacity:.3}}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; width: 100%; min-height: 900px; background: #FFFFFF; font-family: Manrope, system-ui, sans-serif; color: #0F172A; font-variant-numeric: tabular-nums">
+<section aria-label="Live map" style="position: relative; flex: 999 1 640px; min-width: 0; height: 900px; overflow: hidden; background: #EDF0F4">
+<div style="position: absolute; left: 50%; top: 0; width: 1600px; height: 900px; margin-left: -800px"><svg width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Demo map of east Phoenix flood sensors" style="position: absolute; left: 0; top: 0; display: block"><rect x="0" y="0" width="1600" height="900" fill="#EDF0F4"></rect>
+<rect x="935.2" y="591.2" width="67.6" height="67.6" rx="6" fill="#DCEADF"></rect>
+<rect x="404.8" y="716.0" width="88.4" height="67.6" rx="6" fill="#DCEADF"></rect>
+<rect x="670.0" y="105.0" width="65.0" height="44.2" rx="6" fill="#DCEADF"></rect>
+<rect x="1060.0" y="721.2" width="78.0" height="72.8" rx="6" fill="#DCEADF"></rect>
+<path d="M-38.5 0 L-38.5 900 M26.5 0 L26.5 900 M59.0 0 L59.0 900 M91.5 0 L91.5 900 M156.5 0 L156.5 900 M189.0 0 L189.0 900 M221.5 0 L221.5 900 M286.5 0 L286.5 900 M319.0 0 L319.0 900 M351.5 0 L351.5 900 M416.5 0 L416.5 900 M449.0 0 L449.0 900 M481.5 0 L481.5 900 M546.5 0 L546.5 900 M579.0 0 L579.0 900 M611.5 0 L611.5 900 M676.5 0 L676.5 900 M709.0 0 L709.0 900 M741.5 0 L741.5 900 M806.5 0 L806.5 900 M839.0 0 L839.0 900 M871.5 0 L871.5 900 M936.5 0 L936.5 900 M969.0 0 L969.0 900 M1001.5 0 L1001.5 900 M1066.5 0 L1066.5 900 M1099.0 0 L1099.0 900 M1131.5 0 L1131.5 900 M1196.5 0 L1196.5 900 M1229.0 0 L1229.0 900 M1261.5 0 L1261.5 900 M1326.5 0 L1326.5 900 M1359.0 0 L1359.0 900 M1391.5 0 L1391.5 900 M1456.5 0 L1456.5 900 M1489.0 0 L1489.0 900 M1521.5 0 L1521.5 900 M1586.5 0 L1586.5 900 M1619.0 0 L1619.0 900 M1651.5 0 L1651.5 900 M0 -57.5 L1600 -57.5 M0 -25.0 L1600 -25.0 M0 7.5 L1600 7.5 M0 72.5 L1600 72.5 M0 105.0 L1600 105.0 M0 137.5 L1600 137.5 M0 202.5 L1600 202.5 M0 235.0 L1600 235.0 M0 267.5 L1600 267.5 M0 332.5 L1600 332.5 M0 365.0 L1600 365.0 M0 397.5 L1600 397.5 M0 462.5 L1600 462.5 M0 495.0 L1600 495.0 M0 527.5 L1600 527.5 M0 592.5 L1600 592.5 M0 625.0 L1600 625.0 M0 657.5 L1600 657.5 M0 722.5 L1600 722.5 M0 755.0 L1600 755.0 M0 787.5 L1600 787.5 M0 852.5 L1600 852.5 M0 885.0 L1600 885.0 M0 917.5 L1600 917.5" stroke="#E2E6EB" stroke-width="1.2" fill="none"></path>
+<path d="M-6 149.2 L202.0 118.0 L462.0 81.6 L644.0 118.0 L826.0 164.8 L1008.0 128.4 L1190.0 86.8 L1554 53.0" stroke="#B8D3EF" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"></path>
+<path d="M-136.0 0 L-136.0 900 M124.0 0 L124.0 900 M384.0 0 L384.0 900 M644.0 0 L644.0 900 M904.0 0 L904.0 900 M1164.0 0 L1164.0 900 M1424.0 0 L1424.0 900 M1684.0 0 L1684.0 900 M0 -90.0 L1600 -90.0 M0 170.0 L1600 170.0 M0 430.0 L1600 430.0 M0 690.0 L1600 690.0 M0 950.0 L1600 950.0" stroke="#D2D8E0" stroke-width="5" fill="none"></path>
+<path d="M-6.0 0 L-6.0 900 M254.0 0 L254.0 900 M514.0 0 L514.0 900 M774.0 0 L774.0 900 M1034.0 0 L1034.0 900 M1294.0 0 L1294.0 900 M1554.0 0 L1554.0 900 M1814.0 0 L1814.0 900 M0 -220.0 L1600 -220.0 M0 40.0 L1600 40.0 M0 300.0 L1600 300.0 M0 560.0 L1600 560.0 M0 820.0 L1600 820.0 M0 1080.0 L1600 1080.0" stroke="#D2D8E0" stroke-width="8.5" fill="none"></path>
+<path d="M-136.0 0 L-136.0 900 M124.0 0 L124.0 900 M384.0 0 L384.0 900 M644.0 0 L644.0 900 M904.0 0 L904.0 900 M1164.0 0 L1164.0 900 M1424.0 0 L1424.0 900 M1684.0 0 L1684.0 900 M0 -90.0 L1600 -90.0 M0 170.0 L1600 170.0 M0 430.0 L1600 430.0 M0 690.0 L1600 690.0 M0 950.0 L1600 950.0" stroke="#FFFFFF" stroke-width="3" fill="none"></path>
+<path d="M-6.0 0 L-6.0 900 M254.0 0 L254.0 900 M514.0 0 L514.0 900 M774.0 0 L774.0 900 M1034.0 0 L1034.0 900 M1294.0 0 L1294.0 900 M1554.0 0 L1554.0 900 M1814.0 0 L1814.0 900 M0 -220.0 L1600 -220.0 M0 40.0 L1600 40.0 M0 300.0 L1600 300.0 M0 560.0 L1600 560.0 M0 820.0 L1600 820.0 M0 1080.0 L1600 1080.0" stroke="#FFFFFF" stroke-width="6" fill="none"></path>
+<text x="300" y="292" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3">Camelback Rd</text>
+<text x="300" y="422.0" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3">Campbell Ave</text>
+<text x="300" y="552" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3">Indian School Rd</text>
+<text x="300" y="682.0" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3">Osborn Rd</text>
+<text x="300" y="812" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3">Thomas Rd</text>
+<text x="246" y="760" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3" transform="rotate(-90 246 760)">24th St</text>
+<text x="506" y="760" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3" transform="rotate(-90 506 760)">32nd St</text>
+<text x="766" y="760" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3" transform="rotate(-90 766 760)">40th St</text>
+<text x="1026" y="760" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3" transform="rotate(-90 1026 760)">48th St</text>
+<text x="1286" y="760" fill="#6B7684" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.3" transform="rotate(-90 1286 760)">56th St</text><path d="M462.0 560 L566.0 560" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M462.0 560 L566.0 560" stroke="#9A6E00" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M462.0 560 L566.0 560" stroke="#F2B300" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M852.0 820 L956.0 820" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M852.0 820 L956.0 820" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M852.0 820 L956.0 820" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M592.0 820 L696.0 820" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M592.0 820 L696.0 820" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M592.0 820 L696.0 820" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M514 248.0 L514 352.0" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M514 248.0 L514 352.0" stroke="#6B7380" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 6" fill="none"></path><path d="M904.0 383.2 L904.0 476.8" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M904.0 383.2 L904.0 476.8" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M904.0 383.2 L904.0 476.8" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M722.0 1080 L826.0 1080" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M722.0 1080 L826.0 1080" stroke="#0A6B37" stroke-width="8" stroke-linecap="round" fill="none"></path><path d="M722.0 1080 L826.0 1080" stroke="#14A35A" stroke-width="6" stroke-linecap="round" fill="none"></path><path d="M774 253.2 L774 357.2" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" fill="none"></path><path d="M774 253.2 L774 357.2" stroke="{{s1color}}" stroke-width="18" stroke-linecap="round" fill="none" opacity="{{s1glow}}"></path><path d="M774 253.2 L774 357.2" stroke="{{s1color}}" stroke-width="7" stroke-linecap="round" fill="none"></path><path d="{{oldD}}" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 9" fill="none"></path><path d="{{dangerD}}" stroke="#E5243B" stroke-width="7" stroke-linecap="round" stroke-dasharray="9 7" fill="none"></path><path d="{{routeD}}" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"></path><path d="{{routeD}}" stroke="#2563EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"></path><path d="{{coneD}}" fill="#2563EB" fill-opacity="0.09" stroke="#2563EB" stroke-opacity="0.45" stroke-dasharray="3 5"></path><g opacity="{{destOp}}"><g transform="translate(774 170.0)"><path d="M0 0 C-4 -8 -12 -13 -12 -22 A12 12 0 1 1 12 -22 C12 -13 4 -8 0 0 Z" fill="#0F172A" stroke="#FFFFFF" stroke-width="2.5"></path><circle cx="0" cy="-22" r="4.5" fill="#FFFFFF"></circle></g></g><g opacity="{{leadOp}}" transform="translate(774 344.2)"><circle class="lf-pulse" cx="0" cy="0" r="14" fill="#E5243B" fill-opacity="0.3"></circle><circle cx="0" cy="0" r="12" fill="#64748B" stroke="#FFFFFF" stroke-width="3.5"></circle><path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path><g transform="translate(18 -11)"><rect x="0" y="0" width="58" height="22" rx="11" fill="#E5243B"></rect><text x="29" y="15" text-anchor="middle" fill="#FFFFFF" font-family="Manrope, system-ui, sans-serif" font-size="11" font-weight="800">Stalled</text></g></g><g transform="{{carT}}"><circle cx="0" cy="0" r="26" fill="#2563EB" fill-opacity="0.14"></circle><circle cx="0" cy="0" r="13" fill="#2563EB" stroke="#FFFFFF" stroke-width="3.5"></circle><path d="M0 -8.5 L5.5 3.5 L0 0.5 L-5.5 3.5 Z" fill="#FFFFFF"></path></g></svg><sc-for list="{{pins}}" as="p" hint-placeholder-count="7">
+<button type="button" aria-label="{{p.label}}" onClick="{{p.pick}}" style="position: absolute; left: {{p.left}}; top: {{p.top}}; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{p.pulse}}" hint-placeholder-val="{{ false }}"><span class="lf-pulse" style="position: absolute; left: 11px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: rgba(229, 36, 59, 0.35)"></span></sc-if>
+<sc-if value="{{p.sel}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; left: 0; top: 0; width: 44px; height: 44px; box-sizing: border-box; border-radius: 50%; background: #FFFFFF; border: 3px solid #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35)"></span></sc-if>
+<span style="position: relative; display: flex"><sc-if value="{{p.is_clear}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true" style="display: block; filter: drop-shadow(0 2px 3px rgba(15,23,42,0.25))"><circle cx="0" cy="0" r="10.5" fill="#14A35A" stroke="#FFFFFF" stroke-width="3"></circle><path d="M-4.4 0.2 L-1.1 3.6 L4.8 -3.1" stroke="#FFFFFF" stroke-width="2.1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{p.is_caution}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true" style="display: block; filter: drop-shadow(0 2px 3px rgba(15,23,42,0.25))"><path d="M0 -12.8 L13.1 10.0 L-13.1 10.0 Z" fill="#F2B300" stroke-linejoin="round" stroke="#FFFFFF" stroke-width="3"></path><path d="M0 -4.4 L0 1.9" stroke="#2B1F00" stroke-width="2.1" stroke-linecap="round"></path><circle cx="0" cy="5.2" r="1.2" fill="#2B1F00"></circle></svg></sc-if><sc-if value="{{p.is_flooded}}" hint-placeholder-val="{{ true }}"><svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true" style="display: block; filter: drop-shadow(0 2px 3px rgba(15,23,42,0.25))"><polygon points="10.7,4.4 4.4,10.7 -4.4,10.7 -10.7,4.4 -10.7,-4.4 -4.4,-10.7 4.4,-10.7 10.7,-4.4" fill="#E5243B" stroke="#FFFFFF" stroke-width="3"></polygon><path d="M-4.0 -4.0 L4.0 4.0 M4.0 -4.0 L-4.0 4.0" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round"></path></svg></sc-if><sc-if value="{{p.is_offline}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true" style="display: block; filter: drop-shadow(0 2px 3px rgba(15,23,42,0.25))"><circle cx="0" cy="0" r="10.5" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="3"></circle><circle cx="0" cy="0" r="8.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-4.2 0 L4.2 0" stroke="#6B7380" stroke-width="2.1" stroke-linecap="round"></path></svg></sc-if></span></button></sc-for></div>
+<div style="position: absolute; top: 18px; left: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px"><div style="height: 48px; padding: 0 18px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; align-items: center"><div role="img" aria-label="floodroute" style="display: inline-flex; align-items: baseline; font-family: Manrope, system-ui, sans-serif; font-weight: 800; font-size: 24px; letter-spacing: -0.045em; line-height: 1; color: #0F172A">fl<svg width="14" height="14" viewBox="0 0 56 56" aria-hidden="true" style="display: block; margin: 0 0.01em"><defs><clipPath id="ocs11"><circle cx="28" cy="28" r="17"></circle></clipPath></defs><path d="M-2 31 C5 26 11 26 18 31 S32 36 39 31 S53 26 60 31 V60 H-2 Z" fill="#2563EB" clip-path="url(#ocs11)"></path><circle cx="28" cy="28" r="22" fill="none" stroke="#0F172A" stroke-width="9.5"></circle></svg><svg width="14" height="14" viewBox="0 0 56 56" aria-hidden="true" style="display: block; margin: 0 0.01em"><defs><clipPath id="ocs12"><circle cx="28" cy="28" r="17"></circle></clipPath></defs><path d="M-2 31 C5 26 11 26 18 31 S32 36 39 31 S53 26 60 31 V60 H-2 Z" fill="#2563EB" clip-path="url(#ocs12)"></path><circle cx="28" cy="28" r="22" fill="none" stroke="#0F172A" stroke-width="9.5"></circle></svg>d<span style="color: #2563EB">route</span></div></div><div style="display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); font-size: 13px; font-weight: 600; white-space: nowrap"><span style="width: 8px; height: 8px; border-radius: 50%; background: #14A35A; box-shadow: 0 0 0 4px rgba(20,163,90,0.18)"></span>Live<span style="color: #475569; font-weight: 500">1 s ago</span></div></div>
+<div style="display: flex; gap: 6px"><div style="display: flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px 0 6px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); font-size: 12px; font-weight: 700; color: #BE1230"><svg width="16" height="16" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg>{{counts.flooded}} flooded</div><div style="display: flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px 0 6px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); font-size: 12px; font-weight: 700; color: #7A5600"><svg width="16" height="16" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg>{{counts.caution}} rising</div><div style="display: flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px 0 6px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); font-size: 12px; font-weight: 700; color: #0B7A40"><svg width="16" height="16" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{counts.clear}} clear</div><div style="display: flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px 0 6px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); font-size: 12px; font-weight: 700; color: #535C69"><svg width="16" height="16" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg>{{counts.offline}} offline</div></div></div>
+<sc-if value="{{showStrip}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; top: 130px; left: 20px; right: auto; width: 440px; max-width: calc(100% - 24px); min-height: 64px; box-sizing: border-box; padding: 10px 16px 10px 12px; border-radius: 22px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; align-items: center; gap: 12px">
+<div style="width: 40px; height: 40px; flex: none; border-radius: 14px; background: #DBEAFE; color: #1D4ED8; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="12" cy="12" r="2"></circle><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"></path></svg></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: {{stripColor}}">{{stripKicker}}</div><div style="font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{stripLine}}</div></div>
+<div style="font-size: 24px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap">{{stripDist}}</div></div></sc-if>
+<div aria-label="Legend" style="position: absolute; right: 20px; top: 18px; height: 44px; padding: 0 16px; border-radius: 999px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; align-items: center; gap: 16px"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>Clear</div><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg>Rising</div><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg>Flooded</div><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg>Offline</div></div>
+<sc-if value="{{open}}" hint-placeholder-val="{{ true }}">
+<section aria-label="Demo controls" style="position: absolute; right: 20px; bottom: 20px; width: 340px; max-width: calc(100% - 40px); box-sizing: border-box; padding: 16px; border-radius: 26px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #6D28D9; background: #EDE9FE; height: 22px; padding: 0 8px; border-radius: 6px; display: flex; align-items: center">DEMO</span><span style="font-size: 13px; color: #475569">{{clock}}</span></div>
+<button type="button" aria-label="Hide demo controls" onClick="{{toggleOpen}}" style="width: 36px; height: 36px; border-radius: 12px; border: 0; background: #EEF1F5; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M6 9l6 6 6-6"></path></svg></button></div>
+<div style="display: flex; gap: 8px"><button type="button" onClick="{{togglePlay}}" style="flex: 1; height: 50px; border-radius: 16px; border: 0; background: #0F172A; color: #FFFFFF; font: 700 16px Manrope, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer">
+<sc-if value="{{playing}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M8 5v14M16 5v14"></path></svg></sc-if><sc-if value="{{notPlaying}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFFFFF" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M7 5l12 7-12 7z"></path></svg></sc-if>{{playLabel}}</button>
+<button type="button" onClick="{{reset}}" style="height: 50px; padding: 0 14px; border-radius: 16px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #0F172A; font: 700 14px Manrope, system-ui, sans-serif; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>Reset</button></div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: #475569"><span style="display: flex; justify-content: space-between">Speed<span style="color: #0F172A">{{speedLabel}}</span></span>
+<input type="range" min="0.5" max="4" step="0.5" value="{{speed}}" onChange="{{onSpeed}}" style="width: 100%; accent-color: #2563EB"></label>
+<div role="group" aria-label="Drive mode" style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #EEF1F5">
+<button type="button" aria-pressed="{{navP}}" onClick="{{setNav}}" style="flex: 1; height: 40px; border: 0; border-radius: 10px; background: {{navBg}}; color: {{navFg}}; box-shadow: {{navSh}}; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">Navigate</button>
+<button type="button" aria-pressed="{{watchP}}" onClick="{{setWatch}}" style="flex: 1; height: 40px; border: 0; border-radius: 10px; background: {{watchBg}}; color: {{watchFg}}; box-shadow: {{watchSh}}; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">Watch only</button></div>
+<button type="button" onClick="{{toggleLead}}" aria-pressed="{{leadP}}" style="height: 44px; padding: 0 12px; border-radius: 14px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #0F172A; display: flex; align-items: center; gap: 10px; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">
+<span style="width: 36px; height: 20px; border-radius: 10px; background: {{leadTrack}}; position: relative; flex: none"><span style="position: absolute; top: 2px; left: {{leadKnob}}; width: 16px; height: 16px; border-radius: 8px; background: #FFFFFF"></span></span>Car stalled in the flood</button>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 16px; background: #F5F7FA">
+<div style="font-size: 13px; font-weight: 700">40th St &amp; Camelback</div><div style="font-size: 18px; font-weight: 800; color: {{s1t}}">{{depthCm}} cm · {{s1label}}</div></div></section></sc-if>
+<sc-if value="{{closed}}" hint-placeholder-val="{{ false }}"><div style="position: absolute; right: 20px; bottom: 20px; display: flex; gap: 6px">
+<button type="button" onClick="{{togglePlay}}" aria-label="Play or pause demo" style="width: 48px; height: 48px; border-radius: 16px; border: 0; background: #0F172A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFFFFF" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M7 5l12 7-12 7z"></path></svg></button>
+<button type="button" onClick="{{toggleOpen}}" style="height: 48px; padding: 0 16px; border-radius: 16px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); color: #0F172A; font: 700 14px Manrope, system-ui, sans-serif; display: flex; align-items: center; gap: 6px; cursor: pointer">Demo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M6 15l6-6 6 6"></path></svg></button></div></sc-if>
+<sc-if value="{{showToast}}" hint-placeholder-val="{{ false }}">
+<section role="status" style="position: absolute; top: 14px; left: 12px; right: 12px; max-width: 760px; margin: 0 auto; padding: 16px; border-radius: 24px; background: rgba(255,255,255,0.9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(15,23,42,0.07); box-shadow: 0 10px 30px rgba(15,23,42,0.12); display: flex; gap: 14px; align-items: center">
+<div style="width: 48px; height: 48px; flex: none; border-radius: 16px; background: #2563EB; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 19px; font-weight: 800">{{toastTitle}}</div><div style="font-size: 14px; color: #475569">{{toastLine}}</div></div></section></sc-if>
+<sc-if value="{{showCaution}}" hint-placeholder-val="{{ false }}">
+<section role="alert" style="position: absolute; top: 14px; left: 12px; right: 12px; max-width: 760px; margin: 0 auto; padding: 18px; border-radius: 28px; background: #FFFBEB; border: 2px solid #F2B300; box-shadow: 0 16px 40px rgba(122, 86, 0, 0.18); display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #7A5600"><svg width="22" height="22" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg>Water rising ahead</div>
+<div style="display: flex; align-items: center; gap: 14px"><div style="border-radius: 16px; overflow: hidden"><svg width="68" height="68" viewBox="0 0 76 76" role="img" aria-label="Location: 40th St and Camelback Rd" style="flex: none; display: block"><rect width="76" height="76" fill="#EDF0F4"></rect><path d="M0 28 L76 28 M38 0 L38 76" stroke="#D5DAE1" stroke-width="10"></path><path d="M0 28 L76 28 M38 0 L38 76" stroke="#FFFFFF" stroke-width="7"></path><path d="M38 33 L38 57" stroke="#F2B300" stroke-width="7" stroke-linecap="round"></path><g transform="translate(38 45)"><path d="M0 -11.0 L11.2 8.6 L-11.2 8.6 Z" fill="#F2B300" stroke-linejoin="round" stroke="#FFFFFF" stroke-width="3"></path><path d="M0 -3.8 L0 1.6" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.5" r="1.2" fill="#2B1F00"></circle></g></svg></div>
+<div style="flex: 1; min-width: 0"><div style="font-size: 20px; font-weight: 800">40th St &amp; Camelback</div><div style="font-size: 14px; color: #475569">{{depthCm}} cm · {{depthIn}} in · {{rateS1}}</div></div>
+<div style="text-align: right"><div style="font-size: 38px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">{{distMi}}</div><div style="font-size: 13px; color: #475569; font-weight: 600">mi ahead</div></div></div>
+<div style="display: flex; gap: 10px"><button type="button" onClick="{{rerouteNow}}" style="flex: 1; height: 52px; border-radius: 16px; border: 0; background: #0F172A; color: #FFFFFF; font: 700 16px Manrope, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="6" cy="18" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"></path></svg>Find another way</button>
+<button type="button" onClick="{{dismiss}}" style="height: 52px; padding: 0 20px; border-radius: 16px; border: 1px solid #E8D9A8; background: #FFFFFF; color: #0F172A; font: 700 16px Manrope, system-ui, sans-serif; cursor: pointer">Got it</button></div></section></sc-if>
+<sc-if value="{{showFlood}}" hint-placeholder-val="{{ false }}">
+<section role="alert" style="position: absolute; top: 12px; left: 12px; right: 12px; max-width: 760px; margin: 0 auto; padding: 20px; border-radius: 32px; background: #E5243B; color: #FFFFFF; box-shadow: 0 24px 60px rgba(229, 36, 59, 0.4); display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between"><div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700"><svg width="24" height="24" viewBox="-14 -14 28 28" aria-hidden="true"><polygon points="10.2,4.2 4.2,10.2 -4.2,10.2 -10.2,4.2 -10.2,-4.2 -4.2,-10.2 4.2,-10.2 10.2,-4.2" fill="#FFFFFF"></polygon><path d="M-3.8 -3.8 L3.8 3.8 M3.8 -3.8 L-3.8 3.8" stroke="#E5243B" stroke-width="2.0" stroke-linecap="round"></path></svg>Flood alert</div>
+<div style="display: flex; gap: 6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M11 5 6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"></path></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><rect x="8" y="4" width="8" height="16" rx="1.5"></rect><path d="M4 8v8M20 8v8M1.5 10.5v3M22.5 10.5v3"></path></svg></div></div>
+<div><h2 style="margin: 0; font-size: 46px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">{{floodTitle}}</h2><div style="font-size: 18px; font-weight: 600; margin-top: 8px">{{floodLine}}</div></div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.16)">
+<div style="flex: 1"><div style="font-size: 54px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">{{distMi}}<span style="font-size: 20px; margin-left: 4px; letter-spacing: 0">mi</span></div>
+<div style="font-size: 14px; font-weight: 600; margin-top: 4px">{{distSub}} · {{depthCm}} cm deep</div></div>
+<div style="border-radius: 16px; overflow: hidden"><svg width="72" height="72" viewBox="0 0 76 76" role="img" aria-label="Location: 40th St and Camelback Rd" style="flex: none; display: block"><rect width="76" height="76" fill="#EDF0F4"></rect><path d="M0 28 L76 28 M38 0 L38 76" stroke="#D5DAE1" stroke-width="10"></path><path d="M0 28 L76 28 M38 0 L38 76" stroke="#FFFFFF" stroke-width="7"></path><path d="M38 33 L38 57" stroke="#E5243B" stroke-width="7" stroke-linecap="round"></path><g transform="translate(38 45)"><polygon points="9.1,3.8 3.8,9.1 -3.8,9.1 -9.1,3.8 -9.1,-3.8 -3.8,-9.1 3.8,-9.1 9.1,-3.8" fill="#E5243B" stroke="#FFFFFF" stroke-width="3"></polygon><path d="M-3.4 -3.4 L3.4 3.4 M3.4 -3.4 L-3.4 3.4" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></g></svg></div></div>
+<div style="font-size: 20px; font-weight: 800; text-align: center">Turn around, don&#39;t drown.</div>
+<div style="display: flex; gap: 10px"><button type="button" onClick="{{rerouteNow}}" style="flex: 1.3; height: 58px; border-radius: 18px; border: 0; background: #FFFFFF; color: #BE1230; font: 800 18px Manrope, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><circle cx="6" cy="18" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"></path></svg>Reroute</button>
+<button type="button" onClick="{{dismiss}}" style="flex: 1; height: 58px; border-radius: 18px; border: 0; background: rgba(255, 255, 255, 0.2); color: #FFFFFF; font: 700 17px Manrope, system-ui, sans-serif; cursor: pointer">Dismiss</button></div></section></sc-if>
+</section>
+<aside aria-label="Details" style="flex: 1 1 380px; min-width: 0; height: 900px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #E2E8F0; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto">
+<div role="tablist" aria-label="Panel" style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #EEF1F5"><button type="button" role="tab" aria-selected="{{tpSensor}}" onClick="{{tabSensor}}" style="flex: 1; height: 40px; border: 0; border-radius: 10px; background: {{tbSensor}}; color: {{tfSensor}}; box-shadow: {{tsSensor}}; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">Sensor</button><button type="button" role="tab" aria-selected="{{tpAll}}" onClick="{{tabAll}}" style="flex: 1; height: 40px; border: 0; border-radius: 10px; background: {{tbAll}}; color: {{tfAll}}; box-shadow: {{tsAll}}; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">All sensors</button><button type="button" role="tab" aria-selected="{{tpAlerts}}" onClick="{{tabAlerts}}" style="flex: 1; height: 40px; border: 0; border-radius: 10px; background: {{tbAlerts}}; color: {{tfAlerts}}; box-shadow: {{tsAlerts}}; font: 700 14px Manrope, system-ui, sans-serif; cursor: pointer">Alerts</button></div>
+<sc-if value="{{isSensor}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: {{a.tcolor}}"><sc-if value="{{a.is_clear}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{a.is_caution}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg></sc-if><sc-if value="{{a.is_flooded}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if><sc-if value="{{a.is_offline}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if>{{a.status}} · {{a.updated}}</div>
+<h2 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">{{a.name}}</h2>
+<div style="font-size: 14px; color: #475569">{{a.road}}</div></div>
+<button type="button" aria-label="Back to all sensors" onClick="{{toAll}}" style="width: 40px; height: 40px; flex: none; border-radius: 20px; border: 0; background: #EEF1F5; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div><div style="font-size: 52px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">{{a.depth}}<span style="font-size: 20px; color: #475569; margin-left: 4px; letter-spacing: 0">{{a.unit}}</span></div>
+<div style="font-size: 14px; color: #475569; margin-top: 4px">{{a.depthIn}}</div></div>
+<div style="display: flex; align-items: center; gap: 4px; height: 34px; padding: 0 12px; border-radius: 999px; background: #F5F7FA; font-size: 14px; font-weight: 700; color: {{a.trendColor}}">
+<sc-if value="{{a.rising}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></sc-if><sc-if value="{{a.falling}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M7 7l10 10"></path><path d="M17 8v9H8"></path></svg></sc-if>{{a.trend}}</div></div>
+<div role="group" aria-label="Time range" style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #EEF1F5"><button type="button" aria-pressed="{{rg.p1}}" onClick="{{rg.set1}}" style="flex: 1; height: 36px; border: 0; border-radius: 10px; font: 700 13px Manrope, system-ui, sans-serif; cursor: pointer; background: {{rg.bg1}}; color: {{rg.fg1}}; box-shadow: {{rg.sh1}}">Past hour</button><button type="button" aria-pressed="{{rg.p6}}" onClick="{{rg.set6}}" style="flex: 1; height: 36px; border: 0; border-radius: 10px; font: 700 13px Manrope, system-ui, sans-serif; cursor: pointer; background: {{rg.bg6}}; color: {{rg.fg6}}; box-shadow: {{rg.sh6}}">6 h</button><button type="button" aria-pressed="{{rg.p24}}" onClick="{{rg.set24}}" style="flex: 1; height: 36px; border: 0; border-radius: 10px; font: 700 13px Manrope, system-ui, sans-serif; cursor: pointer; background: {{rg.bg24}}; color: {{rg.fg24}}; box-shadow: {{rg.sh24}}">24 h</button></div>
+<div style="padding: 12px 12px 8px; border-radius: 18px; border: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #475569"><span>Water depth</span><span>max {{a.ymax}}</span></div>
+<svg width="330" height="150" viewBox="0 0 330 150" role="img" aria-label="Depth over the selected time range" style="display: block">
+<rect x="0" y="0" width="330" height="{{a.y30}}" fill="#E5243B" fill-opacity="0.05"></rect>
+<path d="M0 {{a.y30}} L330 {{a.y30}}" stroke="#E5243B" stroke-width="1" stroke-dasharray="3 4"></path>
+<path d="M0 {{a.y10}} L330 {{a.y10}}" stroke="#9A6E00" stroke-width="1" stroke-dasharray="3 4"></path>
+<text x="4" y="{{a.y30}}" dy="-4" fill="#BE1230" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="700">Flooded 30 cm</text>
+<text x="4" y="{{a.y10}}" dy="-4" fill="#7A5600" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="700">Caution 10 cm</text>
+<path d="{{a.area}}" fill="{{a.color}}" fill-opacity="0.16"></path>
+<path d="{{a.line}}" stroke="#0F172A" stroke-width="2.2" fill="none" stroke-linejoin="round" stroke-linecap="round"></path>
+<circle cx="{{a.dotX}}" cy="{{a.dotY}}" r="5" fill="{{a.color}}" stroke="#FFFFFF" stroke-width="2"></circle></svg>
+<div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #475569"><span>{{a.xs}}</span><span>{{a.xm}}</span><span>{{a.xe}}</span></div></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="padding: 12px; border-radius: 16px; background: #F5F7FA; display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; font-weight: 600; color: #475569">Peak</div><div style="font-size: 20px; font-weight: 800; letter-spacing: -0.01em">{{a.peak}}</div><div style="font-size: 12px; color: #475569">{{a.peakAt}}</div></div><div style="padding: 12px; border-radius: 16px; background: #F5F7FA; display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; font-weight: 600; color: #475569">Fastest rise</div><div style="font-size: 20px; font-weight: 800; letter-spacing: -0.01em">{{a.fastest}}</div><div style="font-size: 12px; color: #475569">5-min window</div></div><div style="padding: 12px; border-radius: 16px; background: #F5F7FA; display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; font-weight: 600; color: #475569">Above caution</div><div style="font-size: 20px; font-weight: 800; letter-spacing: -0.01em">{{a.above}}</div><div style="font-size: 12px; color: #475569">10 cm or more</div></div><div style="padding: 12px; border-radius: 16px; background: #F5F7FA; display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; font-weight: 600; color: #475569">Flooded</div><div style="font-size: 20px; font-weight: 800; letter-spacing: -0.01em">{{a.flood}}</div><div style="font-size: 12px; color: #475569">30 cm or more</div></div></div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 13px; font-weight: 700; color: #475569">Status changes · last 24 h</div>
+<sc-if value="{{a.noChanges}}" hint-placeholder-val="{{ false }}"><div style="font-size: 14px; color: #475569; padding: 8px 0">No changes. Clear all day.</div></sc-if>
+<sc-for list="{{a.changes}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px">
+<span style="display: flex; gap: 6px; align-items: baseline"><span style="color: #475569">{{c.from}} →</span><span style="font-weight: 800; color: {{c.toColor}}">{{c.to}}</span><span style="color: #475569; font-size: 13px">{{c.depth}}</span></span>
+<span style="font-size: 13px; color: #475569; white-space: nowrap">{{c.time}}</span></div></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 12px; border-radius: 16px; border: 1px solid #E2E8F0">
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 11px; font-weight: 600; color: #475569">Sensor</div><div style="font-size: 14px; font-weight: 700">{{a.code}}</div></div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 11px; font-weight: 600; color: #475569">Battery</div><div style="font-size: 14px; font-weight: 700">{{a.batt}}</div></div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 11px; font-weight: 600; color: #475569">Signal</div><div style="font-size: 14px; font-weight: 700">{{a.sig}}</div></div><div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 11px; font-weight: 600; color: #475569">Calibrated</div><div style="font-size: 14px; font-weight: 700">{{a.cal}}</div></div>
+</div></div></sc-if>
+<sc-if value="{{isAll}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column"><div style="font-size: 13px; font-weight: 700; color: #475569; padding-bottom: 6px">7 sensors · most at risk first</div><sc-for list="{{list}}" as="r" hint-placeholder-count="7">
+<button type="button" onClick="{{r.pick}}" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 8px; border: 0; border-bottom: 1px solid #E2E8F0; background: {{r.bg}}; border-radius: 12px; text-align: left; font-family: Manrope, system-ui, sans-serif; color: #0F172A; cursor: pointer">
+<span style="flex: none"><sc-if value="{{r.is_clear}}" hint-placeholder-val="{{ false }}"><svg width="28" height="28" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{r.is_caution}}" hint-placeholder-val="{{ false }}"><svg width="28" height="28" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg></sc-if><sc-if value="{{r.is_flooded}}" hint-placeholder-val="{{ true }}"><svg width="28" height="28" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if><sc-if value="{{r.is_offline}}" hint-placeholder-val="{{ false }}"><svg width="28" height="28" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">{{r.name}}</span><span style="font-size: 13px; font-weight: 600; color: {{r.tcolor}}">{{r.sub}}</span></span>
+<span style="font-size: 20px; font-weight: 800">{{r.depth}}</span></button></sc-for></div></sc-if>
+<sc-if value="{{isAlerts}}" hint-placeholder-val="{{ false }}"><ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{events}}" as="ev" hint-placeholder-count="5">
+<li style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E2E8F0">
+<div style="flex: none; width: 30px"><sc-if value="{{ev.is_clear}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Clear" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#14A35A"></circle><path d="M-4.0 0.2 L-1.0 3.2 L4.4 -2.9" stroke="#FFFFFF" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{ev.is_caution}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Rising" style="flex: none; display: block"><path d="M0 -11.6 L11.8 9.0 L-11.8 9.0 Z" fill="#F2B300" stroke-linejoin="round"></path><path d="M0 -4.0 L0 1.7" stroke="#2B1F00" stroke-width="2.0" stroke-linecap="round"></path><circle cx="0" cy="4.8" r="1.2" fill="#2B1F00"></circle></svg></sc-if><sc-if value="{{ev.is_flooded}}" hint-placeholder-val="{{ true }}"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Flooded" style="flex: none; display: block"><polygon points="9.7,4.0 4.0,9.7 -4.0,9.7 -9.7,4.0 -9.7,-4.0 -4.0,-9.7 4.0,-9.7 9.7,-4.0" fill="#E5243B"></polygon><path d="M-3.6 -3.6 L3.6 3.6 M3.6 -3.6 L-3.6 3.6" stroke="#FFFFFF" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if><sc-if value="{{ev.is_offline}}" hint-placeholder-val="{{ false }}"><svg width="30" height="30" viewBox="-14 -14 28 28" role="img" aria-label="Offline" style="flex: none; display: block"><circle cx="0" cy="0" r="9.5" fill="#FFFFFF"></circle><circle cx="0" cy="0" r="7.7" fill="none" stroke="#6B7380" stroke-width="2" stroke-dasharray="3 3"></circle><path d="M-3.8 0 L3.8 0" stroke="#6B7380" stroke-width="2.0" stroke-linecap="round"></path></svg></sc-if><sc-if value="{{ev.is_you}}" hint-placeholder-val="{{ false }}"><div style="width: 30px; height: 30px; border-radius: 15px; background: #DBEAFE; color: #1D4ED8; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M5 16V11l2-5h10l2 5v5"></path><path d="M3 16h18v3H3z"></path><circle cx="7.5" cy="13" r="1"></circle><circle cx="16.5" cy="13" r="1"></circle></svg></div></sc-if><sc-if value="{{ev.is_route}}" hint-placeholder-val="{{ false }}"><div style="width: 30px; height: 30px; border-radius: 15px; background: #2563EB; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></div></sc-if></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline"><div style="font-size: 15px; font-weight: 700">{{ev.title}}</div><div style="font-size: 12px; color: #475569; white-space: nowrap">{{ev.time}}</div></div>
+<div style="font-size: 14px; font-weight: 700; color: {{ev.color}}">{{ev.change}}</div>
+<div style="font-size: 13px; color: #475569">{{ev.detail}} · {{ev.ago}}</div></div></li></sc-for></ul></sc-if>
+</aside></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+constructor(...args) {
+super(...args);
+this.state = { T: 0, playing: false, speed: 2, mode: 'nav', lead: false, leadAt: null, dismissed: '', stopD: null, stopAt: null, sel: 'S1', range: 1, ptab: 'sensor', open: true };
+}
+componentDidMount() {
+this.timer = setInterval(() => {
+const s = this.state;
+if (!s.playing) return;
+const tmax = s.mode === 'nav' ? 124 : 72;
+const T = Math.min(tmax, s.T + 0.1 * s.speed);
+this.setState({ T: T, playing: T < tmax });
+}, 100);
+}
+componentWillUnmount() { clearInterval(this.timer); }
+pick(id) { this.setState({ sel: id, ptab: 'sensor' }); }
+
+sim() {
+const s = this.state;
+const T = s.T;
+const TC = 6 + 7 * 34 / 19, TF = 40 + 8 / 3.9;
+const dT = (t) => t < 6 ? 3 : t < 40 ? 3 + (t - 6) * 19 / 34 : t < 50 ? 22 + (t - 40) * 3.9 : Math.min(64, 61 + (t - 50) * 0.05);
+const nz = (i, k) => { const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+const g = (x, c, w) => Math.exp(-((x - c) * (x - c)) / (2 * w * w));
+const F = {
+S1: (m) => m >= 0 ? dT(m * 6) : 2.2 + nz(Math.floor(m), 1) * 0.8 + 9 * g(m, -1420, 30) + 1 * g(m, -20, 15),
+S2: (m) => 2 + nz(Math.floor(m), 2) * 0.6 + 16 * Math.min(1, Math.max(0, (m + 40) / 40)) + (m > 0 ? Math.min(4, m * 0.08) : 0) + 6 * g(m, -1400, 40),
+S3: (m) => 1.6 + nz(Math.floor(m), 3) * 0.6 + 12 * g(m, -50, 22) + 5 * g(m, -1430, 30),
+S4: (m) => 1 + nz(Math.floor(m), 4) * 0.5 + 3 * g(m, -1410, 30),
+S5: (m) => m > -5 ? null : 1.5 + nz(Math.floor(m), 5) * 0.5 + 5 * g(m, -12, 15) + 4 * g(m, -1420, 30),
+S6: (m) => 2 + nz(Math.floor(m), 6) * 0.6 + 2 * g(m, -1415, 30),
+S7: (m) => 3 + nz(Math.floor(m), 7) * 0.7 + 19 * g(m, -1425, 35)
+};
+const META = [
+{ id: 'S1', name: '40th St & Camelback', road: 'N 40th St dip, south of Camelback Rd', x: 2, y: 1, code: 'FR-07', batt: '86%', sig: 'Strong', cal: 'Jun 12' },
+{ id: 'S2', name: '32nd St & Indian School', road: 'Indian School Rd low point at 32nd St', x: 1, y: 2, code: 'FR-03', batt: '74%', sig: 'Good', cal: 'May 30' },
+{ id: 'S3', name: '44th St & Thomas', road: 'Thomas Rd dip east of 44th St', x: 2.5, y: 3, code: 'FR-11', batt: '91%', sig: 'Strong', cal: 'Jun 12' },
+{ id: 'S4', name: '36th St & Thomas', road: 'Thomas Rd wash crossing at 36th St', x: 1.5, y: 3, code: 'FR-09', batt: '68%', sig: 'Good', cal: 'May 30' },
+{ id: 'S5', name: '32nd St & Camelback', road: '32nd St dip north of Camelback Rd', x: 1, y: 1, code: 'FR-02', batt: '9%', sig: 'Lost', cal: 'Apr 18' },
+{ id: 'S6', name: '44th St & Campbell', road: '44th St dip at Campbell Ave', x: 2.5, y: 1.5, code: 'FR-12', batt: '80%', sig: 'Strong', cal: 'Jun 12' },
+{ id: 'S7', name: '40th St & McDowell', road: 'McDowell Rd low point at 40th St', x: 2, y: 4, code: 'FR-14', batt: '77%', sig: 'Good', cal: 'Jun 02' }
+];
+const SC = { clear: '#14A35A', caution: '#F2B300', flooded: '#E5243B', offline: '#9AA3AF' };
+const STX = { clear: '#0B7A40', caution: '#7A5600', flooded: '#BE1230', offline: '#535C69' };
+const LBL = { clear: 'Clear', caution: 'Rising', flooded: 'Flooded', offline: 'Offline' };
+const now = T / 6;
+const st = (d) => d == null ? 'offline' : d >= 30 ? 'flooded' : d >= 10 ? 'caution' : 'clear';
+const clock = (m) => { let sec = Math.round(67200 + m * 60); let y = ''; if (sec < 0) { sec += 86400; y = 'Yest. '; } const h = Math.floor(sec / 3600) % 24, mi = Math.floor(sec / 60) % 60; const h12 = h % 12 === 0 ? 12 : h % 12; return y + h12 + ':' + String(mi).padStart(2, '0') + (h >= 12 ? ' PM' : ' AM'); };
+const ago = (m) => { const d = now - m; if (d < 1) return 'just now'; if (d < 60) return Math.round(d) + ' min ago'; return Math.round(d / 60) + ' h ago'; };
+const sensors = META.map((mt) => {
+const f = F[mt.id];
+const d = f(now);
+const prev = f(now - 5);
+let lastSeen = null;
+if (d == null) { for (let k = 1; k < 200; k++) { const v = f(now - k); if (v != null) { lastSeen = now - k; break; } } }
+return Object.assign({}, mt, { d: d, status: st(d), rate: d != null && prev != null ? (d - prev) / 5 : 0, lastSeen: lastSeen });
+});
+const byId = {};
+sensors.forEach((x) => { byId[x.id] = x; });
+const counts = { clear: 0, caution: 0, flooded: 0, offline: 0 };
+sensors.forEach((x) => { counts[x.status] += 1; });
+// ---------- vehicle
+const nav = s.mode === 'nav';
+const v = nav ? 0.03 : 0.012;
+const y0 = nav ? 3.2 : 2.0;
+const A = [[2, y0], [2, 0.5]];
+const B = [[2, y0], [2, 1.5], [2.5, 1.5], [2.5, 0.5], [2, 0.5]];
+const rerouteT = nav ? Math.min(TF, s.lead && s.leadAt != null ? s.leadAt : Infinity) : Infinity;
+const rerouted = T >= rerouteT;
+const path = nav && rerouted ? B : A;
+const segLen = (a, b) => Math.abs(b[0] - a[0]) + Math.abs(b[1] - a[1]);
+let len = 0;
+for (let i = 1; i < path.length; i++) len += segLen(path[i - 1], path[i]);
+let dmax = nav ? len : (y0 - 1.25);
+if (!nav && s.stopD != null) dmax = Math.min(dmax, s.stopD);
+const d = Math.min(T * v, dmax);
+let car = [path[0][0], path[0][1], 0];
+let rest = [];
+let rem = d;
+for (let i = 1; i < path.length; i++) {
+const a = path[i - 1], b = path[i];
+const L = segLen(a, b);
+if (rem <= L || i === path.length - 1) {
+const f = L ? Math.min(1, rem / L) : 0;
+const dx = b[0] - a[0], dy = b[1] - a[1];
+car = [a[0] + dx * f, a[1] + dy * f, dx > 0 ? 90 : dx < 0 ? 270 : dy < 0 ? 0 : 180];
+rest = [[car[0], car[1]]].concat(path.slice(i));
+break;
+}
+rem -= L;
+}
+const s1 = byId.S1;
+const ahead = car[1] > 1.0 && Math.abs(car[0] - 2) < 1e-6 && !(nav && rerouted) && s.stopD == null;
+const dist = Math.max(0, car[1] - 1);
+let raw = '';
+if (ahead && s.lead) raw = 'stalled';
+else if (ahead && (s1.status === 'caution' || s1.status === 'flooded') && dist <= 0.62) raw = s1.status;
+const level = raw && s.dismissed === raw ? '' : raw;
+const tmax = nav ? 124 : 72;
+const arrived = nav && d >= len - 1e-6;
+const stopped = !nav && d >= dmax - 1e-6 && T > 0;
+// ---------- events
+const ev = [];
+sensors.forEach((sn) => {
+const f = F[sn.id];
+const grid = [];
+for (let k = 120; k >= 0; k--) grid.push(Math.floor(now) - k);
+if (now > Math.floor(now)) grid.push(now);
+let prev = st(f(grid[0]));
+for (let i = 1; i < grid.length; i++) {
+const m = grid[i];
+const val = f(m);
+const cur = st(val);
+if (cur !== prev) ev.push({ m: m, kind: cur, title: sn.name, change: LBL[prev] + ' → ' + LBL[cur], detail: cur === 'offline' ? 'No reading from sensor' : Math.round(val) + ' cm · ' + (val / 2.54).toFixed(1) + ' in' });
+prev = cur;
+}
+});
+if (nav && rerouted) ev.push({ m: rerouteT / 6 + 0.001, kind: 'route', title: 'Route recalculated', change: '+3 min', detail: 'Avoids flooded dip at 40th St & Camelback' });
+if (!nav) {
+const tw = (y0 - 1.62) / v;
+if (T >= tw && tw < TF && !(s.lead && s.leadAt != null && s.leadAt < tw)) ev.push({ m: tw / 6, kind: 'you', title: 'You were warned', change: 'Rising water 0.62 mi ahead', detail: '40th St & Camelback' });
+const yF = y0 - Math.min(TF * v, y0 - 1.25);
+if (T >= TF && yF - 1 <= 0.62 && !(s.stopD != null && s.stopAt < TF)) ev.push({ m: TF / 6 + 0.001, kind: 'you', title: 'Warning escalated', change: 'Flooded ' + (yF - 1).toFixed(2) + ' mi ahead', detail: 'Turn around, don\'t drown' });
+}
+if (s.lead && s.leadAt != null) {
+ev.push({ m: s.leadAt / 6, kind: 'flooded', title: 'Car stalled in water', change: '40th St & Camelback', detail: 'Reported by the car ahead' });
+ev.push({ m: s.leadAt / 6 + 0.001, kind: 'you', title: 'Car behind warned instantly', change: nav ? 'Rerouted before the dip' : 'Before reaching the 1 km zone', detail: 'Driver behind on 40th St' });
+}
+if (s.stopD != null) ev.push({ m: s.stopAt / 6, kind: 'route', title: 'Driver turned around', change: 'Stopped short of the flood', detail: 'Rerouting via Campbell Ave' });
+if (arrived) ev.push({ m: Math.min(now, len / v / 6) + 0.002, kind: 'route', title: 'Arrived safely', change: 'Avoided 1 flooded dip', detail: 'N 40th St & E Stanford Dr' });
+ev.sort((a, b) => b.m - a.m);
+const events = ev.slice(0, 14).map((e) => Object.assign({}, e, {
+time: clock(e.m), ago: ago(e.m),
+is_clear: e.kind === 'clear', is_caution: e.kind === 'caution', is_flooded: e.kind === 'flooded', is_offline: e.kind === 'offline', is_you: e.kind === 'you', is_route: e.kind === 'route',
+color: e.kind === 'you' || e.kind === 'route' ? '#1D4ED8' : STX[e.kind]
+}));
+// ---------- analytics
+const an = (id, rh, W, H) => {
+const sn = byId[id];
+const f = F[id];
+const Mt = rh * 60;
+const N = 120;
+const step = Mt / N;
+const pts = [];
+for (let i = 0; i <= N; i++) { const m = now - Mt + i * step; pts.push({ m: m, d: f(m) }); }
+let peak = null;
+let fastest = 0;
+let above = 0, flood = 0;
+pts.forEach((p, i) => {
+if (p.d == null) return;
+if (!peak || p.d > peak.d) peak = p;
+if (p.d >= 10) above += step;
+if (p.d >= 30) flood += step;
+});
+for (let i = 0; i <= N; i++) { const m = now - Mt + i * step; const a1 = f(m), a0 = f(m - 5); if (a1 != null && a0 != null) fastest = Math.max(fastest, (a1 - a0) / 5); }
+const ymax = Math.max(35, peak ? peak.d * 1.15 : 35);
+const px = (i) => 2 + i * (W - 4) / N;
+const py = (dv) => H - 2 - dv / ymax * (H - 4);
+let line = '', area = '', seg = [];
+const flush = () => { if (seg.length > 1) { line += 'M' + seg.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' L') + ' '; area += 'M' + seg[0][0].toFixed(1) + ' ' + H + ' L' + seg.map((q) => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' L') + ' L' + seg[seg.length - 1][0].toFixed(1) + ' ' + H + ' Z '; } seg = []; };
+pts.forEach((p, i) => { if (p.d == null) flush(); else seg.push([px(i), py(p.d)]); });
+flush();
+let lastI = N; while (lastI > 0 && pts[lastI].d == null) lastI--;
+const chg = [];
+let pv = st(f(now - 1440));
+for (let k = 1439; k >= 0; k--) { const m = Math.floor(now) - k; const val = f(m); const cs = st(val); if (cs !== pv) chg.push({ m: m, from: LBL[pv], to: LBL[cs], toColor: STX[cs], depth: val == null ? 'no reading' : Math.round(val) + ' cm', time: clock(m) }); pv = cs; }
+{ const val = f(now); const cs = st(val); if (cs !== pv) chg.push({ m: now, from: LBL[pv], to: LBL[cs], toColor: STX[cs], depth: val == null ? 'no reading' : Math.round(val) + ' cm', time: clock(now) }); }
+chg.reverse();
+const fmtMin = (x) => x < 1 ? '0 min' : x < 90 ? Math.round(x) + ' min' : (x / 60).toFixed(1) + ' h';
+const dd = sn.d;
+const tr = sn.rate;
+return {
+id: id, name: sn.name, road: sn.road, code: sn.code, batt: sn.batt, sig: sn.sig, cal: sn.cal,
+status: LBL[sn.status], color: SC[sn.status], tcolor: STX[sn.status],
+is_clear: sn.status === 'clear', is_caution: sn.status === 'caution', is_flooded: sn.status === 'flooded', is_offline: sn.status === 'offline',
+depth: dd == null ? '—' : String(Math.round(dd)), unit: dd == null ? '' : 'cm',
+depthIn: dd == null ? 'Last reading ' + (sn.lastSeen != null ? clock(sn.lastSeen) : '') : (dd / 2.54).toFixed(1) + ' in' + (dd >= 27 ? ' · ~' + Math.max(1, Math.round(dd / 30.48)) + ' ft' : ''),
+trend: dd == null ? 'No data' : tr > 0.3 ? '+' + tr.toFixed(1) + ' cm/min' : tr < -0.3 ? tr.toFixed(1) + ' cm/min' : 'Steady',
+trendColor: dd == null ? '#535C69' : tr > 0.3 ? STX.flooded : tr < -0.3 ? STX.clear : '#475569',
+rising: tr > 0.3 && dd != null, falling: tr < -0.3 && dd != null, steady: !(tr > 0.3) && !(tr < -0.3) && dd != null,
+updated: dd == null ? 'No reading for ' + Math.round(now - (sn.lastSeen || now)) + ' min' : 'Updated ' + (1 + Math.floor((T * 7) % 4)) + ' s ago',
+line: line, area: area,
+dotX: px(lastI).toFixed(1), dotY: pts[lastI].d == null ? '-20' : py(pts[lastI].d).toFixed(1),
+y10: py(10).toFixed(1), y30: py(30).toFixed(1), ymax: Math.round(ymax) + ' cm',
+xs: clock(now - Mt), xm: clock(now - Mt / 2), xe: 'Now',
+peak: peak ? Math.round(peak.d) + ' cm' : '—', peakAt: peak ? 'at ' + clock(peak.m) : '',
+above: fmtMin(above), flood: fmtMin(flood), fastest: fastest > 0.05 ? '+' + fastest.toFixed(1) + ' cm/min' : 'Steady',
+changes: chg.slice(0, 5), hasChanges: chg.length > 0, noChanges: chg.length === 0
+};
+};
+let stripKicker, stripLine, stripDist, stripColor;
+if (nav) {
+stripKicker = arrived ? 'ARRIVED' : rerouted ? 'SAFER ROUTE · ALL CLEAR' : 'ROUTE · ALL SENSORS CLEAR';
+stripColor = rerouted || arrived ? '#1D4ED8' : STX.clear;
+stripLine = rerouted ? 'Via Campbell Ave & 44th St' : 'To N 40th St & E Stanford Dr';
+stripDist = Math.max(0, len - d).toFixed(1) + ' mi';
+} else if (stopped) {
+stripKicker = 'STOPPED SHORT OF FLOOD'; stripColor = STX.flooded; stripLine = '40th St & Camelback · ' + Math.round(s1.d) + ' cm'; stripDist = dist.toFixed(2) + ' mi';
+} else if (ahead && (s1.status === 'caution' || s1.status === 'flooded')) {
+stripKicker = 'NEAREST AHEAD · ' + LBL[s1.status].toUpperCase(); stripColor = STX[s1.status]; stripLine = '40th St & Camelback · ' + Math.round(s1.d) + ' cm'; stripDist = dist.toFixed(2) + ' mi';
+} else {
+stripKicker = 'WATCHING 1 KM AHEAD'; stripColor = STX.clear; stripLine = 'Nothing flooded ahead'; stripDist = '';
+}
+const s1d = s1.d;
+return {
+T: T, TC: TC, TF: TF, now: now, sensors: sensors, byId: byId, counts: counts, nav: nav, v: v, len: len, d: d, dmax: dmax, car: car, rest: rest,
+rerouted: rerouted, rerouteT: rerouteT, raw: raw, level: level, dist: dist, tmax: tmax, arrived: arrived, stopped: stopped, events: events, an: an,
+clock: clock(now), SC: SC, STX: STX, LBL: LBL,
+s1: s1, s1color: SC[s1.status], s1glow: s1.status === 'flooded' ? 0.2 : 0,
+depthCm: Math.round(s1d), depthIn: (s1d / 2.54).toFixed(1), ft: s1d >= 27 ? '~' + Math.max(1, Math.round(s1d / 30.48)) + ' ft' : '~' + Math.round(s1d / 2.54) + ' in',
+rateS1: s1.rate > 0.3 ? 'rising ' + s1.rate.toFixed(1) + ' cm/min' : 'steady',
+eta: Math.max(0, Math.round(dist / (v * Math.max(0.5, s.speed)))),
+stripKicker: stripKicker, stripLine: stripLine, stripDist: stripDist, stripColor: stripColor
+};
+}
+
+renderVals() {
+const OX = 254, OY = 40, SC_ = 260;
+
+const S = this.sim();
+const s = this.state;
+const T = S.T;
+const X = (x) => OX + x * SC_ + 0, Y = (y) => OY + y * SC_;
+const P = (pts) => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(' ');
+const cx = X(S.car[0]), cy = Y(S.car[1]);
+const showFlood = S.level === 'flooded' || S.level === 'stalled';
+const showCaution = S.level === 'caution';
+const toastRoute = S.nav && S.rerouted && T < S.rerouteT + 14;
+const toastPassive = !S.nav && s.stopD != null;
+const toastArrive = S.arrived;
+const showToast = !S.level && (toastRoute || toastPassive || toastArrive);
+const pins = S.sensors.map((x) => ({
+left: X(x.x).toFixed(1) + 'px', top: Y(x.y).toFixed(1) + 'px', label: x.name + ', ' + S.LBL[x.status] + (x.d != null ? ', ' + Math.round(x.d) + ' cm' : ''),
+is_clear: x.status === 'clear', is_caution: x.status === 'caution', is_flooded: x.status === 'flooded', is_offline: x.status === 'offline',
+pulse: x.status === 'flooded', sel: s.sel === x.id,
+pick: () => this.pick(x.id)
+}));
+const rg = {};
+[1, 6, 24].forEach((k) => {
+const on = s.range === k;
+rg['p' + k] = on ? 'true' : 'false';
+rg['bg' + k] = on ? '#FFFFFF' : 'transparent';
+rg['fg' + k] = on ? '#0F172A' : '#475569';
+rg['sh' + k] = on ? '0 1px 3px rgba(15,23,42,0.12)' : 'none';
+rg['set' + k] = () => this.setState({ range: k });
+});
+const base = {
+pins: pins, rg: rg, counts: S.counts, events: S.events,
+s1color: S.s1color, s1glow: S.s1glow,
+carT: 'translate(' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ') rotate(' + S.car[2] + ')',
+routeD: S.nav ? P(S.rest) : '',
+oldD: S.nav && S.rerouted ? P([[2, 1.5], [2, 0.5]]) : '',
+dangerD: S.nav && S.rerouted ? P([[2, 1.22], [2, 0.82]]) : '',
+coneD: S.nav ? '' : 'M' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' L' + (cx - 0.2 * SC_).toFixed(1) + ' ' + (cy - 0.62 * SC_).toFixed(1) + ' A' + (0.62 * SC_).toFixed(1) + ' ' + (0.62 * SC_).toFixed(1) + ' 0 0 1 ' + (cx + 0.2 * SC_).toFixed(1) + ' ' + (cy - 0.62 * SC_).toFixed(1) + ' Z',
+destOp: S.nav ? 1 : 0, leadOp: s.lead ? 1 : 0,
+showFlood: showFlood, showCaution: showCaution, showToast: showToast,
+floodTitle: S.level === 'stalled' ? 'Car stalled ahead' : 'Flooded ahead',
+floodLine: S.level === 'stalled' ? 'A vehicle is stuck in the water at 40th St & Camelback' : S.ft + ' deep at 40th St & Camelback',
+distMi: S.dist.toFixed(2), distSub: S.stopped ? 'stopped' : 'closing · ~' + S.eta + ' s',
+depthCm: S.depthCm, depthIn: S.depthIn, rateS1: S.rateS1,
+toastTitle: toastArrive ? 'You arrived safely' : toastPassive ? 'Turning around' : 'Route recalculated',
+toastLine: toastArrive ? 'Avoided 1 flooded dip · +3 min' : toastPassive ? 'Rerouting via Campbell Ave and 44th St' : (s.lead && s.leadAt != null && s.leadAt <= S.TF ? 'Car stalled ahead. ' : '') + '+3 min, avoids flooded dip at 40th St & Camelback',
+stripKicker: S.stripKicker, stripLine: S.stripLine, stripDist: S.stripDist, stripColor: S.stripColor,
+clock: S.clock,
+playing: s.playing, notPlaying: !s.playing, playLabel: s.playing ? 'Pause' : (T > 0 && T < S.tmax ? 'Resume' : 'Play'),
+speedLabel: s.speed + '×', speed: s.speed,
+navBg: S.nav ? '#FFFFFF' : 'transparent', navFg: S.nav ? '#0F172A' : '#475569', navSh: S.nav ? '0 1px 3px rgba(15,23,42,0.12)' : 'none', navP: S.nav ? 'true' : 'false',
+watchBg: S.nav ? 'transparent' : '#FFFFFF', watchFg: S.nav ? '#475569' : '#0F172A', watchSh: S.nav ? 'none' : '0 1px 3px rgba(15,23,42,0.12)', watchP: S.nav ? 'false' : 'true',
+leadP: s.lead ? 'true' : 'false', leadTrack: s.lead ? '#E5243B' : '#CBD5E1', leadKnob: s.lead ? '18px' : '2px',
+togglePlay: () => this.setState({ playing: !s.playing, T: T >= S.tmax ? 0 : T }),
+reset: () => this.setState({ T: 0, playing: false, lead: false, leadAt: null, dismissed: '', stopD: null, stopAt: null }),
+setNav: () => this.setState({ mode: 'nav', T: 0, playing: false, lead: false, leadAt: null, dismissed: '', stopD: null, stopAt: null }),
+setWatch: () => this.setState({ mode: 'watch', T: 0, playing: false, lead: false, leadAt: null, dismissed: '', stopD: null, stopAt: null }),
+toggleLead: () => this.setState(s.lead ? { lead: false, leadAt: null } : { lead: true, leadAt: T, dismissed: '' }),
+cycleSpeed: () => this.setState({ speed: s.speed >= 4 ? 1 : s.speed * 2 }),
+onSpeed: (e) => this.setState({ speed: parseFloat(e.target.value) }),
+dismiss: () => this.setState({ dismissed: S.raw }),
+rerouteNow: () => S.nav ? this.setState({ dismissed: S.raw }) : this.setState({ stopD: S.d, stopAt: T, dismissed: S.raw })
+};
+
+const ptab = s.ptab;
+const a = S.an(s.sel || "S1", s.range, 330, 150);
+const order = { flooded: 0, caution: 1, offline: 2, clear: 3 };
+const list = S.sensors.slice().sort((p, q) => order[p.status] - order[q.status] || (q.d || 0) - (p.d || 0)).map((x) => ({
+name: x.name, depth: x.d == null ? '—' : Math.round(x.d) + ' cm', sub: S.LBL[x.status] + (x.d != null && Math.abs(x.rate) > 0.3 ? (x.rate > 0 ? ' · rising ' : ' · falling ') + Math.abs(x.rate).toFixed(1) + ' cm/min' : ''),
+tcolor: S.STX[x.status], bg: s.sel === x.id ? '#EFF6FF' : 'transparent',
+is_clear: x.status === 'clear', is_caution: x.status === 'caution', is_flooded: x.status === 'flooded', is_offline: x.status === 'offline',
+pick: () => this.pick(x.id)
+}));
+const tb = (k, key) => ({ ['tp' + k]: ptab === key ? 'true' : 'false', ['tb' + k]: ptab === key ? '#FFFFFF' : 'transparent', ['tf' + k]: ptab === key ? '#0F172A' : '#475569', ['ts' + k]: ptab === key ? '0 1px 3px rgba(15,23,42,0.12)' : 'none', ['tab' + k]: () => this.setState({ ptab: key }) });
+return Object.assign(base, tb('Sensor', 'sensor'), tb('All', 'all'), tb('Alerts', 'alerts'), {
+a: a, list: list,
+isSensor: ptab === 'sensor', isAll: ptab === 'all', isAlerts: ptab === 'alerts',
+showStrip: !showFlood && !showCaution && !showToast,
+s1t: S.STX[S.s1.status], s1label: S.LBL[S.s1.status],
+open: s.open, closed: !s.open,
+toggleOpen: () => this.setState({ open: !s.open }),
+toAll: () => this.setState({ ptab: 'all' })
+});
+}
+}
+</script>
+</body>
+</html>

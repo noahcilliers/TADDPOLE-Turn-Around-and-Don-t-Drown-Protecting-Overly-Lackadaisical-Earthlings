@@ -1,0 +1,9 @@
+{
+  "sensor_id": "FR-07",
+  "range": "24h",
+  "peak_cm": 61.5,
+  "peak_at": "2026-08-15T01:50:00.000Z",
+  "fastest_rise_cm_per_min": 9.02,
+  "minutes_above_caution": 48,
+  "minutes_flooded": 12
+}

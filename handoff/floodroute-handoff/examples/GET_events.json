@@ -1,0 +1,48 @@
+{
+  "events": [
+    {
+      "id": "sc_FR-07_flooded",
+      "time": "2026-08-15T01:47:00.600Z",
+      "kind": "status_change",
+      "sensor_id": "FR-07",
+      "title": "40th St & Camelback",
+      "from_status": "caution",
+      "to_status": "flooded",
+      "depth_cm": 30,
+      "detail": "30 cm · 11.8 in"
+    },
+    {
+      "id": "sc_FR-07_caution",
+      "time": "2026-08-15T01:43:04.800Z",
+      "kind": "status_change",
+      "sensor_id": "FR-07",
+      "title": "40th St & Camelback",
+      "from_status": "clear",
+      "to_status": "caution",
+      "depth_cm": 10,
+      "detail": "10 cm · 3.9 in"
+    },
+    {
+      "id": "sc_FR-02_offline",
+      "time": "2026-08-15T01:36:00.000Z",
+      "kind": "status_change",
+      "sensor_id": "FR-02",
+      "title": "32nd St & Camelback",
+      "from_status": "clear",
+      "to_status": "offline",
+      "depth_cm": null,
+      "detail": "No reading from sensor"
+    },
+    {
+      "id": "sc_FR-03_caution",
+      "time": "2026-08-15T01:19:00.000Z",
+      "kind": "status_change",
+      "sensor_id": "FR-03",
+      "title": "32nd St & Indian School",
+      "from_status": "clear",
+      "to_status": "caution",
+      "depth_cm": 10.2,
+      "detail": "10 cm · 4.0 in"
+    }
+  ]
+}

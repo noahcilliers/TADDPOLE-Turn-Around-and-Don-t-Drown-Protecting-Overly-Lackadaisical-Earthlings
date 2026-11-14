@@ -1,0 +1,184 @@
+{
+  "FR-07": [
+    {
+      "range": "1h",
+      "peak_cm": 4,
+      "peak_at": "2026-08-15T01:22:00.000Z",
+      "fastest_rise_cm_per_min": 0.14,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 4,
+      "peak_at": "2026-08-15T01:22:00.000Z",
+      "fastest_rise_cm_per_min": 0.14,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 11.7,
+      "peak_at": "2026-08-14T02:04:00.000Z",
+      "fastest_rise_cm_per_min": 0.31,
+      "minutes_above_caution": 48,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-03": [
+    {
+      "range": "1h",
+      "peak_cm": 18.2,
+      "peak_at": "2026-08-15T01:39:30.000Z",
+      "fastest_rise_cm_per_min": 0.5,
+      "minutes_above_caution": 22,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 18,
+      "peak_at": "2026-08-15T01:40:00.000Z",
+      "fastest_rise_cm_per_min": 0.46,
+      "minutes_above_caution": 24,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 18,
+      "peak_at": "2026-08-15T01:40:00.000Z",
+      "fastest_rise_cm_per_min": 0.42,
+      "minutes_above_caution": 24,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-11": [
+    {
+      "range": "1h",
+      "peak_cm": 14.2,
+      "peak_at": "2026-08-15T00:49:30.000Z",
+      "fastest_rise_cm_per_min": 0.26,
+      "minutes_above_caution": 31,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 14.2,
+      "peak_at": "2026-08-15T00:49:00.000Z",
+      "fastest_rise_cm_per_min": 0.33,
+      "minutes_above_caution": 39,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 13.6,
+      "peak_at": "2026-08-15T00:52:00.000Z",
+      "fastest_rise_cm_per_min": 0.28,
+      "minutes_above_caution": 36,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-09": [
+    {
+      "range": "1h",
+      "peak_cm": 1.5,
+      "peak_at": "2026-08-15T01:28:00.000Z",
+      "fastest_rise_cm_per_min": 0.09,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 1.5,
+      "peak_at": "2026-08-14T23:58:00.000Z",
+      "fastest_rise_cm_per_min": 0.09,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 4.4,
+      "peak_at": "2026-08-14T02:04:00.000Z",
+      "fastest_rise_cm_per_min": 0.1,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-02": [
+    {
+      "range": "1h",
+      "peak_cm": 6.9,
+      "peak_at": "2026-08-15T01:29:00.000Z",
+      "fastest_rise_cm_per_min": 0.23,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 6.9,
+      "peak_at": "2026-08-15T01:31:00.000Z",
+      "fastest_rise_cm_per_min": 0.23,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 6.7,
+      "peak_at": "2026-08-15T01:28:00.000Z",
+      "fastest_rise_cm_per_min": 0.19,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-12": [
+    {
+      "range": "1h",
+      "peak_cm": 2.6,
+      "peak_at": "2026-08-15T01:40:00.000Z",
+      "fastest_rise_cm_per_min": 0.1,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 2.6,
+      "peak_at": "2026-08-14T22:52:00.000Z",
+      "fastest_rise_cm_per_min": 0.11,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 4.5,
+      "peak_at": "2026-08-14T02:04:00.000Z",
+      "fastest_rise_cm_per_min": 0.11,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    }
+  ],
+  "FR-14": [
+    {
+      "range": "1h",
+      "peak_cm": 3.6,
+      "peak_at": "2026-08-15T01:16:00.000Z",
+      "fastest_rise_cm_per_min": 0.12,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "6h",
+      "peak_cm": 3.7,
+      "peak_at": "2026-08-14T23:13:00.000Z",
+      "fastest_rise_cm_per_min": 0.12,
+      "minutes_above_caution": 0,
+      "minutes_flooded": 0
+    },
+    {
+      "range": "24h",
+      "peak_cm": 22.3,
+      "peak_at": "2026-08-14T01:52:00.000Z",
+      "fastest_rise_cm_per_min": 0.29,
+      "minutes_above_caution": 72,
+      "minutes_flooded": 0
+    }
+  ]
+}

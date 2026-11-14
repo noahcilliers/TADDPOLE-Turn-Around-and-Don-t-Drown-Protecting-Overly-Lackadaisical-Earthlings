@@ -1,0 +1,62 @@
+from functools import lru_cache
+
+from pydantic import AliasChoices, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    # Tiger Data / TimescaleDB connection string, e.g.
+    # postgres://tsdbadmin:<pw>@<host>.tsdb.cloud.timescale.com:<port>/tsdb?sslmode=require
+    # Accepts DATABASE_URL or TIGER_DB.
+    database_url: str = Field(
+        default="postgresql://postgres:password@localhost:5432/postgres",
+        validation_alias=AliasChoices("DATABASE_URL", "TIGER_DB"),
+    )
+
+    # Poller
+    poll_interval_s: float = 1.0
+    sensor_refresh_s: int = 30            # reload `sensors` table (new sensors / baselines)
+    stale_after_s: int = 60               # no reading for this long -> sensor flagged stale
+    offline_after_s: int = 300            # no reading for this long -> status `offline`
+
+    # Status thresholds (cm). Defaults: 6 in knocks a person over, 12 in floats a car.
+    caution_cm: float = 5.0
+    flooded_cm: float = 15.0
+    rise_rate_cm_per_min: float = 2.0     # rising this fast -> at least caution
+    rise_window_s: int = 60               # net-change window for the rise rate
+    median_of: int = 3                    # median of last N readings to kill ultrasonic noise
+    hysteresis_cm: float = 2.0            # must drop this far below a threshold to downgrade
+
+    # Spike filter for history charts / stats (Hampel; see app/filters.py)
+    spike_half_window: int = 3            # neighbours each side; removes spikes up to this many readings long
+    spike_sigmas: float = 3.0             # robust std-devs from the local median that count as a spike
+    spike_min_cm: float = 1.0             # never treat a deviation smaller than this as a spike
+
+    # Routing
+    graph_path: str = "data/camelback.graphml"
+
+    # Stage demo (handoff demo_scenario.json corridor: 40th St northbound through Camelback)
+    demo_sensor_id: str = "water_tank_1"
+    hazard_ttl_s: int = 1800
+    # The handoff's profiles/demo curve assume 10/30 cm thresholds. Scale them so they hit the
+    # same states against ours. Empty = flooded_cm / 30.
+    sim_depth_scale: float | None = None
+
+    @property
+    def effective_sim_scale(self) -> float:
+        return self.sim_depth_scale if self.sim_depth_scale else self.flooded_cm / 30.0
+
+    # API
+    cors_origins: str = "*"               # comma-separated
+    admin_token: str = ""                 # required for /admin/*; empty disables admin endpoints
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

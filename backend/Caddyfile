@@ -1,0 +1,6 @@
+# SITE_ADDRESS = your domain (e.g. api.turnarounddontdrown.tech) for automatic HTTPS/WSS,
+# or ":80" (default) for plain HTTP on the instance IP.
+{$SITE_ADDRESS::80} {
+	encode gzip
+	reverse_proxy api:8000
+}
