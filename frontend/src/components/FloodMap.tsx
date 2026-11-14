@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Hazard, LngLat, Sensor, Status } from '../types'
 import { statusSvg } from './pinSvg'
+import { FROG_SVG_INNER } from './frogSvg'
 
 export interface MapRoute { coords: LngLat[]; style: 'active' | 'abandoned' | 'alt' }
 export interface MapCar { pos: LngLat; heading: number }
@@ -28,6 +29,8 @@ const ll = (p: LngLat): L.LatLngExpression => [p[1], p[0]]
 const lls = (c: LngLat[]) => c.map((p) => L.latLng(p[1], p[0]))
 /** After the user drags/zooms, don't auto-follow the car for this long. */
 const USER_HOLD_MS = 8000
+/** Heading changes smaller than this are route-line wobble, not a turn. */
+const TURN_DEADBAND_DEG = 12
 
 function pinIcon(status: Status, selected: boolean) {
   return L.divIcon({
@@ -37,9 +40,10 @@ function pinIcon(status: Status, selected: boolean) {
   })
 }
 
+// TADDPOLE mascot. Drawn nose-up so the heading rotation applied to the <svg> points it along the route.
 const carIcon = L.divIcon({
   className: 'fr-car',
-  html: `<div class="halo"></div><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 3l7 17-7-4-7 4z" fill="#fff"/></svg></div>`,
+  html: `<div class="halo"></div><svg class="frog" width="60" height="60" viewBox="0 0 60 60">${FROG_SVG_INNER}</svg>`,
   iconSize: [60, 60], iconAnchor: [30, 30],
 })
 
@@ -68,6 +72,8 @@ export default function FloodMap(p: Props) {
   const destMarker = useRef<L.Marker | null>(null)
   const hazardMarkers = useRef(new Map<string, L.Marker>())
   const carMarker = useRef<L.Marker | null>(null)
+  /** Frog's on-screen rotation, unwrapped (may go past 360) so CSS never spins the long way. */
+  const carRot = useRef<number | null>(null)
   const userAt = useRef(0)
   const panning = useRef(false)
   const cb = useRef(p)
@@ -220,11 +226,19 @@ export default function FloodMap(p: Props) {
   useEffect(() => {
     const m = map.current
     if (!m) return
-    if (!p.car) { carMarker.current?.remove(); carMarker.current = null; return }
+    if (!p.car) { carMarker.current?.remove(); carMarker.current = null; carRot.current = null; return }
     if (!carMarker.current) carMarker.current = L.marker(ll(p.car.pos), { icon: carIcon, interactive: false, zIndexOffset: 2000 }).addTo(m)
     else carMarker.current.setLatLng(ll(p.car.pos))
+    // Turn the frog the short way round (359° → 1° is +2°, not a full spin), and ignore
+    // small wobbles in the route line so it only turns on real turns.
+    const h = p.car.heading
+    if (Number.isFinite(h)) {
+      const prev = carRot.current
+      const delta = prev === null ? h : ((h - prev) % 360 + 540) % 360 - 180
+      if (prev === null || Math.abs(delta) >= TURN_DEADBAND_DEG) carRot.current = prev === null ? h : prev + delta
+    }
     const svg = carMarker.current.getElement()?.querySelector('svg')
-    if (svg) svg.style.transform = `rotate(${p.car.heading}deg)`
+    if (svg && carRot.current !== null) svg.style.transform = `rotate(${carRot.current}deg)`
 
     // Follow the car only when it's about to leave the view, and never while the user
     // is (or just was) moving the map themselves.

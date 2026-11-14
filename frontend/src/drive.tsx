@@ -9,7 +9,7 @@
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api } from './api'
-import { along, angleDiff, bearing, dist, lineLength, project, sliceFrom } from './geo'
+import { along, angleDiff, bearing, dist, headingAt, lineLength, project, sliceFrom } from './geo'
 import { fmtDuration, feetHint } from './format'
 import { onDomainEvent, pushLocal, store, useStore } from './store'
 import type { DemoSession, Hazard, LngLat, Route, RoutesResponse, Sensor } from './types'
@@ -306,15 +306,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     if (!demoActive) {
       if (gpsState.pos) {
         const pr = project(path, gpsState.pos)
-        const h = gpsState.heading ?? along(path, pr.along_m).heading
+        const h = Number.isFinite(gpsState.heading) ? gpsState.heading! : headingAt(path, pr.along_m)
         return { car: { pos: gpsState.pos, heading: h }, traveled: pr.along_m, moving: true }
       }
       const a = along(path, 0)
-      return { car: { pos: a.pos, heading: a.heading }, traveled: 0, moving: false }
+      return { car: { pos: a.pos, heading: headingAt(path, 0) }, traveled: 0, moving: false }
     }
     const d = prog.ver === activeVer ? prog.d : 0
     const a = along(path, d)
-    return { car: { pos: a.pos, heading: a.heading }, traveled: d, moving: demo?.state === 'playing' && !prog.stopped && d < pathLen }
+    return { car: { pos: a.pos, heading: headingAt(path, d) }, traveled: d, moving: demo?.state === 'playing' && !prog.stopped && d < pathLen }
   }, [path, pathLen, demoActive, prog, activeVer, gpsState.pos, gpsState.heading, demo?.state])
 
   // ---------- reroute ----------

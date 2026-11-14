@@ -101,9 +101,13 @@ input { font: inherit; color: inherit; }
 .st-offline { color: var(--offline); }
 
 /* ---------- brand / top bar ---------- */
-.brand { height: 52px; padding: 0 20px; display: inline-flex; align-items: center; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
-.brand-word { font-weight: 800; font-size: 25px; letter-spacing: 0.01em; color: var(--ink); }
+.brand { height: 52px; padding: 0 20px; display: inline-flex; align-items: center; flex-shrink: 0; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
+.brand-word { font-weight: 800; font-size: 25px; letter-spacing: 0.01em; color: var(--ink); white-space: nowrap; }
 .brand-word b { color: var(--blue); font-weight: 800; }
+/* the frog's face stands in for the O, centred on the capitals (cap height ≈ 0.72em, so its middle
+   is 0.36em above the baseline). The -0.2em margins keep it from making the line taller; since
+   vertical-align places the margin edge, the face's own bottom ends up at 0.36 - 1.1/2 = -0.19em. */
+.brand-frog { display: inline-block; width: 1.02em; height: 1.1em; vertical-align: 0.01em; margin: -0.2em 0.02em; overflow: visible; }
 .live-dot { width: 10px; height: 10px; border-radius: 99px; background: var(--green); box-shadow: 0 0 0 3px #DCEADF; }
 .live-dot.warn { background: var(--yellow); box-shadow: 0 0 0 3px #FFF3C4; }
 .live-dot.down { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
@@ -118,7 +122,7 @@ input { font: inherit; color: inherit; }
 /* the car glides between position updates, but snaps during zoom animations */
 .fr-car { transition: transform 0.22s linear; }
 .fr-zooming .fr-car, .leaflet-zoom-anim .fr-car { transition: none; }
-.fr-car .dot svg { transition: transform 0.3s ease; }
+.fr-car .frog { transition: transform 0.3s ease; }
 .leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.75) !important; }
 .leaflet-control-zoom { border: 0 !important; box-shadow: var(--shadow) !important; border-radius: 12px !important; overflow: hidden; }
 .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; color: var(--ink) !important; }
@@ -131,8 +135,8 @@ input { font: inherit; color: inherit; }
 }
 @keyframes pulse { from { transform: scale(.7); opacity: .9 } to { transform: scale(2.1); opacity: 0 } }
 .fr-car { background: none; border: 0; }
-.fr-car .halo { position: absolute; inset: 0; border-radius: 99px; background: rgba(37,99,235,.18); }
-.fr-car .dot { position: absolute; inset: 14px; border-radius: 99px; background: var(--blue); border: 3px solid #fff; box-shadow: 0 2px 8px rgba(37,99,235,.5); display: grid; place-items: center; }
+.fr-car .halo { position: absolute; inset: 6px; border-radius: 99px; background: rgba(37,99,235,.16); }
+.fr-car .frog { position: absolute; inset: 0; overflow: visible; filter: drop-shadow(0 2px 4px rgba(30,64,175,.45)); }
 .fr-dest, .fr-hazard { background: none; border: 0; }
 .fr-hazard .h { width: 38px; height: 38px; border-radius: 12px; background: var(--red); border: 3px solid #fff; display: grid; place-items: center; box-shadow: 0 4px 14px rgba(229,36,59,.45); animation: bob 1.2s ease-in-out infinite alternate; }
 @keyframes bob { to { transform: translateY(-3px) } }

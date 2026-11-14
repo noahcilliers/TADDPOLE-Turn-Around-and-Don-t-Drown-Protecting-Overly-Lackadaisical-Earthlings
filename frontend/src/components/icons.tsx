@@ -1,4 +1,5 @@
 import type { Status } from '../types'
+import { FROG_FACE_BLUE } from './frogSvg'
 
 // Each status has its own shape (design rule): ✓ circle, ! triangle, ✕ octagon, – dashed circle.
 export function StatusIcon({ status, size = 22 }: { status: Status; size?: number }) {
@@ -67,8 +68,10 @@ export const Icon = {
 
 export function Brand() {
   return (
-    <div className="brand" aria-label="TADDPOLE: Turn Around and Don't Drown">
-      <span className="brand-word">TADD<b>POLE</b></span>
+    <div className="brand" role="img" aria-label="TADDPOLE: Turn Around and Don't Drown">
+      <span className="brand-word" aria-hidden>
+        TADD<b>P<svg className="brand-frog" viewBox="16.5 8.5 27 29" dangerouslySetInnerHTML={{ __html: FROG_FACE_BLUE }} />LE</b>
+      </span>
     </div>
   )
 }

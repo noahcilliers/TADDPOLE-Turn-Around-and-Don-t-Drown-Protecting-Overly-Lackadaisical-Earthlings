@@ -42,6 +42,13 @@ export function along(coords: LngLat[], d: number): { pos: LngLat; heading: numb
   return { pos: coords[n - 1], heading: bearing(coords[n - 2], coords[n - 1]), done: true }
 }
 
+/** Smoothed travel heading at distance d: bearing to the point `ahead` metres further on,
+ *  so tiny or zero-length segments in the route geometry don't make the heading jump. */
+export function headingAt(coords: LngLat[], d: number, ahead = 15): number {
+  const here = along(coords, d), there = along(coords, d + ahead)
+  return dist(here.pos, there.pos) > 1 ? bearing(here.pos, there.pos) : here.heading
+}
+
 /** Distance along the line of the point on it nearest to p, and how far p is from the line. */
 export function project(coords: LngLat[], p: LngLat): { along_m: number; off_m: number } {
   // local equirectangular metres
