@@ -1,4 +1,4 @@
-/* FloodRoute: tokens from the design handoff (A2 / OptA screens). */
+/* TADDPOLE: tokens from the design handoff (A2 / OptA screens). */
 :root {
   --ink: #0F172A;
   --ink-2: #475569;
@@ -102,7 +102,7 @@ input { font: inherit; color: inherit; }
 
 /* ---------- brand / top bar ---------- */
 .brand { height: 52px; padding: 0 20px; display: inline-flex; align-items: center; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
-.brand-word { font-weight: 800; font-size: 25px; letter-spacing: -0.03em; color: var(--ink); }
+.brand-word { font-weight: 800; font-size: 25px; letter-spacing: 0.01em; color: var(--ink); }
 .brand-word b { color: var(--blue); font-weight: 800; }
 .live-dot { width: 10px; height: 10px; border-radius: 99px; background: var(--green); box-shadow: 0 0 0 3px #DCEADF; }
 .live-dot.warn { background: var(--yellow); box-shadow: 0 0 0 3px #FFF3C4; }
@@ -331,3 +331,8 @@ input { font: inherit; color: inherit; }
   transform: translate(-50%, -50%); background: var(--line); transition: background .15s, height .15s;
 }
 .divider:hover::after, .divider:focus-visible::after, .divider.dragging::after { background: var(--blue); height: 72px; }
+
+.blocked-bar { display: flex; align-items: center; gap: 12px; background: var(--red); color: #fff; border-radius: 20px; padding: 12px 14px; box-shadow: 0 14px 40px rgba(229,36,59,.35); animation: drop .28s cubic-bezier(.2,.9,.3,1.2); }
+.blocked-bar .t { font-weight: 800; font-size: 16px; }
+.blocked-bar .d { font-weight: 600; font-size: 14px; opacity: .92; }
+.blocked-bar .btn-white { color: var(--red-dark); }

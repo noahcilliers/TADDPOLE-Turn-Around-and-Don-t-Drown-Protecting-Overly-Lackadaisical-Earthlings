@@ -53,11 +53,11 @@ export function Welcome() {
   const drive = useDrive()
   const done = (gps: boolean) => { if (gps) drive.enableGps(); updateSettings({ welcomed: true }) }
   return (
-    <div className="welcome" role="dialog" aria-label="Welcome to FloodRoute">
+    <div className="welcome" role="dialog" aria-label="Welcome to TADDPOLE">
       <div style={{ maxWidth: 460, margin: '0 auto', width: '100%' }}>
         <Brand />
         <h1>Know which roads are under water before you reach them.</h1>
-        <p>Sensors at Phoenix's flood-prone dips report water depth live. FloodRoute warns you and finds a way around.</p>
+        <p>Sensors at Phoenix's flood-prone dips report water depth live. TADDPOLE warns you and finds a way around. Turn around, don't drown.</p>
         <div className="perm"><div className="ic"><Icon.Locate size={22} /></div><div><div className="t">Location while driving</div><div className="d">To warn you about flooded roads within 1 km ahead.</div></div></div>
         <div className="perm"><div className="ic"><Icon.Bell size={22} /></div><div><div className="t">Alerts with sound</div><div className="d">So you hear a warning without looking at your phone.</div></div></div>
         <button className="btn btn-blue" style={{ width: '100%', marginTop: 8, height: 54 }} onClick={() => done(true)}>Allow and start</button>
@@ -69,7 +69,7 @@ export function Welcome() {
 
 export function Summary({ trip, onDone }: { trip: TripSummary; onDone: () => void }) {
   const share = async () => {
-    const text = `Arrived safely at ${trip.destination} with FloodRoute${trip.avoided.length ? `, avoided ${trip.avoided.map((a) => a.name).join(', ')}` : ''}.`
+    const text = `Arrived safely at ${trip.destination} with TADDPOLE${trip.avoided.length ? `, avoided ${trip.avoided.map((a) => a.name).join(', ')}` : ''}.`
     try { if (navigator.share) await navigator.share({ text }); else await navigator.clipboard.writeText(text) } catch { /* cancelled */ }
   }
   return (

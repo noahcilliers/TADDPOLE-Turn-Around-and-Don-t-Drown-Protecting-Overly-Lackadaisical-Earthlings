@@ -21,6 +21,7 @@ const WATCH_START: LngLat = [-111.99532, 33.49492]  // 40th St at Indian School,
 const WATCH_STOP_SHORT_M = 0.25 * 1609.344          // watch car stops 0.25 mi before the dip
 const STOP_BEFORE_HAZARD_M = 90                      // drivers stop short of water they were warned about
 const STALL_RADIUS_M = 2500
+const FLOOD_STICKY_MS = 30_000                      // a dip that just read flooded stays 'flooded' this long (noisy sensors)
 const CONE_DEG = 20
 const ON_ROUTE_M = 35
 
@@ -33,7 +34,7 @@ export interface DriveAlert {
   closing_s: number | null
   key: string
 }
-export interface Toast { id: number; title: string; detail: string; tone: 'blue' | 'green' }
+export interface Toast { id: number; title: string; detail: string; tone: 'blue' | 'green' | 'red' }
 export interface TripSummary {
   destination: string
   duration_s: number
@@ -59,6 +60,9 @@ export interface DriveApi {
   traveled_m: number
   alert: DriveAlert | null
   dismissAlert: () => void
+  /** Car is held before water/hazard and the alert was dismissed: offer the reroute again. */
+  blocked: { sensor: Sensor | null; hazard: Hazard | null } | null
+  stopped: boolean
   rerouteNow: () => void
   toast: Toast | null
   arrived: TripSummary | null
@@ -96,7 +100,7 @@ export function useDemoClock(): number {
   const demo = base.demo
   if (!demo) return 0
   if (demo.state !== 'playing') return demo.demo_s
-  return Math.min(demo.duration_s, demo.demo_s + (Math.max(0, now - base.t0) / 1000) * demo.speed)
+  return Math.min(demo.max_s ?? demo.duration_s, demo.demo_s + (Math.max(0, now - base.t0) / 1000) * demo.speed)
 }
 
 function chime() {
@@ -133,7 +137,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [routes, setRoutes] = useState<RoutesResponse | null>(null)
   const [active, setActive] = useState<Route | null>(null)
   const [abandoned, setAbandoned] = useState<LngLat[] | null>(null)
-  const [pathStart, setPathStart] = useState<{ demoS: number; offset_m: number }>({ demoS: 0, offset_m: 0 })
+  // Car progress along the active route. It only ever moves forward, a bit per demo tick,
+  // and never past a stop point in front of water, so a flickering sensor can't let it through.
+  const [activeVer, setActiveVer] = useState(0)
+  const [prog, setProg] = useState<{ ver: number; d: number; s: number; stopped: boolean }>({ ver: -1, d: 0, s: 0, stopped: false })
+  const pendingInit = useRef<'catchup' | 'here'>('catchup')
+  const lastFlooded = useRef<Record<string, number>>({})
   const [toast, setToast] = useState<Toast | null>(null)
   const [arrived, setArrived] = useState<TripSummary | null>(null)
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
@@ -199,10 +208,10 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       setRoutes(r)
       // Watch mode drives the plain road ahead (fastest), it doesn't navigate around anything.
       const chosen = mode === 'watch' ? r.routes.find((x) => x.kind === 'fastest') ?? recommended(r) : recommended(r)
-      setActive(chosen)
+      // Planned from the trip origin: a screen that joins mid-demo catches up to demo_s × speed.
+      pendingInit.current = 'catchup'
+      setActive(chosen); setActiveVer((v) => v + 1)
       trip.current.baseDuration = r.routes.find((x) => x.kind === 'fastest')?.duration_s ?? null
-      // Planned from the trip origin: the demo car's position is demo_s × speed along this path.
-      setPathStart({ demoS: 0, offset_m: 0 })
     })
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -221,7 +230,60 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const path = active?.geometry.coordinates ?? null
   const pathLen = useMemo(() => (path ? lineLength(path) : 0), [path])
 
-  // Where along the active path is the car?
+  // Remember when each sensor last read flooded (sticky window for noisy water).
+  useEffect(() => {
+    const now = Date.now()
+    for (const sn of Object.values(sensorsMap)) if (sn.current.status === 'flooded') lastFlooded.current[sn.id] = now
+  }, [sensorsMap])
+  const isFlooded = useCallback((sn: Sensor) =>
+    sn.current.status === 'flooded' || Date.now() - (lastFlooded.current[sn.id] ?? 0) < FLOOD_STICKY_MS, [])
+
+  /** First thing on the path at or ahead of `from` that the car must not drive into. */
+  const firstBlocker = useCallback((from: number): { along_m: number; sensor: Sensor | null; hazard: Hazard | null } | null => {
+    if (!path) return null
+    let best: { along_m: number; sensor: Sensor | null; hazard: Hazard | null } | null = null
+    for (const sn of Object.values(sensorsMap)) {
+      if (!isFlooded(sn)) continue
+      const pr = project(path, sn.location.coordinates)
+      if (pr.off_m < ON_ROUTE_M && pr.along_m >= from - 5 && (!best || pr.along_m < best.along_m)) best = { along_m: pr.along_m, sensor: sn, hazard: null }
+    }
+    for (const h of Object.values(hazardsMap)) {
+      const pr = project(path, h.location.coordinates)
+      if (pr.off_m < ON_ROUTE_M && pr.along_m >= from - 5 && (!best || pr.along_m < best.along_m)) best = { along_m: pr.along_m, sensor: h.sensor_id ? sensorsMap[h.sensor_id] ?? null : null, hazard: h }
+    }
+    return best
+  }, [path, sensorsMap, hazardsMap, isFlooded])
+
+  // Advance the demo car on every demo tick.
+  useEffect(() => {
+    if (!path || path.length < 2 || !demoActive) return
+    setProg((p) => {
+      const v = mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S
+      const fresh = p.ver !== activeVer
+      const prevD = fresh ? 0 : p.d
+      let d = fresh ? (pendingInit.current === 'catchup' ? demoS * v : 0) : p.d + Math.max(0, demoS - p.s) * v
+      let limit = pathLen
+      // Watch car stops 0.25 mi before the demo dip (sim.js choreography).
+      if (mode === 'watch' && config) {
+        const sn = sensorsMap[config.demo.sensor_id]
+        if (sn) {
+          const pr = project(path, sn.location.coordinates)
+          if (pr.off_m < 60) limit = Math.min(limit, Math.max(prevD, pr.along_m - WATCH_STOP_SHORT_M))
+        }
+      }
+      // Never drive into water or a stalled car: hold short of it (or where we already are).
+      const b = firstBlocker(prevD)
+      if (b) limit = Math.min(limit, Math.max(prevD, b.along_m - STOP_BEFORE_HAZARD_M))
+      const stopped = d > limit + 0.5 && limit < pathLen
+      d = Math.max(prevD, Math.min(d, limit))
+      if (!fresh && d === p.d && demoS === p.s && stopped === p.stopped) return p
+      return { ver: activeVer, d, s: demoS, stopped }
+    })
+  }, [demoS, activeVer, path, pathLen, demoActive, mode, config, sensorsMap, firstBlocker])
+
+  // Demo reset/rewind: start over from the origin.
+  useEffect(() => { setProg({ ver: -1, d: 0, s: 0, stopped: false }) }, [resetCounter])
+
   const { car, traveled, moving } = useMemo(() => {
     if (!path || path.length < 2) return { car: null as DriveApi['car'], traveled: 0, moving: false }
     if (!demoActive) {
@@ -233,37 +295,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const a = along(path, 0)
       return { car: { pos: a.pos, heading: a.heading }, traveled: 0, moving: false }
     }
-    const v = mode === 'nav' ? NAV_SPEED_M_PER_DEMO_S : WATCH_SPEED_M_PER_DEMO_S
-    const free = pathStart.offset_m + Math.max(0, demoS - pathStart.demoS) * v
-    let d = free
-    // Watch car stops 0.25 mi before the demo dip (sim.js choreography).
-    if (mode === 'watch' && config) {
-      const s = sensorsMap[config.demo.sensor_id]
-      if (s) {
-        const pr = project(path, s.location.coordinates)
-        if (pr.off_m < 60) d = Math.min(d, Math.max(0, pr.along_m - WATCH_STOP_SHORT_M))
-      }
-    }
-    // Any driver stops short of flooded water or a stalled car on their path.
-    for (const s of Object.values(sensorsMap)) {
-      if (s.current.status !== 'flooded') continue
-      const pr = project(path, s.location.coordinates)
-      if (pr.off_m < ON_ROUTE_M && pr.along_m > d - 5) d = Math.min(d, Math.max(0, pr.along_m - STOP_BEFORE_HAZARD_M))
-    }
-    for (const h of Object.values(hazardsMap)) {
-      const pr = project(path, h.location.coordinates)
-      if (pr.off_m < ON_ROUTE_M && pr.along_m > d - 5) d = Math.min(d, Math.max(0, pr.along_m - STOP_BEFORE_HAZARD_M))
-    }
-    d = Math.min(d, pathLen)
+    const d = prog.ver === activeVer ? prog.d : 0
     const a = along(path, d)
-    return { car: { pos: a.pos, heading: a.heading }, traveled: d, moving: demo?.state === 'playing' && d >= free - 1 && d < pathLen }
-  }, [path, pathLen, demoActive, demoS, pathStart, mode, config, sensorsMap, hazardsMap, gpsState.pos, gpsState.heading, demo?.state])
+    return { car: { pos: a.pos, heading: a.heading }, traveled: d, moving: demo?.state === 'playing' && !prog.stopped && d < pathLen }
+  }, [path, pathLen, demoActive, prog, activeVer, gpsState.pos, gpsState.heading, demo?.state])
 
   // ---------- reroute ----------
   const carRef = useRef(car); carRef.current = car
   const activeRef = useRef(active); activeRef.current = active
   const traveledRef = useRef(traveled); traveledRef.current = traveled
-  const demoSRef = useRef(demoS); demoSRef.current = demoS
   const rerouting = useRef(false)
 
   const reroute = useCallback(async (reason: Sensor | Hazard | null, forceToast = false) => {
@@ -281,11 +321,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const prevRemaining = prev ? sliceFrom(prev.geometry.coordinates, traveledRef.current) : null
       const changed = !prev || JSON.stringify(next.geometry.coordinates.slice(-3)) !== JSON.stringify(prevRemaining?.slice(-3)) ||
         Math.abs(lineLength(next.geometry.coordinates) - (prevRemaining ? lineLength(prevRemaining) : 0)) > 25
-      if (!changed && !forceToast) return
-      setAbandoned(prevRemaining && changed ? prevRemaining : null)
+      if (!changed) {
+        if (forceToast) showToast(next.safe ? 'Current route is still the best' : 'No flood-free route right now',
+          next.safe ? 'Water is rising but still passable. You\'ll be warned if it floods.' : 'Every way through is flooded. Wait here or turn around.', next.safe ? 'blue' : 'red')
+        return
+      }
+      setAbandoned(prevRemaining)
       trip.current.drivenBefore_m += traveledRef.current // the new route starts where the car is
-      setActive(next)
-      setPathStart({ demoS: demoSRef.current, offset_m: 0 })
+      pendingInit.current = 'here'
+      setActive(next); setActiveVer((v) => v + 1)
       if (next.kind === 'safer' || !next.safe || forceToast) {
         const avoided = r.routes.find((x) => x.kind === 'fastest')?.crosses.filter((c) => c.status === 'flooded' || c.status === 'offline') ?? []
         avoided.forEach((c) => trip.current.avoided.set(c.sensor_id, c.depth_cm))
@@ -302,20 +346,18 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     } finally { rerouting.current = false }
   }, [destination, origin, fetchRoutes, showToast])
 
-  // React to live events that touch our route.
+  // A new flood: if it's ahead on our route the red alert takes over (and the car holds);
+  // otherwise just let the driver know. Rerouting is the driver's call (Reroute button).
   useEffect(() => onDomainEvent((e) => {
-    if (mode !== 'nav' || !activeRef.current) return
+    if (e.kind !== 'status_changed' || e.to !== 'flooded') return
     const route = activeRef.current
-    if (e.kind === 'status_changed') {
-      const crosses = route.crosses.some((c) => c.sensor_id === e.sensor.id)
-      const becameUnsafe = e.to === 'flooded' || (e.to === 'offline' && store.get().settings.avoid_offline)
-      const becameSafe = e.from === 'flooded' || e.from === 'offline'
-      if ((crosses && becameUnsafe) || (becameSafe && trip.current.avoided.has(e.sensor.id))) void reroute(e.sensor)
-    } else if (e.kind === 'hazard_created') {
-      const pr = project(route.geometry.coordinates, e.hazard.location.coordinates)
-      if (pr.off_m < 60 && pr.along_m > traveledRef.current) void reroute(e.hazard)
+    if (route) {
+      const pr = project(route.geometry.coordinates, e.sensor.location.coordinates)
+      if (pr.off_m < ON_ROUTE_M && pr.along_m >= traveledRef.current - 5) return
     }
-  }), [mode, reroute])
+    const d = e.sensor.current.depth_cm
+    showToast(`Flooding at ${e.sensor.name}`, `${d != null ? `${Math.round(d)} cm deep · ` : ''}not on your route`, 'red')
+  }), [showToast])
 
   // ---------- look-ahead alert ----------
   const alert: DriveAlert | null = useMemo(() => {
@@ -349,19 +391,23 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     }
     let best: DriveAlert | null = null
     for (const s of sensors) {
-      const st = s.current.status
+      const st = isFlooded(s) ? 'flooded' : s.current.status
       if (st !== 'flooded' && st !== 'caution') continue
       if (st === 'flooded' && !settings.alert_flooded) continue
       if (st === 'caution' && !settings.alert_rising) continue
       const d = aheadDist(s.location.coordinates)
-      if (d == null || d > settings.lookahead_m) continue
+      // On the route you're driving, a flood always warns (radius only applies to the look-ahead cone / rising water).
+      const onRoute = !!path && project(path, s.location.coordinates).off_m < ON_ROUTE_M
+      if (d == null || (d > settings.lookahead_m && !(st === 'flooded' && onRoute && mode === 'nav'))) continue
       const cand: DriveAlert = { level: st, sensor: s, hazard: null, distance_m: d, closing_s: speed ? d / speed : null, key: `${st}:${s.id}` }
       if (!best || (cand.level === 'flooded' && best.level !== 'flooded') || (cand.level === best.level && d < best.distance_m)) best = cand
     }
     return best
-  }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, moving, demo?.speed, mode])
+  }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, moving, demo?.speed, mode, isFlooded])
 
   const visibleAlert = alert && !dismissed.has(alert.key) ? alert : null
+  const blocker = prog.stopped && demoActive ? firstBlocker(traveled) : null
+  const blocked = !visibleAlert && blocker ? { sensor: blocker.sensor, hazard: blocker.hazard } : null
 
   // side effects of a new alert: sound, vibration, feed entries
   const lastAlertKey = useRef<string | null>(null)
@@ -411,8 +457,13 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     remaining: path ? sliceFrom(path, traveled) : null,
     car, traveled_m: traveled,
     alert: visibleAlert,
+    blocked, stopped: prog.stopped && demoActive,
     dismissAlert: () => { if (visibleAlert) setDismissed((s) => new Set(s).add(visibleAlert.key)) },
-    rerouteNow: () => { if (visibleAlert) setDismissed((s) => new Set(s).add(visibleAlert.key)); setModeState('nav'); void reroute(visibleAlert?.sensor ?? visibleAlert?.hazard ?? null, true) },
+    rerouteNow: () => {
+      if (visibleAlert) setDismissed((s) => new Set(s).add(visibleAlert.key))
+      // Reroute from where the car is now, in whichever mode it's in (switching modes would re-plan the trip).
+      void reroute(visibleAlert?.sensor ?? visibleAlert?.hazard ?? blocked?.hazard ?? blocked?.sensor ?? null, true)
+    },
     toast, arrived, clearArrived: () => setArrived(null),
     demoActive, demoS, routeError,
     gps: { enabled: gpsState.enabled, error: gpsState.error }, enableGps,

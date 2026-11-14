@@ -55,10 +55,12 @@ class DemoSession:
     at: datetime = field(default_factory=now_utc)
     scripted: bool = False
     stall: bool = False
-    duration_s: float = 124.0
+    duration_s: float = 124.0     # length of the scripted water curve (depth holds at its last value after)
+    max_s: float = 600.0          # the demo clock itself runs this long, so a driver who stops and
+                                  # reroutes still has time to finish the trip
 
     def now_s(self, now: datetime | None = None) -> float:
-        return current_demo_s(self.state, self.demo_s, self.at, self.speed, now or now_utc(), self.duration_s)
+        return current_demo_s(self.state, self.demo_s, self.at, self.speed, now or now_utc(), self.max_s)
 
     def resample(self, now: datetime | None = None) -> None:
         now = now or now_utc()
@@ -69,7 +71,7 @@ class DemoSession:
         return {
             "state": self.state, "mode": self.mode, "speed": self.speed,
             "demo_s": round(self.demo_s, 3), "at": self.at.isoformat(),
-            "scripted": self.scripted, "stall": self.stall, "duration_s": self.duration_s,
+            "scripted": self.scripted, "stall": self.stall, "duration_s": self.duration_s, "max_s": self.max_s,
         }
 
 
@@ -101,7 +103,7 @@ class DemoController:
         async with self._lock:
             s = self.session
             s.resample()
-            if s.demo_s >= s.duration_s:
+            if s.demo_s >= s.max_s:
                 s.demo_s = 0.0
             if mode:
                 s.mode = mode
@@ -168,7 +170,7 @@ class DemoController:
             try:
                 async with self._lock:
                     s = self.session
-                    if s.state == "playing" and s.now_s() >= s.duration_s:
+                    if s.state == "playing" and s.now_s() >= s.max_s:
                         s.resample()
                         s.state = "paused"
                         await self._publish()

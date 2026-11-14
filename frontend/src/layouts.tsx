@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import FloodMap, { type MapRoute } from './components/FloodMap'
 import { AlertFeed, SensorList } from './components/Lists'
-import { AlertOverlay, ConnBanner, DemoPanel, Legend, LivePill, NavBanner, RouteCard, StatusChips, ToastView } from './components/Overlays'
+import { AlertOverlay, BlockedBar, ConnBanner, DemoPanel, Legend, LivePill, NavBanner, RouteCard, StatusChips, ToastView } from './components/Overlays'
 import { DestinationSearch, DriveSheet, SettingsPage, Summary } from './components/Screens'
 import SensorPanel from './components/SensorPanel'
 import { Brand, Icon } from './components/icons'
@@ -126,7 +126,12 @@ export function Stage() {
         <div className="overlay br"><DemoPanel variant="stage" /></div>
         {drive.alert
           ? <div className="overlay alert-slot"><AlertOverlay alert={drive.alert} /></div>
-          : drive.toast && <div className="overlay alert-slot"><ToastView /></div>}
+          : (drive.blocked || drive.toast) && (
+            <div className="overlay alert-slot" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <BlockedBar />
+              <ToastView />
+            </div>
+          )}
       </div>
     </div>
   )
@@ -183,6 +188,8 @@ export function Phone() {
           {tab === 'drive' && (
             drive.toast ? <ToastView /> : drive.mode === 'nav' && drive.active && drive.demoActive ? <NavBanner /> : <RouteCard />
           )}
+          {tab === 'drive' && <BlockedBar />}
+          {tab === 'map' && drive.toast?.tone === 'red' && <ToastView />}
         </div>
       )}
 

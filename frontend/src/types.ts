@@ -93,7 +93,8 @@ export interface DemoSession {
   at: string
   scripted: boolean
   stall: boolean
-  duration_s: number
+  duration_s: number   // scripted water curve length
+  max_s?: number       // demo clock limit (older backends: duration_s)
 }
 
 export type LiveMsg =

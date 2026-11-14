@@ -110,7 +110,9 @@ export function ToastView() {
   if (!toast) return null
   return (
     <div className="toast" role="status" aria-live="polite">
-      <div className="ic" style={toast.tone === 'green' ? { background: 'var(--green)' } : undefined}>{toast.tone === 'green' ? <Icon.Flag size={26} /> : <Icon.Shield size={26} />}</div>
+      <div className="ic" style={toast.tone === 'green' ? { background: 'var(--green)' } : toast.tone === 'red' ? { background: 'var(--red)' } : undefined}>
+        {toast.tone === 'green' ? <Icon.Flag size={26} /> : toast.tone === 'red' ? <StatusIcon status="flooded" size={30} /> : <Icon.Shield size={26} />}
+      </div>
       <div><div className="t">{toast.title}</div><div className="d">{toast.detail}</div></div>
     </div>
   )
@@ -294,4 +296,21 @@ export function TripStats() {
   const r = drive.active
   if (!r) return null
   return <span className="muted" style={{ fontWeight: 600 }}>{fmtDuration(r.duration_s)} · {fmtMiles(r.distance_m)} mi</span>
+}
+
+/** Car is holding before water/a stalled car and the big alert was dismissed: keep offering the reroute. */
+export function BlockedBar() {
+  const drive = useDrive()
+  if (!drive.blocked) return null
+  const name = drive.blocked.sensor?.name ?? 'the road ahead'
+  return (
+    <div className="blocked-bar" role="status">
+      <StatusIcon status="flooded" size={26} />
+      <div className="grow">
+        <div className="t">Stopped before {drive.blocked.hazard ? 'a stalled car' : 'flooded road'}</div>
+        <div className="d ellipsis">{name}</div>
+      </div>
+      <button className="btn btn-white btn-sm" onClick={drive.rerouteNow}><Icon.Reroute size={18} />Reroute</button>
+    </div>
+  )
 }

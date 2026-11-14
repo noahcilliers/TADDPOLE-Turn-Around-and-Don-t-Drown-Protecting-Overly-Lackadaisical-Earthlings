@@ -67,8 +67,8 @@ export const Icon = {
 
 export function Brand() {
   return (
-    <div className="brand" aria-label="FloodRoute">
-      <span className="brand-word">fl<b>oo</b>d<b>route</b></span>
+    <div className="brand" aria-label="TADDPOLE: Turn Around and Don't Drown">
+      <span className="brand-word">TADD<b>POLE</b></span>
     </div>
   )
 }
