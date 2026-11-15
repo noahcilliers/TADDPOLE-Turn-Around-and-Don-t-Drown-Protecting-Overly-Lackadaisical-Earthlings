@@ -125,3 +125,64 @@ async def test_url_mode_wrong_token_fails_open(snapshot_url):
 def test_camera_server_requires_token():
     with pytest.raises(SystemExit):
         camera_server.make_server("127.0.0.1", 0, "", lambda: JPEG)
+
+
+# ---------- push mode: the Wi-Fi camera (XIAO ESP32-S3) uploads photos, no laptop ----------
+def push_gate(answer, **kw):
+    g = CameraGate(api_key="", camera="push", camera_token="s3cret", sensor_ids=["tank"], model="m", **kw)
+    g._client, g.problem = object(), None
+    seen = []
+    g._ask_gemini = lambda jpg, depth: (seen.append(jpg), answer)[1]
+    return g, seen
+
+
+def test_push_mode_parsed():
+    g, _ = push_gate(V("flood_water", True, True))
+    assert g.push_mode and g.source == "push"
+    g.start()                                              # no webcam to open
+    assert g._webcam is None
+
+
+def test_push_rejects_non_jpeg():
+    g, _ = push_gate(V("flood_water", True, True))
+    with pytest.raises(ValueError):
+        g.receive_upload("tank", b"<html>")
+
+
+async def test_push_waits_for_a_fresh_photo():
+    g, seen = push_gate(V("object_under_sensor", False, False, "hand"), push_wait_s=2)
+    g.receive_upload("tank", JPEG + b"old")
+    assert g.decide("tank", 10.0) == "pending"
+    await asyncio.sleep(0.2)
+    g.receive_upload("tank", JPEG + b"new")                # arrives after the check started
+    await settle(g)
+    assert seen == [JPEG + b"new"]
+    assert g.decide("tank", 10.0) == "block"
+
+
+async def test_push_uses_recent_photo_if_none_arrives():
+    g, seen = push_gate(V("flood_water", True, True), push_wait_s=0.2)
+    g.receive_upload("tank", JPEG)
+    g.decide("tank", 10.0)
+    await settle(g)
+    assert seen == [JPEG]
+    assert g.decide("tank", 10.0) == "allow"
+
+
+async def test_push_camera_silent_fails_open():
+    g, seen = push_gate(V("object_under_sensor", False, False, "hand"), push_wait_s=0.2)
+    assert g.decide("tank", 20.0) == "pending"
+    await settle(g)
+    assert seen == [] and "hasn't uploaded" in g.sensors["tank"].error
+    assert g.decide("tank", 20.0) == "allow"
+
+
+async def test_push_stale_photo_fails_open():
+    g, seen = push_gate(V("object_under_sensor", False, False, "hand"), push_wait_s=0.2, push_max_age_s=5)
+    g.receive_upload("tank", JPEG)
+    g._uploads["tank"] = (JPEG, g._uploads["tank"][1] - 60)   # camera went quiet a minute ago
+    g.decide("tank", 20.0)
+    await settle(g)
+    assert seen == [] and "no photo from the camera" in g.sensors["tank"].error
+    assert g.decide("tank", 20.0) == "allow"
+    assert g.snapshot()["last_upload_age_s"]["tank"] >= 60

@@ -61,8 +61,8 @@ class Settings(BaseSettings):
     # Camera water check (app/camera.py). Empty GEMINI_API_KEY = off (alerts work as before).
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.5-flash"
-    camera: str = "0"                             # webcam number (0 built-in, 1 USB, ...) or JPEG URL
-    camera_token: str = ""                        # shared secret with scripts/camera_server.py (URL mode)
+    camera: str = "0"                             # webcam number (0 built-in, 1 USB, ...), JPEG URL, or "push"
+    camera_token: str = ""                        # shared secret with camera_server.py (URL) or the camera (push)
     camera_sensors: str = "water_tank_1"          # comma-separated sensors the camera is pointed at
     camera_verdict_max_age_s: float = 30.0        # a verdict this old is stale; take a new photo
     camera_recheck_s: float = 10.0                # while blocked as "not water", re-look this often

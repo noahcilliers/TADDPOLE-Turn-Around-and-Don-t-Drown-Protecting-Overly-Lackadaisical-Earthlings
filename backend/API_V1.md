@@ -45,6 +45,7 @@ Sensors: the real `water_tank_1` (40th St & Camelback, the handoff's FR-07 spot)
 | POST | `/v1/hazards` | body `{kind: "stalled_vehicle", location: [lng,lat], source: "driver"}` → `Hazard` (201). Links nearest sensor within 150 m. TTL 30 min |
 | GET | `/v1/hazards/active` | `Hazard[]` |
 | DELETE | `/v1/hazards/{id}` | 204 (admin token) |
+| POST | `/v1/camera/{id}` | Wi-Fi camera upload when `CAMERA=push`: body = raw JPEG (≤ 1 MB), header `X-Camera-Token`. 204; 401 bad token; 409 not in push mode; 404 sensor not in `CAMERA_SENSORS` |
 | GET | `/v1/demo` | `DemoSession` |
 | POST | `/v1/demo/start` | `{mode?, speed?}` → `DemoSession` (start or resume) |
 | POST | `/v1/demo/pause` | `DemoSession` |
