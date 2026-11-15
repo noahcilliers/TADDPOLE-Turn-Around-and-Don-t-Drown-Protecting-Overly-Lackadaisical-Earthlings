@@ -20,6 +20,24 @@
       "name": "frontend-running",
       "url": "http://localhost:5173",
       "port": 5173
+    },
+    {
+      "name": "frontend-prod-api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "frontend",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "env": {
+        "BACKEND_URL": "https://ifyourreadingthisimstranded.us"
+      },
+      "port": 5175
     }
   ]
 }

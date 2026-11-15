@@ -150,25 +150,19 @@ export function DestinationSearch({ onPicked, onPickOnMap }: { onPicked: (p: Pla
 // ---------- phone drive sheet ----------
 export function DriveSheet() {
   const drive = useDrive()
-  const look = useStore((s) => s.settings.lookahead_m)
   const r = drive.active
   const remaining = r ? Math.max(0, r.distance_m - drive.traveled_m) : 0
   let title = 'Navigating', detail = drive.destination ? `${fmtMiles(remaining)} mi to ${drive.destination.name}` : 'Pick a destination'
-  if (drive.mode === 'watch') { title = 'Watching for floods'; detail = `Warns you about anything within ${look >= 1000 ? `${look / 1000} km` : `${look} m`} ahead` }
-  else if (drive.arrived) { title = 'Arrived'; detail = drive.destination?.name ?? '' }
+  if (drive.arrived) { title = 'Arrived'; detail = drive.destination?.name ?? '' }
   else if (r?.kind === 'safer') { title = 'Safer route' }
   else if (r && !r.safe) { title = 'Route crosses water'; detail = 'No flood-free route right now' }
   return (
     <div className="sheet">
       <div className="drive-head">
-        <div className="ic" style={r && !r.safe && drive.mode === 'nav' ? { background: 'var(--red-soft)', color: 'var(--red)' } : undefined}><Icon.Wheel size={28} /></div>
+        <div className="ic" style={r && !r.safe ? { background: 'var(--red-soft)', color: 'var(--red)' } : undefined}><Icon.Wheel size={28} /></div>
         <div className="grow"><div className="t">{title}</div><div className="d">{detail}</div></div>
       </div>
       {drive.routeError && <div className="offline-note">Routing unavailable: {drive.routeError}</div>}
-      <div className="seg" role="group" aria-label="Driving mode" style={{ marginTop: 14 }}>
-        <button aria-pressed={drive.mode === 'nav'} onClick={() => drive.setMode('nav')}>Navigate</button>
-        <button aria-pressed={drive.mode === 'watch'} onClick={() => drive.setMode('watch')}>Watch only</button>
-      </div>
       <div className="dash-sep" />
       <DemoPanel variant="phone" />
     </div>

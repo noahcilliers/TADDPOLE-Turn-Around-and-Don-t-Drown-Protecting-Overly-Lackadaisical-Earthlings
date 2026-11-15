@@ -118,9 +118,9 @@ export function Stage() {
       <div className="stage-map">
         <FloodMap
           sensors={sensors} hazards={hazards} routes={routes} car={drive.car}
-          destination={drive.mode === 'nav' ? drive.destination?.lnglat ?? null : null}
+          destination={drive.destination?.lnglat ?? null}
           selectedId={sel} onSelectSensor={select}
-          fitKey={`${sensors.length > 0}|${drive.mode}`} fitTo={fitTo}
+          fitKey={`${sensors.length > 0}`} fitTo={fitTo}
           padding={{ top: 80, right: 380, bottom: 40, left: 40 }} follow
           floodZoneM={config?.flood_zone_m}
         />
@@ -157,7 +157,7 @@ export function Phone() {
     <div className="phone">
       <FloodMap
         sensors={sensors} hazards={hazards} routes={routes} car={drive.car}
-        destination={drive.mode === 'nav' ? drive.destination?.lnglat ?? null : null}
+        destination={drive.destination?.lnglat ?? null}
         selectedId={detail} onSelectSensor={(id) => setDetail(id)}
         fitKey={`${sensors.length > 0}|${drive.active?.id ?? ''}`} fitTo={fitTo}
         padding={{ top: 90, right: 20, bottom: 110, left: 20 }}

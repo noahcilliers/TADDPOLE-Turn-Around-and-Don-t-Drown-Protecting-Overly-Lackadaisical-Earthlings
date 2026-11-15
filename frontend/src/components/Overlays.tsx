@@ -121,21 +121,9 @@ export function ToastView() {
 
 export function RouteCard() {
   const drive = useDrive()
-  const look = useStore((s) => s.settings.lookahead_m)
   const sensors = useStore((s) => s.sensors)
   const r = drive.active
   if (!r || !drive.destination) return null
-  if (drive.mode === 'watch') {
-    return (
-      <div className="card route-card">
-        <div className="ic"><Icon.Broadcast size={24} /></div>
-        <div className="grow">
-          <div className="k st-clear" style={{ color: 'var(--blue)' }}>Watching for floods</div>
-          <div className="d">Warns you about anything within {look >= 1000 ? `${look / 1000} km` : `${look} m`} ahead</div>
-        </div>
-      </div>
-    )
-  }
   const remaining = drive.remaining ? Math.max(0, r.distance_m - drive.traveled_m) : r.distance_m
   // live statuses of the sensors this route crosses (the route object is a snapshot)
   const live = r.crosses.map((c) => sensors[c.sensor_id]?.current.status ?? c.status)
@@ -161,7 +149,7 @@ export function RouteCard() {
 export function NavBanner() {
   const drive = useDrive()
   const r = drive.active
-  if (!r || drive.mode !== 'nav' || !r.steps.length) return null
+  if (!r || !r.steps.length) return null
   // current step = first whose cumulative distance exceeds traveled
   let acc = 0, idx = 0
   for (let i = 0; i < r.steps.length; i++) { acc += r.steps[i].distance_m; if (acc > drive.traveled_m) { idx = i; break } idx = i }
@@ -226,7 +214,11 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
   if (!demo) return null
   const playing = demo.state === 'playing'
   const label = demo.state === 'idle' && demo.demo_s === 0 ? 'Play' : playing ? 'Pause' : 'Resume'
-  const toggle = () => run(() => (playing ? api.demo.pause() : api.demo.start(drive.mode, demo.speed)))
+  const toggle = () => run(() => (playing ? api.demo.pause() : api.demo.start('nav', demo.speed)))
+  // Both sources feed the same live sensor (config.demo.sensor_id): "Automatic" writes the
+  // scripted depth curve as that sensor's readings, "Live" uses what the device itself reports.
+  const setAuto = (auto: boolean) => { if (auto !== demo.scripted) void run(() => api.demo.scripted(auto)) }
+  const liveDown = !demo.scripted && sensor?.current.status === 'offline'
   // demo clock shown as Phoenix time, 1 demo s = 10 real s (handoff), starting 6:40 PM
   const demoClock = clock(new Date(Date.parse('2026-08-15T01:40:00Z') + drive.demoS * 10_000))
 
@@ -237,9 +229,7 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
         <button className="btn btn-dark btn-sm grow" style={{ height: 46 }} onClick={toggle}>{playing ? <Icon.Pause size={18} /> : <Icon.Play size={18} />}{label}</button>
         <button className="btn btn-ghost btn-sm sq" onClick={() => run(() => api.demo.speed(demo.speed >= 4 ? 1 : demo.speed * 2))} aria-label={`Speed ${demo.speed}×, tap to change`}>{demo.speed}×</button>
         <button className="btn btn-ghost btn-sm sq" onClick={() => run(api.demo.reset)} aria-label="Reset demo"><Icon.Reset size={18} /></button>
-        <label className="btn btn-ghost btn-sm stall">
-          <span className="switch danger mini"><input type="checkbox" checked={demo.stall} onChange={(e) => run(() => api.demo.stall(e.target.checked))} aria-label="Car stalled in the flood" /><span /></span>Stall
-        </label>
+        <button className="btn btn-ghost btn-sm src" onClick={() => setAuto(!demo.scripted)} aria-label={`Water source: ${demo.scripted ? 'automatic flood' : 'live sensor'}, tap to switch`}>{demo.scripted ? 'Auto' : 'Live'}</button>
         {err && <span className="st-flooded" style={{ fontSize: 12 }}>{err}</span>}
       </div>
     )
@@ -256,6 +246,13 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
       </div>
       {open && (
         <>
+          <div className="seg" role="group" aria-label="Water source" style={{ marginTop: 12 }}>
+            <button aria-pressed={demo.scripted} onClick={() => setAuto(true)}>Automatic flood</button>
+            <button aria-pressed={!demo.scripted} onClick={() => setAuto(false)}>Live sensor</button>
+          </div>
+          <div className="muted src-hint">
+            {demo.scripted ? 'Plays a scripted 2-minute rise through the sensor.' : 'Uses real readings from the sensor. Add water to flood it.'}
+          </div>
           <div className="row" style={{ marginTop: 12 }}>
             <button className="btn btn-dark grow" onClick={toggle}>{playing ? <Icon.Pause size={18} /> : <Icon.Play size={18} />}{label}</button>
             <button className="btn btn-ghost" onClick={() => run(api.demo.reset)}><Icon.Reset size={18} />Reset</button>
@@ -265,18 +262,6 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
             <input type="range" min={0.5} max={4} step={0.5} value={demo.speed} aria-label="Demo speed"
               onChange={(e) => run(() => api.demo.speed(Number(e.target.value)))} />
           </div>
-          <div className="seg" role="group" aria-label="Driving mode" style={{ marginTop: 10 }}>
-            <button aria-pressed={drive.mode === 'nav'} onClick={() => drive.setMode('nav')}>Navigate</button>
-            <button aria-pressed={drive.mode === 'watch'} onClick={() => drive.setMode('watch')}>Watch only</button>
-          </div>
-          <label className="toggle-row">
-            <span className="switch danger"><input type="checkbox" checked={demo.stall} onChange={(e) => run(() => api.demo.stall(e.target.checked))} /><span /></span>
-            Car stalled in the flood
-          </label>
-          <label className="toggle-row" title="Replay the scripted depth curve instead of the real tub sensor">
-            <span className="switch"><input type="checkbox" checked={demo.scripted} onChange={(e) => run(() => api.demo.scripted(e.target.checked))} /><span /></span>
-            <span className="grow">Scripted flood <span className="muted" style={{ fontSize: 13 }}>{demo.scripted ? '(replaying curve)' : '(using real sensor)'}</span></span>
-          </label>
           {sensor && (
             <div className="foot">
               <span>{sensor.name}</span>
@@ -285,6 +270,7 @@ export function DemoPanel({ variant }: { variant: 'stage' | 'phone' }) {
               </span>
             </div>
           )}
+          {liveDown && <div className="st-caution" style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>The sensor isn't reporting. Switch to Automatic flood or check the device.</div>}
           {err && <div className="st-flooded" style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>{err}</div>}
         </>
       )}
