@@ -8,7 +8,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, Response, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ValidationError
 
@@ -193,6 +193,35 @@ async def camera_last_photo(sensor_id: str):
     if sc is None or sc.last_jpeg is None:
         raise HTTPException(404, "no camera photo yet for this sensor")
     return Response(sc.last_jpeg, media_type="image/jpeg", headers={"Cache-Control": "no-store"})
+
+
+MAX_UPLOAD_BYTES = 1_000_000
+
+
+@app.post("/v1/camera/{sensor_id}", status_code=204)
+async def camera_upload(sensor_id: str, request: Request, x_camera_token: str = Header(default="")):
+    """CAMERA=push: the Wi-Fi camera (XIAO ESP32-S3) POSTs its current JPEG here every few seconds.
+    Body = raw JPEG bytes, header X-Camera-Token = CAMERA_TOKEN."""
+    cfg: Settings = app.state.cfg
+    gate: CameraGate = app.state.camera
+    if not cfg.camera_token.strip():
+        raise HTTPException(404, "camera uploads disabled (set CAMERA_TOKEN)")
+    if not hmac.compare_digest(x_camera_token.strip(), cfg.camera_token.strip()):
+        raise HTTPException(401, "bad or missing X-Camera-Token")
+    if not gate.push_mode:
+        raise HTTPException(409, "server isn't in upload mode (set CAMERA=push)")
+    if sensor_id not in gate.sensor_ids:
+        raise HTTPException(404, f"camera isn't set up for sensor '{sensor_id}' (CAMERA_SENSORS)")
+    if int(request.headers.get("content-length") or 0) > MAX_UPLOAD_BYTES:
+        raise HTTPException(413, "photo too big (max 1 MB)")
+    body = await request.body()
+    if len(body) > MAX_UPLOAD_BYTES:
+        raise HTTPException(413, "photo too big (max 1 MB)")
+    try:
+        gate.receive_upload(sensor_id, body)
+    except ValueError as e:
+        raise HTTPException(422, str(e))
+    return Response(status_code=204)
 
 
 @app.get("/config")

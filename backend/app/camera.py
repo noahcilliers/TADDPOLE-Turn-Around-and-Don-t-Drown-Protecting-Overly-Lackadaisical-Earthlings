@@ -12,6 +12,11 @@ Going DOWN is never gated. Enabled when GEMINI_API_KEY is set; CAMERA picks the 
 (0 = built-in, 1 = USB, ...) or a URL that returns a JPEG, e.g. scripts/camera_server.py on the
 webcam laptop behind a tunnel, so the deployed backend can use it (sends CAMERA_TOKEN). opencv / google-genai are imported
 lazily, so the backend still runs (ungated) without them.
+
+CAMERA=push: no laptop. A Wi-Fi camera (e.g. the XIAO ESP32-S3 Sense, arduino/xiao_camera_upload)
+POSTs a JPEG every few seconds to /v1/camera/{sensor_id} with X-Camera-Token. A check uses the
+first photo that arrives after it starts (or the latest one if it's still recent); if the camera
+has gone quiet, the check fails open like any other camera failure.
 """
 from __future__ import annotations
 
@@ -76,8 +81,13 @@ def is_water(v: Verdict) -> bool | None:
 
 
 # ================= webcam =================
+PUSH = "push"                      # CAMERA=push: the camera uploads photos to us
+
+
 def camera_source(value: str) -> int | str:
     v = str(value).strip()
+    if v.lower() == PUSH:
+        return PUSH
     return int(v) if v.isdigit() else v
 
 
@@ -176,6 +186,8 @@ class CameraGate:
         verdict_max_age_s: float = 30.0,
         recheck_s: float = 10.0,
         timeout_s: float = 30.0,
+        push_wait_s: float = 6.0,
+        push_max_age_s: float = 20.0,
     ):
         self.api_key = api_key.strip()
         self.source = camera_source(camera)
@@ -185,10 +197,14 @@ class CameraGate:
         self.verdict_max_age_s = verdict_max_age_s
         self.recheck_s = recheck_s
         self.timeout_s = timeout_s
+        self.push_wait_s = push_wait_s          # wait this long for a photo newer than the check
+        self.push_max_age_s = push_max_age_s    # else use the latest upload if it's at most this old
         self.sensors: dict[str, _SensorCam] = {}
         self.problem: str | None = None
         self._client = None
         self._webcam: Webcam | None = None
+        self._uploads: dict[str, tuple[bytes, float]] = {}   # sensor -> (jpeg, time.time() received)
+        self._upload_cond = threading.Condition()
 
         if not self.api_key:
             self.problem = "GEMINI_API_KEY not set"
@@ -270,7 +286,7 @@ class CameraGate:
     async def _check(self, sid: str, sc: _SensorCam, depth_cm: float) -> None:
         taken = time.monotonic()
         try:
-            jpg = await asyncio.to_thread(self._photo)
+            jpg = await asyncio.to_thread(self._photo_for, sid)
             sc.last_jpeg, sc.last_checked = jpg, datetime.now(timezone.utc)
             v = await asyncio.wait_for(asyncio.to_thread(self._ask_gemini, jpg, depth_cm), self.timeout_s)
         except asyncio.CancelledError:
@@ -284,7 +300,45 @@ class CameraGate:
         log.info("camera check %s at %.1f cm -> %s (water=%s, object=%r, conf=%.2f): %s",
                  sid, depth_cm, v.verdict, v.water_present, v.object_description, v.confidence, v.reason)
 
+    # ---------- push mode: photos uploaded by the camera ----------
+    @property
+    def push_mode(self) -> bool:
+        return self.source == PUSH
+
+    def receive_upload(self, sid: str, jpg: bytes) -> None:
+        """Store a photo the camera uploaded (called from the upload endpoint)."""
+        if not jpg.startswith(b"\xff\xd8"):
+            raise ValueError("not a JPEG")
+        with self._upload_cond:
+            first = sid not in self._uploads
+            self._uploads[sid] = (jpg, time.time())
+            self._upload_cond.notify_all()
+        if first:
+            log.info("camera %s: first photo uploaded (%d bytes)", sid, len(jpg))
+
+    def _pushed_photo(self, sid: str) -> bytes:
+        """The first upload newer than this call, or the latest one if it's still recent."""
+        asked = time.time()
+        deadline = asked + self.push_wait_s
+        with self._upload_cond:
+            while True:
+                got = self._uploads.get(sid)
+                if got and got[1] >= asked:
+                    return got[0]
+                left = deadline - time.time()
+                if left <= 0:
+                    break
+                self._upload_cond.wait(left)
+        if got and asked - got[1] <= self.push_max_age_s:
+            return got[0]
+        if got:
+            raise RuntimeError(f"no photo from the camera for {asked - got[1]:.0f} s (is it online?)")
+        raise RuntimeError("the camera hasn't uploaded any photo yet (is it online?)")
+
     # ---------- blocking I/O (runs in a thread) ----------
+    def _photo_for(self, sid: str) -> bytes:
+        return self._pushed_photo(sid) if self.push_mode else self._photo()
+
     def _photo(self) -> bytes:
         if isinstance(self.source, int):
             if self._webcam is None:
@@ -328,11 +382,13 @@ class CameraGate:
     # ---------- introspection ----------
     def snapshot(self) -> dict:
         now = time.monotonic()
+        wall = time.time()
         return {
             "enabled": self.enabled,
             "problem": self.problem,
             "camera": self.source,
             "webcam_error": self._webcam.error if self._webcam else None,
+            "last_upload_age_s": {sid: round(wall - t, 1) for sid, (_, t) in self._uploads.items()},
             "sensors": {
                 sid: {
                     "holding_alert": sc.held,
