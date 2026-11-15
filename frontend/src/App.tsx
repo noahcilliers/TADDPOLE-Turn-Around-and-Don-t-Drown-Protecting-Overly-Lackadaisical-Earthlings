@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Welcome } from './components/Screens'
 import { DriveProvider } from './drive'
 import { Phone, Stage } from './layouts'
-import { connectLive, useStore } from './store'
+import { connectLive } from './store'
 
 function useLayout(): 'stage' | 'phone' {
   const forced = new URLSearchParams(location.search).get('view')
@@ -19,12 +18,10 @@ function useLayout(): 'stage' | 'phone' {
 
 export default function App() {
   const layout = useLayout()
-  const welcomed = useStore((s) => s.settings.welcomed)
   useEffect(() => { connectLive() }, [])
   return (
     <DriveProvider>
       {layout === 'stage' ? <Stage /> : <Phone />}
-      {layout === 'phone' && !welcomed && <Welcome />}
     </DriveProvider>
   )
 }

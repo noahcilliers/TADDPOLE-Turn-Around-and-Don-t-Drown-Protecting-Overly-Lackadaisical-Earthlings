@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import FloodMap, { type MapRoute } from './components/FloodMap'
 import { AlertFeed, SensorList } from './components/Lists'
-import { AlertOverlay, BlockedBar, ConnBanner, DemoPanel, Legend, LivePill, NavBanner, RouteCard, StatusChips, ToastView } from './components/Overlays'
-import { DestinationSearch, DriveSheet, SettingsPage, Summary } from './components/Screens'
+import { AlertOverlay, BlockedBar, ConnBanner, DemoPanel, Legend, LivePill, ToastView } from './components/Overlays'
+import { SettingsPage, Summary } from './components/Screens'
 import SensorPanel from './components/SensorPanel'
 import { Brand, Icon } from './components/icons'
 import { useDrive } from './drive'
-import { ago, depthText, STATUS_LABEL, trend } from './format'
 import { useStore } from './store'
 import type { LngLat } from './types'
 
@@ -138,101 +137,88 @@ export function Stage() {
 }
 
 // =============================== PHONE ===============================
-type PhoneTab = 'map' | 'drive' | 'alerts'
-type Page = null | 'sensors' | 'settings' | 'analytics'
+// The judges' view: opens straight on Drive, nothing on screen but the map, the car and
+// the alerts that matter. Mode switching and demo controls live on the presenter's laptop.
+type PhoneTab = 'sensors' | 'drive' | 'alerts'
 
 export function Phone() {
-  const [tab, setTab] = useState<PhoneTab>('map')
-  const [page, setPage] = useState<Page>(null)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [picking, setPicking] = useState(false)
-  const units = useStore((s) => s.settings.units)
-  const sensor = useStore((s) => (selected ? s.sensors[selected] : undefined))
-  const showRoute = tab === 'drive' || (tab === 'map' && !!selected === false)
-  const { sensors, hazards, routes, fitTo, drive } = useMapData(showRoute)
+  const [tab, setTab] = useState<PhoneTab>('drive')
+  const [detail, setDetail] = useState<string | null>(null)     // sensor id shown full-screen
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const { sensors, hazards, routes, fitTo, drive } = useMapData(true)
 
-  const select = (id: string | null) => { setSelected(id); if (id) { setTab('map'); setPage(null) } }
-  const onMapClick = picking ? (p: LngLat) => { drive.setDestination({ lnglat: p, name: 'Dropped pin' }); drive.setMode('nav'); setPicking(false); setTab('drive') } : undefined
+  const go = (t: PhoneTab) => { setTab(t); setDetail(null); setSettingsOpen(false) }
 
   return (
     <div className="phone">
       <FloodMap
-        sensors={sensors} hazards={hazards} routes={routes} car={tab === 'drive' || drive.demoActive ? drive.car : null}
-        destination={drive.mode === 'nav' && showRoute ? drive.destination?.lnglat ?? null : null}
-        selectedId={selected} onSelectSensor={select} onMapClick={onMapClick}
-        fitKey={`${sensors.length > 0}|${tab}|${drive.active?.id ?? ''}`} fitTo={fitTo}
-        padding={{ top: tab === 'drive' ? 150 : 200, right: 20, bottom: tab === 'drive' ? 300 : 120, left: 20 }}
-        follow={tab === 'drive'}
+        sensors={sensors} hazards={hazards} routes={routes} car={drive.car}
+        destination={drive.mode === 'nav' ? drive.destination?.lnglat ?? null : null}
+        selectedId={detail} onSelectSensor={(id) => setDetail(id)}
+        fitKey={`${sensors.length > 0}|${drive.active?.id ?? ''}`} fitTo={fitTo}
+        padding={{ top: 90, right: 20, bottom: 110, left: 20 }}
+        follow={tab === 'drive' && !detail}
       />
 
-      {/* top */}
-      {drive.alert && tab !== 'alerts' ? (
-        <div className="alert-top"><AlertOverlay alert={drive.alert} /></div>
-      ) : (
-        <div className="top">
-          {tab === 'map' && (
-            <>
-              <div className="row" style={{ justifyContent: 'space-between' }}>
-                <Brand />
-                <div className="row"><LivePill />
-                  <button className="pill" style={{ width: 40, padding: 0, justifyContent: 'center' }} onClick={() => setPage('sensors')} aria-label="All sensors"><Icon.Broadcast size={19} /></button>
-                  <button className="pill" style={{ width: 40, padding: 0, justifyContent: 'center' }} onClick={() => setPage('settings')} aria-label="Settings"><Icon.Settings size={19} /></button>
-                </div>
-              </div>
-              <DestinationSearch onPicked={(p) => { drive.setDestination(p); drive.setMode('nav'); setTab('drive') }} onPickOnMap={() => setPicking(true)} />
-              <StatusChips />
-              {picking && <div className="pill" style={{ alignSelf: 'center' }}>Tap the map to set your destination <button onClick={() => setPicking(false)} aria-label="Cancel"><Icon.Close size={16} /></button></div>}
-              <ConnBanner />
-            </>
-          )}
-          {tab === 'drive' && (
-            drive.toast ? <ToastView /> : drive.mode === 'nav' && drive.active && drive.demoActive ? <NavBanner /> : <RouteCard />
-          )}
-          {tab === 'drive' && <BlockedBar />}
-          {tab === 'map' && drive.toast?.tone === 'red' && <ToastView />}
+      {/* Drive: only alerts and short notices on top of the map */}
+      {tab === 'drive' && !detail && (
+        drive.alert ? (
+          <div className="alert-top"><AlertOverlay alert={drive.alert} /></div>
+        ) : (
+          <div className="top">
+            <div className="row" style={{ justifyContent: 'space-between' }}><Brand /><LivePill /></div>
+            <ConnBanner />
+            <ToastView />
+            <BlockedBar />
+          </div>
+        )
+      )}
+
+      {tab === 'sensors' && !detail && (
+        <div className="page">
+          <div className="row" style={{ justifyContent: 'space-between' }}>
+            <LivePill />
+            <button className="icon-btn" onClick={() => setSettingsOpen(true)} aria-label="Settings"><Icon.Settings size={19} /></button>
+          </div>
+          <SensorList title onSelect={setDetail} />
         </div>
       )}
 
-      {/* bottom */}
-      <div className="bottom">
-        {tab === 'map' && sensor && !page && (
-          <div className="sheet">
-            <div className="sp-head">
-              <div className="grow">
-                <div className={`sp-status st-${sensor.current.status}`}>{STATUS_LABEL[sensor.current.status]} · Updated {ago(sensor.current.last_reading_at)}</div>
-                <div className="sp-name">{sensor.name}</div>
-              </div>
-              <button className="icon-btn" onClick={() => setSelected(null)} aria-label="Close"><Icon.Close size={20} /></button>
-            </div>
-            <div className="depth" style={{ margin: '10px 0 14px' }}>
-              <div><span className="depth-big" style={{ fontSize: 52 }}>{depthText(sensor.current.depth_cm, units).big}</span><span className="depth-unit">{depthText(sensor.current.depth_cm, units).unit}</span>
-                <div className="depth-small">{depthText(sensor.current.depth_cm, units).small}</div></div>
-              <span style={{ fontWeight: 700 }}>{sensor.current.status === 'offline' ? 'No data' : trend(sensor.current.rate_cm_per_min).label}</span>
-            </div>
-            <button className="btn btn-blue" style={{ width: '100%' }} onClick={() => setPage('analytics')}><Icon.Clock size={20} />Analytics · past hours</button>
+      {tab === 'alerts' && !detail && (
+        <div className="page">
+          <div className="row" style={{ justifyContent: 'flex-end' }}><LivePill /></div>
+          <AlertFeed title onSelect={setDetail} />
+        </div>
+      )}
+
+      {detail && (
+        <div className="page" role="dialog" aria-label="Sensor details">
+          <div className="row" style={{ justifyContent: 'flex-end' }}>
+            <button className="icon-btn" onClick={() => setDetail(null)} aria-label="Close"><Icon.Close size={20} /></button>
           </div>
+          <SensorPanel id={detail} />
+        </div>
+      )}
+
+      {settingsOpen && (
+        <div className="page" role="dialog" aria-label="Settings" style={{ zIndex: 560 }}>
+          <div className="row" style={{ justifyContent: 'flex-end' }}>
+            <button className="icon-btn" onClick={() => setSettingsOpen(false)} aria-label="Close"><Icon.Close size={20} /></button>
+          </div>
+          <SettingsPage />
+        </div>
+      )}
+
+      <div className="bottom">
+        {tab === 'drive' && !detail && drive.arrived && (
+          <div className="sheet tall"><Summary trip={drive.arrived} onDone={() => drive.clearArrived()} /></div>
         )}
-        {tab === 'drive' && !drive.arrived && <DriveSheet />}
-        {tab === 'drive' && drive.arrived && <div className="sheet tall"><Summary trip={drive.arrived} onDone={() => { drive.clearArrived(); setTab('map') }} /></div>}
         <nav className="tabbar" aria-label="Main">
-          <button aria-pressed={tab === 'map' && !page} onClick={() => { setTab('map'); setPage(null) }}><Icon.Map size={22} />Map</button>
-          <button aria-pressed={tab === 'drive'} onClick={() => { setTab('drive'); setPage(null); setSelected(null) }}><Icon.Wheel size={22} />Drive</button>
-          <button aria-pressed={tab === 'alerts'} onClick={() => { setTab('alerts'); setPage(null) }}><Icon.Bell size={22} />Alerts</button>
+          <button aria-pressed={tab === 'sensors'} onClick={() => go('sensors')}><Icon.Broadcast size={22} />Sensors</button>
+          <button aria-pressed={tab === 'drive'} onClick={() => go('drive')}><Icon.Wheel size={22} />Drive</button>
+          <button aria-pressed={tab === 'alerts'} onClick={() => go('alerts')}><Icon.Bell size={22} />Alerts</button>
         </nav>
       </div>
-
-      {tab === 'alerts' && <div className="page"><div className="row" style={{ justifyContent: 'space-between' }}><span /><LivePill /></div><AlertFeed title onSelect={select} /></div>}
-      {page && (
-        <div className="page" role="dialog" aria-label={page}>
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            {page === 'analytics' ? <span /> : <LivePill />}
-            <button className="icon-btn" onClick={() => setPage(null)} aria-label="Close"><Icon.Close size={20} /></button>
-          </div>
-          {page === 'sensors' && <SensorList title onSelect={(id) => select(id)} />}
-          {page === 'settings' && <SettingsPage />}
-          {page === 'analytics' && selected && <div style={{ marginTop: 8 }}><SensorPanel id={selected} /></div>}
-        </div>
-      )}
     </div>
   )
 }
