@@ -317,25 +317,24 @@ input { font: inherit; color: inherit; }
 
 /* One bar for every notice: same height, padding, radius and type; only the colour changes. */
 .notice-bar {
-  display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px 10px 14px; border-radius: 20px;
+  display: flex; align-items: center; gap: 14px; min-height: 80px; padding: 14px 18px; border-radius: 22px;
   background: #fff; color: var(--ink); box-shadow: var(--shadow-lg); animation: drop .28s cubic-bezier(.2,.9,.3,1.2);
 }
 .notice-bar.red { background: var(--red); color: #fff; box-shadow: 0 14px 40px rgba(229,36,59,.35); }
 .notice-bar.yellow { background: var(--yellow); color: var(--ink); box-shadow: 0 14px 40px rgba(242,179,0,.35); }
-.notice-bar .nb-ic { width: 30px; height: 30px; flex: none; display: grid; place-items: center; }
-.notice-bar .t { font-weight: 800; font-size: 16px; line-height: 1.2; }
-.notice-bar .d { font-weight: 600; font-size: 14px; line-height: 1.25; opacity: .9; margin-top: 1px; }
+.notice-bar .nb-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; }
+.notice-bar .t { font-weight: 800; font-size: 19px; line-height: 1.2; }
+.notice-bar .d { font-weight: 600; font-size: 15px; line-height: 1.3; opacity: .92; margin-top: 2px; }
 .notice-bar.white .d { color: var(--ink-2); opacity: 1; }
-.notice-bar .nb-go { flex: none; background: #fff; color: var(--red-dark); }
-.notice-bar.yellow .nb-go { background: var(--ink); color: #fff; }
-.notice-bar .nb-go:disabled { opacity: .85; cursor: progress; }
-.notice-bar .nb-x { width: 34px; height: 34px; flex: none; border-radius: 12px; display: grid; place-items: center; color: inherit; background: rgba(255,255,255,.18); }
-.notice-bar.yellow .nb-x { background: rgba(15,23,42,.1); }
-.notice-bar .nb-x:hover { background: rgba(255,255,255,.28); }
-.notice-bar .nb-dot { width: 30px; height: 30px; border-radius: 99px; display: grid; place-items: center; color: #fff; background: var(--blue); }
+/* status on the right ("Rerouting…"): information, not a button */
+.notice-bar .nb-state { flex: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; padding: 7px 11px; border-radius: 99px; background: rgba(255,255,255,.2); }
+.notice-bar.yellow .nb-state { background: rgba(15,23,42,.1); }
+.notice-bar .nb-spin { width: 14px; height: 14px; border-radius: 99px; border: 2.5px solid currentColor; border-right-color: transparent; animation: nb-spin .8s linear infinite; }
+@keyframes nb-spin { to { transform: rotate(360deg) } }
+.notice-bar .nb-dot { width: 36px; height: 36px; border-radius: 99px; display: grid; place-items: center; color: #fff; background: var(--blue); }
 .notice-bar .nb-dot.green { background: var(--green); }
 .notice-bar .nb-dot.red { background: var(--red); }
-.phone .notice-bar { min-height: 58px; padding: 8px 10px 8px 12px; gap: 10px; border-radius: 18px; }
-.phone .notice-bar .t { font-size: 15px; }
-.phone .notice-bar .d { font-size: 13px; }
-.phone .notice-bar .btn-sm { padding: 0 10px; }
+.phone .notice-bar { min-height: 72px; padding: 12px 14px; gap: 12px; border-radius: 20px; }
+.phone .notice-bar .t { font-size: 17px; }
+.phone .notice-bar .d { font-size: 14px; }
+.phone .notice-bar .nb-state { font-size: 13px; padding: 6px 9px; }

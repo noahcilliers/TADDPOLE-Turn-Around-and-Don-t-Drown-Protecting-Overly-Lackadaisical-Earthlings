@@ -59,17 +59,14 @@ function Bar({ tone, icon, title, detail, children }: {
   )
 }
 
-/** The flood / rising-water notice: stays put until the driver taps Reroute or ×. */
+/** The flood / rising-water notice. Purely information: the app reroutes on its own. */
 export function NoticeBar() {
   const drive = useDrive()
   const n = drive.notice
   if (!n) return null
   return (
-    <Bar tone={n.tone} icon={<StatusIcon status={n.tone === 'yellow' ? 'caution' : 'flooded'} size={26} />} title={n.title} detail={n.detail}>
-      <button className="btn btn-sm nb-go" onClick={drive.rerouteNow} disabled={drive.rerouting}>
-        <Icon.Reroute size={18} />{drive.rerouting ? 'Rerouting…' : 'Reroute'}
-      </button>
-      {n.dismissible && <button className="nb-x" onClick={drive.dismissAlert} disabled={drive.rerouting} aria-label="Dismiss"><Icon.Close size={18} /></button>}
+    <Bar tone={n.tone} icon={<StatusIcon status={n.tone === 'yellow' ? 'caution' : 'flooded'} size={32} />} title={n.title} detail={n.detail}>
+      {n.state && <span className="nb-state" role="status">{n.state === 'rerouting' && <span className="nb-spin" aria-hidden />}{n.state === 'rerouting' ? 'Rerouting…' : 'Waiting'}</span>}
     </Bar>
   )
 }
@@ -77,7 +74,10 @@ export function NoticeBar() {
 export function ToastView() {
   const { toast } = useDrive()
   if (!toast) return null
-  const icon = toast.tone === 'green' ? <Icon.Flag size={16} /> : toast.tone === 'red' ? <Icon.Close size={16} /> : <Icon.Shield size={16} />
+  // Flood-related messages (e.g. "Rerouted around flooding") stay red, so the flood alert and
+  // its outcome read as one continuous notice.
+  if (toast.tone === 'red') return <Bar tone="red" icon={<StatusIcon status="flooded" size={32} />} title={toast.title} detail={toast.detail} />
+  const icon = toast.tone === 'green' ? <Icon.Flag size={20} /> : <Icon.Shield size={20} />
   return <Bar tone="white" icon={<span className={`nb-dot ${toast.tone}`}>{icon}</span>} title={toast.title} detail={toast.detail} />
 }
 

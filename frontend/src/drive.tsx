@@ -21,6 +21,8 @@ const STALL_RADIUS_M = 2500
 const FLOOD_STICKY_MS = 30_000                      // a dip that just read flooded stays 'flooded' this long (noisy sensors)
 const CONE_DEG = 20
 const ON_ROUTE_M = 35
+const AUTO_REROUTE_MS = 1500   // the flood alert shows this long before the app reroutes by itself
+const RETRY_REROUTE_MS = 8000  // no way around yet: try again this often
 
 export type AlertLevel = 'caution' | 'flooded' | 'stalled'
 export interface DriveAlert {
@@ -39,6 +41,8 @@ export interface Notice {
   detail: string
   /** false for "stopped before …": that one stays until the driver reroutes or the water clears */
   dismissible: boolean
+  /** red notices: the app is rerouting by itself, or found no way around and is holding */
+  state?: 'rerouting' | 'waiting'
 }
 export interface Toast { id: number; title: string; detail: string; tone: 'blue' | 'green' | 'red' }
 export interface TripSummary {
@@ -320,26 +324,27 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const rerouting = useRef(false)
   const [reroutingNow, setReroutingNow] = useState(false)
 
-  const reroute = useCallback(async (reason: Sensor | Hazard | null, forceToast = false) => {
-    if (rerouting.current || !destination) return
+  /** Returns true if the car is now on a new route. */
+  const reroute = useCallback(async (reason: Sensor | Hazard | null, forceToast = false): Promise<boolean> => {
+    if (rerouting.current || !destination) return false
     const from = carRef.current?.pos ?? origin
-    if (!from) return
+    if (!from) return false
     rerouting.current = true
     setReroutingNow(true)
     try {
       const r = await fetchRoutes(from, destination.lnglat)
-      if (!r) return
+      if (!r) return false
       const next = recommended(r)
       const prev = activeRef.current
       setRoutes(r)
-      if (!next) return
+      if (!next) return false
       const prevRemaining = prev ? sliceFrom(prev.geometry.coordinates, traveledRef.current) : null
       const changed = !prev || JSON.stringify(next.geometry.coordinates.slice(-3)) !== JSON.stringify(prevRemaining?.slice(-3)) ||
         Math.abs(lineLength(next.geometry.coordinates) - (prevRemaining ? lineLength(prevRemaining) : 0)) > 25
       if (!changed) {
         if (forceToast) showToast(next.safe ? 'Current route is still the best' : 'No flood-free route right now',
           next.safe ? 'Water is rising but still passable. You\'ll be warned if it floods.' : 'Every way through is flooded. Wait here or turn around.', next.safe ? 'blue' : 'red')
-        return
+        return false
       }
       setAbandoned(prevRemaining)
       trip.current.drivenBefore_m += traveledRef.current // the new route starts where the car is
@@ -351,13 +356,16 @@ export function DriveProvider({ children }: { children: ReactNode }) {
         const name = avoided[0]?.name ?? (reason && 'name' in reason ? reason.name : 'a flooded road')
         const delta = next.delta_vs_fastest_s ?? 0
         const what = reason && 'kind' in reason ? 'stalled car' : 'flooded dip'
-        const detail = next.safe ? `+${Math.max(1, Math.round(delta / 60))} min, avoids ${what} at ${name}` : 'No flood-free route right now. Wait or turn around.'
-        showToast('Route recalculated', detail)
+        const detail = next.safe ? `+${Math.max(1, Math.round(delta / 60))} min · avoids ${what} at ${name}` : 'No flood-free route right now. Wait or turn around.'
+        // Rerouted because of a flood / stalled car: keep it red, it's the outcome of that alert.
+        if (reason) showToast(next.safe ? `Rerouted around ${'kind' in reason ? 'stalled car' : 'flooding'}` : 'No flood-free route', detail, 'red')
+        else showToast('Route recalculated', detail)
         trip.current.reroutes.push(new Date().toISOString())
         pushLocal('Route recalculated', detail, { icon: 'shield', tone: 'blue' })
       } else if (prev && prev.kind === 'safer' && next.kind === 'fastest') {
         showToast('Road reopened', 'Back on the fastest route', 'green')
       }
+      return true
     } finally { rerouting.current = false; setReroutingNow(false) }
   }, [destination, origin, fetchRoutes, showToast])
 
@@ -461,7 +469,34 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       dismissible: false,
     }
   }
-  // Between tapping Reroute and the new route arriving, keep showing exactly what was tapped:
+  // ---------- automatic reroute ----------
+  // A flood or stalled car on the route: show the alert, hold the car, and reroute by itself
+  // after a moment. If there's no way around yet, keep holding and try again every few seconds.
+  const autoTarget = visibleAlert && visibleAlert.level !== 'caution'
+    ? { key: visibleAlert.key, reason: visibleAlert.hazard ?? visibleAlert.sensor }
+    : blocked ? { key: `blocked:${blocked.hazard?.id ?? blocked.sensor?.id ?? ''}`, reason: blocked.hazard ?? blocked.sensor } : null
+  const autoRef = useRef(autoTarget); autoRef.current = autoTarget
+  const [autoFail, setAutoFail] = useState<{ key: string; n: number } | null>(null)
+  const autoKey = autoTarget?.key ?? null
+  const failedHere = autoFail && autoFail.key === autoKey ? autoFail.n : 0
+  useEffect(() => {
+    if (!autoKey) return
+    const t = window.setTimeout(async () => {
+      const target = autoRef.current
+      if (!target || target.key !== autoKey) return
+      const ok = await reroute(target.reason, false)
+      if (ok) { setDismissed((s) => new Set(s).add(autoKey)); setAutoFail(null) }
+      else setAutoFail({ key: autoKey, n: failedHere + 1 })
+    }, failedHere ? RETRY_REROUTE_MS : AUTO_REROUTE_MS)
+    return () => window.clearTimeout(t)
+  }, [autoKey, failedHere, reroute])
+  if (live && live.tone === 'red') {
+    live.dismissible = false
+    if (failedHere) { live.state = 'waiting'; live.detail = 'No flood-free route right now · holding here' }
+    else live.state = 'rerouting'
+  }
+
+  // Between starting a reroute and the new route arriving, keep showing exactly what was on screen:
   // otherwise the alert would vanish, the "stopped" bar flash up, then the result toast appear.
   const noticeRef = useRef<Notice | null>(null)
   const notice = reroutingNow ? noticeRef.current : live
