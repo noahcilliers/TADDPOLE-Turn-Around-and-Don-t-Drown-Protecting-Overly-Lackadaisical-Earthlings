@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import type { Hazard, LngLat, Sensor, Status } from '../types'
 import { statusSvg } from './pinSvg'
 import { FROG_SVG_INNER } from './frogSvg'
+import { enableTrackpadPinch } from './trackpadPinch'
 
 export interface MapRoute { coords: LngLat[]; style: 'active' | 'abandoned' | 'alt' }
 export interface MapCar { pos: LngLat; heading: number }
@@ -144,6 +145,8 @@ export default function FloodMap(p: Props) {
     c.addEventListener('pointerdown', touched)
     c.addEventListener('wheel', touched, { passive: true })
     c.addEventListener('touchstart', touched, { passive: true })
+    // Laptop trackpad pinch: follow the fingers continuously, like touch pinch on phones.
+    const disablePinch = enableTrackpadPinch(m, touched)
     // The car glides between updates (CSS transition) but must snap during zoom.
     m.on('zoomstart', () => c.classList.add('fr-zooming'))
     m.on('zoomend', () => window.setTimeout(() => c.classList.remove('fr-zooming'), 50))
@@ -159,6 +162,7 @@ export default function FloodMap(p: Props) {
       c.removeEventListener('pointerdown', touched)
       c.removeEventListener('wheel', touched)
       c.removeEventListener('touchstart', touched)
+      disablePinch()
       // Stop pan/zoom animations first: removing a map mid-zoom makes Leaflet's
       // transitionend handler touch a pane that no longer exists.
       m.stop(); m.off()
