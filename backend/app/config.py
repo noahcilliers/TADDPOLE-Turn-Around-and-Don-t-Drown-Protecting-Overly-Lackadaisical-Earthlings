@@ -58,6 +58,16 @@ class Settings(BaseSettings):
     discord_mention: str = ""                     # ping on `flooded`: everyone, here, or a role ID
     discord_app_url: str = ""                     # link embeds to the live map
 
+    # Camera water check (app/camera.py). Empty GEMINI_API_KEY = off (alerts work as before).
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.5-flash"
+    camera: str = "0"                             # webcam number (0 built-in, 1 USB, ...) or JPEG URL
+    camera_token: str = ""                        # shared secret with scripts/camera_server.py (URL mode)
+    camera_sensors: str = "water_tank_1"          # comma-separated sensors the camera is pointed at
+    camera_verdict_max_age_s: float = 30.0        # a verdict this old is stale; take a new photo
+    camera_recheck_s: float = 10.0                # while blocked as "not water", re-look this often
+    camera_timeout_s: float = 30.0                # give up on Gemini after this long (then fail open)
+
     # API
     cors_origins: str = "*"               # comma-separated
     admin_token: str = ""                 # required for /admin/*; empty disables admin endpoints

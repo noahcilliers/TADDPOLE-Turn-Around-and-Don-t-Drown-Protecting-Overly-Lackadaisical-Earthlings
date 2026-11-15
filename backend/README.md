@@ -67,6 +67,26 @@ Send a test alert:
 curl -X POST -H "X-Admin-Token: $ADMIN_TOKEN" http://localhost:8000/admin/discord/test
 ```
 
+## Camera water check
+
+Before a camera-equipped sensor's status goes **up** (clear → caution, → flooded), the poller grabs a webcam frame and asks Gemini whether the surface under the sensor is water (`app/camera.py`). If it is **not** water (toy car, hand, box, dry ground), the status is held where it was, so no Discord alert, live alert or reroute fires. It re-looks every 10 s while blocked. Going down is never gated. If the camera or Gemini fails, or the photo is "unclear", it **fails open** (alerts as before), since a missed flood is worse than a false one.
+
+- `.env`: `GEMINI_API_KEY=...` (empty = off), `CAMERA=1` (webcam number, or a JPEG URL), `CAMERA_SENSORS=water_tank_1`
+- Install: `uv pip install --python .venv/bin/python -r requirements-camera.txt` (opencv; only on the laptop the webcam is plugged into)
+- macOS: give your terminal camera permission (System Settings → Privacy & Security → Camera)
+
+**Deployed (EC2 has no webcam):** the laptop serves the webcam frame and EC2 fetches it through a tunnel.
+
+1. Laptop `.env`: `CAMERA=1` and `CAMERA_TOKEN=<random>` (`python3 -c 'import secrets; print(secrets.token_urlsafe(24))'`).
+2. Laptop, terminal 1: `.venv/bin/python scripts/camera_server.py` (serves `127.0.0.1:8090/snapshot.jpg`, needs header `X-Camera-Token`).
+3. Laptop, terminal 2: `brew install cloudflared` once, then `cloudflared tunnel --url http://localhost:8090`. Note the `https://….trycloudflare.com` URL it prints (it changes every time you restart it).
+4. EC2 `/opt/floodroute/backend/.env`: `GEMINI_API_KEY=…`, `CAMERA=https://….trycloudflare.com/snapshot.jpg`, the same `CAMERA_TOKEN`. Then deploy (`google-genai` is in `requirements.txt`), or after only an `.env` change: `docker compose up -d api`.
+5. Check: `https://<domain>/health` → `camera.enabled: true`; after a rise, `camera.sensors.water_tank_1` shows the verdict.
+
+If the laptop sleeps or the tunnel drops, checks fail and alerts go out unchecked (fail open). Keep the laptop awake (`caffeinate -d`).
+- Status: `GET /health` → `camera`; last photo sent to Gemini: `GET /camera/water_tank_1/last.jpg`
+- The scripted demo (`/v1/demo`) bypasses the check. `/admin/.../simulate` readings do not, so the camera will block them unless it sees water.
+
 ## Run locally
 
 ```bash

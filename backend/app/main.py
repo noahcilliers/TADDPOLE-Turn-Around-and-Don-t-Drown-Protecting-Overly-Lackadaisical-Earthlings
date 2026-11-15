@@ -8,11 +8,12 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ValidationError
 
 from . import db
+from .camera import CameraGate
 from .config import Settings, get_settings
 from .hub import Hub, now_iso
 from .demo import DemoController
@@ -107,6 +108,13 @@ async def lifespan(app: FastAPI):
         mention=cfg.discord_mention,
     )
     poller.discord = discord
+    camera = CameraGate(
+        api_key=cfg.gemini_api_key, camera=cfg.camera, camera_token=cfg.camera_token, sensor_ids=cfg.camera_sensors.split(","),
+        model=cfg.gemini_model, verdict_max_age_s=cfg.camera_verdict_max_age_s,
+        recheck_s=cfg.camera_recheck_s, timeout_s=cfg.camera_timeout_s,
+    )
+    camera.start()
+    poller.camera = camera
     await poller.start()
 
     sim = ProfileSimulator(pool, [(r.sensor_id, r.signal) for r in poller.sensor_rows.values() if r.simulated],
@@ -122,7 +130,7 @@ async def lifespan(app: FastAPI):
     ]
 
     app.state.cfg, app.state.hub, app.state.pool, app.state.poller = cfg, hub, pool, poller
-    app.state.discord = discord
+    app.state.discord, app.state.camera = discord, camera
     app.state.live, app.state.hazards, app.state.demo = live, hazards, demo
     try:
         yield
@@ -174,7 +182,17 @@ async def health():
         "last_error": p.last_error,
         "routing": app.state.hub.network is not None,
         "clients": len(app.state.hub.clients),
+        "camera": app.state.camera.snapshot(),
     }
+
+
+@app.get("/camera/{sensor_id}/last.jpg")
+async def camera_last_photo(sensor_id: str):
+    """The last photo the camera check sent to Gemini for this sensor (for aiming / debugging)."""
+    sc = app.state.camera.sensors.get(sensor_id)
+    if sc is None or sc.last_jpeg is None:
+        raise HTTPException(404, "no camera photo yet for this sensor")
+    return Response(sc.last_jpeg, media_type="image/jpeg", headers={"Cache-Control": "no-store"})
 
 
 @app.get("/config")

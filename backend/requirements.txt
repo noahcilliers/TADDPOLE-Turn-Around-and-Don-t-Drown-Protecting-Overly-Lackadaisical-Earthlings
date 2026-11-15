@@ -5,3 +5,4 @@ pydantic-settings==2.16.3
 networkx==3.7
 numpy==2.5.4
 osmnx==2.1.1
+google-genai==3.3.0   # camera water check (app/camera.py); opencv is only needed on the webcam laptop

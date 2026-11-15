@@ -21,6 +21,8 @@ from .status import RISK_ORDER, Status, classify, rise_rate, smoothed_depth
 
 log = logging.getLogger(__name__)
 
+SEVERITY = {Status.CLEAR: 0, Status.OFFLINE: 0, Status.CAUTION: 1, Status.FLOODED: 2}
+
 
 @dataclass
 class SensorState:
@@ -54,6 +56,7 @@ class Poller:
         self.live = None           # app.live.Live
         self.hazards = None        # app.hazards.HazardStore
         self.discord = None        # app.discord_alerts.DiscordAlerts
+        self.camera = None         # app.camera.CameraGate
 
     @property
     def status(self) -> dict[str, Status]:
@@ -199,6 +202,15 @@ class Poller:
                     caution_cm=cfg.caution_cm, flooded_cm=cfg.flooded_cm,
                     rise_rate_cm_per_min=cfg.rise_rate_cm_per_min, hysteresis_cm=cfg.hysteresis_cm,
                 )
+                # Camera check: only let the status go UP if the camera agrees it's water.
+                # Not water (or still checking) -> hold the old status and its last depth,
+                # so no alert, Discord post or reroute fires for a car parked under the sensor.
+                if (SEVERITY[new] > SEVERITY[base] and self.camera is not None and self.camera.covers(sid)
+                        and not (sid == self.demo_sensor and self.demo_scripted())
+                        and self.camera.decide(sid, depth) != "allow"):
+                    new = base
+                    if st.depth is not None:
+                        depth, rise = st.depth, st.rate
 
             # A demo reset flipped the in-memory status to clear; report the transition from
             # what clients last saw (the persisted status) so they get a status_changed event.

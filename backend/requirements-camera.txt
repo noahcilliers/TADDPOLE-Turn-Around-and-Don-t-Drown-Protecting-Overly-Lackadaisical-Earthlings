@@ -1,0 +1,4 @@
+# Optional: camera water check (app/camera.py). Only needed on the machine the webcam is plugged into.
+# pip install -r requirements-camera.txt
+-r requirements.txt
+opencv-python-headless
