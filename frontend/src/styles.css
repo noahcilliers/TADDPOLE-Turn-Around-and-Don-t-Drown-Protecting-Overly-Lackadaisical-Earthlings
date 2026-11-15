@@ -104,10 +104,10 @@ input { font: inherit; color: inherit; }
 .brand { height: 52px; padding: 0 20px; display: inline-flex; align-items: center; flex-shrink: 0; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
 .brand-word { font-weight: 800; font-size: 25px; letter-spacing: 0.01em; color: var(--ink); white-space: nowrap; }
 .brand-word b { color: var(--blue); font-weight: 800; }
-/* the frog's face stands in for the O, centred on the capitals (cap height ≈ 0.72em, so its middle
-   is 0.36em above the baseline). The -0.2em margins keep it from making the line taller; since
-   vertical-align places the margin edge, the face's own bottom ends up at 0.36 - 1.1/2 = -0.19em. */
-.brand-frog { display: inline-block; width: 1.02em; height: 1.1em; vertical-align: 0.01em; margin: -0.2em 0.02em; overflow: visible; }
+/* the hooded frog face stands in for the O, centred on the capitals (cap height ≈ 0.72em, so its
+   middle is 0.36em above the baseline). The -0.2em margins keep it from making the line taller; since
+   vertical-align places the margin edge, its own bottom ends up at 0.36 - 1.25/2 = -0.265em. */
+.brand-frog { display: inline-block; width: 1.35em; height: 1.25em; vertical-align: -0.065em; margin: -0.2em 0.01em; overflow: visible; }
 .live-dot { width: 10px; height: 10px; border-radius: 99px; background: var(--green); box-shadow: 0 0 0 3px #DCEADF; }
 .live-dot.warn { background: var(--yellow); box-shadow: 0 0 0 3px #FFF3C4; }
 .live-dot.down { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
@@ -126,6 +126,11 @@ input { font: inherit; color: inherit; }
 .leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.75) !important; }
 .leaflet-control-zoom { border: 0 !important; box-shadow: var(--shadow) !important; border-radius: 12px !important; overflow: hidden; }
 .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; color: var(--ink) !important; }
+.fr-recenter { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; background: #fff; border: 0 !important; border-radius: 14px !important; box-shadow: var(--shadow) !important; cursor: pointer; transition: transform .15s; }
+.fr-recenter:hover { transform: scale(1.06); }
+.fr-recenter:active { transform: scale(.95); }
+.fr-recenter svg { overflow: visible; filter: drop-shadow(0 1px 2px rgba(30,64,175,.35)); }
+.fr-recenter.off { display: none; }
 .fr-pin { background: none; border: 0; }
 .fr-pin .ring { width: 44px; height: 44px; border-radius: 99px; display: grid; place-items: center; transition: transform .15s; }
 .fr-pin.selected .ring { background: #fff; box-shadow: 0 0 0 4px var(--blue), 0 4px 14px rgba(37,99,235,.35); }
@@ -319,6 +324,8 @@ input { font: inherit; color: inherit; }
 .phone .chip { height: 30px; font-size: 13px; padding: 0 9px; }
 .phone .where { height: 50px; }
 .phone .leaflet-control-zoom { display: none; }
+/* lift the mascot button clear of the floating tab bar */
+.phone .leaflet-bottom.leaflet-left { bottom: calc(84px + var(--safe-b)); }
 .demo-row { gap: 6px; }
 .demo-row > .btn.grow { min-width: 104px; }
 .demo-row > label.btn { padding: 0 10px; }

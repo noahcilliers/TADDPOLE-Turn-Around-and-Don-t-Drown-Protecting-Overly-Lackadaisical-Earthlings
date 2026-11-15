@@ -77,6 +77,8 @@ export default function FloodMap(p: Props) {
   const renderers = useRef<{ segments: L.Renderer; route: L.Renderer } | null>(null)
   /** Frog's on-screen rotation, unwrapped (may go past 360) so CSS never spins the long way. */
   const carRot = useRef<number | null>(null)
+  const recenterBtn = useRef<HTMLButtonElement | null>(null)
+  const recenter = useRef(() => {})
   const userAt = useRef(0)
   const panning = useRef(false)
   const cb = useRef(p)
@@ -98,6 +100,22 @@ export default function FloodMap(p: Props) {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(m)
     L.control.zoom({ position: 'bottomleft' }).addTo(m)
+    // "Back to the driver": the mascot, sitting just above +/- (bottom corners stack upward,
+    // so a control added after the zoom one lands on top of it).
+    const Recenter = L.Control.extend({
+      onAdd: () => {
+        const b = L.DomUtil.create('button', 'fr-recenter leaflet-bar') as HTMLButtonElement
+        b.type = 'button'
+        b.title = 'Back to the driver'
+        b.setAttribute('aria-label', 'Back to the driver')
+        b.innerHTML = `<svg viewBox="8 0 44 60" width="30" height="34">${FROG_SVG_INNER}</svg>`
+        L.DomEvent.disableClickPropagation(b)
+        L.DomEvent.on(b, 'click', () => recenter.current())
+        recenterBtn.current = b
+        return b
+      },
+    })
+    new Recenter({ position: 'bottomleft' }).addTo(m)
     m.createPane('segments').style.zIndex = '420'
     m.createPane('route').style.zIndex = '430'
     // One SVG renderer per pane with a generous padding: lines are clipped to the view plus
@@ -148,6 +166,7 @@ export default function FloodMap(p: Props) {
       m.remove(); map.current = null
       // these all belonged to the map we just removed
       carMarker.current = null; destMarker.current = null; routeLayers.current = null; renderers.current = null
+      recenterBtn.current = null
       sensors.clear(); hazards.clear()
     }
   }, [])
@@ -236,6 +255,22 @@ export default function FloodMap(p: Props) {
       }
     }
   }, [p.hazards])
+
+  // Mascot button: fly back to the car (keeping the overlay padding in mind) and resume following.
+  recenter.current = () => {
+    const m = map.current, car = cb.current.car
+    if (!m || !car) return
+    const pad = cb.current.padding ?? { top: 0, right: 0, bottom: 0, left: 0 }
+    const z = Math.max(m.getZoom(), 15)
+    // shift the centre so the car sits in the middle of the area not covered by overlays
+    const off = L.point((pad.right - pad.left) / 2, (pad.bottom - pad.top) / 2)
+    const target = m.unproject(m.project(ll(car.pos), z).add(off), z)
+    userAt.current = 0
+    m.setView(target, z, { animate: true, duration: 0.6 })
+  }
+  useEffect(() => {
+    recenterBtn.current?.classList.toggle('off', !p.car)
+  }, [p.car])
 
   // car
   useEffect(() => {
