@@ -23,9 +23,8 @@ const COAT = `
 
 /** Hood framing the face (drawn behind it), with a white outline for contrast on the map. */
 const HOOD = `
-  <path d="${HOOD_PATH}" fill="none" stroke="#fff" stroke-width="4.5"/>
-  <path d="${HOOD_PATH}" fill="${COAT_YELLOW}" stroke="${COAT_TRIM}" stroke-width="1.2"/>
-  <path d="M30 3 L30 7" stroke="${COAT_TRIM}" stroke-width="1.2" stroke-linecap="round"/>`
+  <path d="${HOOD_PATH}" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="${HOOD_PATH}" fill="${COAT_YELLOW}" stroke="${COAT_TRIM}" stroke-width="1.2" stroke-linejoin="round"/>`
 
 /** Just the face (eyes, head, smile). `skin` is the head colour, `line` the smile. */
 export const frogFace = (skin: string, line: string) => `

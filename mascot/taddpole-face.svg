@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -1 40 40">
-  <path d="M13 30 C11 12,20 3,30 3 C40 3,49 12,47 30 C42 37.5,18 37.5,13 30 Z" fill="none" stroke="#fff" stroke-width="4.5"/>
-  <path d="M13 30 C11 12,20 3,30 3 C40 3,49 12,47 30 C42 37.5,18 37.5,13 30 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="1.2"/>
-  <path d="M30 3 L30 7" stroke="#CA8A04" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M13 30 C11 12,20 3,30 3 C40 3,49 12,47 30 C42 37.5,18 37.5,13 30 Z" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M13 30 C11 12,20 3,30 3 C40 3,49 12,47 30 C42 37.5,18 37.5,13 30 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="1.2" stroke-linejoin="round"/>
   <circle cx="24" cy="16" r="5.5" fill="#2563EB" stroke="#fff" stroke-width="2.5"/><circle cx="36" cy="16" r="5.5" fill="#2563EB" stroke="#fff" stroke-width="2.5"/>
   <ellipse cx="30" cy="25" rx="12" ry="10.5" fill="#2563EB" stroke="#fff" stroke-width="2.5"/>
   <circle cx="24" cy="16" r="4" fill="#2563EB"/><circle cx="36" cy="16" r="4" fill="#2563EB"/>
