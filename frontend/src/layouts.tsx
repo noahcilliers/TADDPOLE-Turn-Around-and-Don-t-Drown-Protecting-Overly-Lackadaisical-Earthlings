@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import FloodMap, { type MapRoute } from './components/FloodMap'
 import { AlertFeed, SensorList } from './components/Lists'
 import { AlertOverlay, BlockedBar, ConnBanner, DemoPanel, Legend, LivePill, ToastView } from './components/Overlays'
-import { SettingsPage, Summary } from './components/Screens'
+import { SettingsPage } from './components/Screens'
 import SensorPanel from './components/SensorPanel'
 import { Brand, Icon } from './components/icons'
 import { useDrive } from './drive'
@@ -210,9 +210,6 @@ export function Phone() {
       )}
 
       <div className="bottom">
-        {tab === 'drive' && !detail && drive.arrived && (
-          <div className="sheet tall"><Summary trip={drive.arrived} onDone={() => drive.clearArrived()} /></div>
-        )}
         <nav className="tabbar" aria-label="Main">
           <button aria-pressed={tab === 'sensors'} onClick={() => go('sensors')}><Icon.Broadcast size={22} />Sensors</button>
           <button aria-pressed={tab === 'drive'} onClick={() => go('drive')}><Icon.Wheel size={22} />Drive</button>

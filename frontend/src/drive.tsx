@@ -10,7 +10,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api } from './api'
 import { along, angleDiff, bearing, dist, headingAt, lineLength, project, sliceFrom } from './geo'
-import { fmtDuration, feetHint } from './format'
+import { feetHint } from './format'
 import { onDomainEvent, pushLocal, store, useStore } from './store'
 import type { DemoSession, Hazard, LngLat, Route, RoutesResponse, Sensor } from './types'
 
@@ -469,9 +469,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       arrived_at: new Date().toISOString(),
     }
     setArrived(summary)
-    const avoidedTxt = summary.avoided.length ? `Avoided ${summary.avoided.length} flooded dip${summary.avoided.length > 1 ? 's' : ''}` : 'No hazards on the way'
-    showToast('You arrived safely', `${avoidedTxt}${summary.reroutes.length ? ` · ${fmtDuration(Math.max(60, summary.delta_s))} extra` : ''}`, 'green')
-    pushLocal('Arrived safely', avoidedTxt, { icon: 'flag', tone: 'green' })
+    // Arrival is silent on purpose (minimal UI): the car just stops at the destination.
   }, [traveled, pathLen, mode, active, demoActive, arrived, routes, demoS, destination, abandoned, sensorsMap, showToast])
 
   const value: DriveApi = {
