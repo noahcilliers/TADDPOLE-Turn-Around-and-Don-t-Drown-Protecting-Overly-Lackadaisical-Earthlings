@@ -72,6 +72,7 @@ export default function FloodMap(p: Props) {
   const destMarker = useRef<L.Marker | null>(null)
   const hazardMarkers = useRef(new Map<string, L.Marker>())
   const carMarker = useRef<L.Marker | null>(null)
+  const renderers = useRef<{ segments: L.Renderer; route: L.Renderer } | null>(null)
   /** Frog's on-screen rotation, unwrapped (may go past 360) so CSS never spins the long way. */
   const carRot = useRef<number | null>(null)
   const userAt = useRef(0)
@@ -97,8 +98,15 @@ export default function FloodMap(p: Props) {
     L.control.zoom({ position: 'bottomleft' }).addTo(m)
     m.createPane('segments').style.zIndex = '420'
     m.createPane('route').style.zIndex = '430'
+    // One SVG renderer per pane with a generous padding: lines are clipped to the view plus
+    // this margin, so a tight margin makes line ends get re-clipped mid-zoom (visible wobble).
+    renderers.current = {
+      segments: L.svg({ pane: 'segments', padding: 0.6 }),
+      route: L.svg({ pane: 'route', padding: 0.6 }),
+    }
 
-    const line = (o: L.PolylineOptions) => L.polyline([], { interactive: false, pane: 'route', ...o }).addTo(m)
+    // smoothFactor 0: Leaflet otherwise re-simplifies lines per zoom level, so their shape shifts as you zoom
+    const line = (o: L.PolylineOptions) => L.polyline([], { interactive: false, pane: 'route', renderer: renderers.current!.route, smoothFactor: 0, ...o }).addTo(m)
     routeLayers.current = {
       abandoned: line({ color: '#94A3B8', weight: 5, dashArray: '1 10', lineCap: 'round' }),
       alt: line({ color: '#E5243B', weight: 5, opacity: 0.55, dashArray: '8 8' }),
@@ -137,7 +145,7 @@ export default function FloodMap(p: Props) {
       ;(m as unknown as { _animatingZoom: boolean })._animatingZoom = false
       m.remove(); map.current = null
       // these all belonged to the map we just removed
-      carMarker.current = null; destMarker.current = null; routeLayers.current = null
+      carMarker.current = null; destMarker.current = null; routeLayers.current = null; renderers.current = null
       sensors.clear(); hazards.clear()
     }
   }, [])
@@ -157,7 +165,7 @@ export default function FloodMap(p: Props) {
       const locKey = s.location.coordinates.join(',')
       let layer = sensorLayers.current.get(s.id)
       if (!layer) {
-        const opt = { pane: 'segments', interactive: false, lineCap: 'round' as const }
+        const opt = { pane: 'segments', interactive: false, lineCap: 'round' as const, renderer: renderers.current?.segments, smoothFactor: 0 }
         const marker = L.marker(ll(s.location.coordinates), { icon: pinIcon(st, selected), title: `${s.name}: ${st}`, keyboard: true, riseOnHover: true })
         marker.on('click', (e) => { L.DomEvent.stopPropagation(e); cb.current.onSelectSensor(s.id) })
         layer = {

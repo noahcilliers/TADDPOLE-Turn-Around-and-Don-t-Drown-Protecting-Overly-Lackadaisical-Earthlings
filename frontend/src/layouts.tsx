@@ -19,9 +19,11 @@ function useMapData(showRoute: boolean) {
     if (!showRoute) return []
     const out: MapRoute[] = []
     if (drive.abandoned) out.push({ coords: drive.abandoned, style: 'abandoned' })
-    if (drive.remaining) out.push({ coords: drive.remaining, style: 'active' })
+    // The whole route, drawn once (changes only on a reroute); re-slicing it to the car's
+    // position on every tick redrew the line several times a second and made zooming wobble.
+    if (drive.active) out.push({ coords: drive.active.geometry.coordinates, style: 'active' })
     return out
-  }, [showRoute, drive.abandoned, drive.remaining])
+  }, [showRoute, drive.abandoned, drive.active])
   // initial fit: every sensor + the trip
   const fitTo = useMemo<LngLat[]>(() => {
     const pts = sensors.map((s) => s.location.coordinates)
