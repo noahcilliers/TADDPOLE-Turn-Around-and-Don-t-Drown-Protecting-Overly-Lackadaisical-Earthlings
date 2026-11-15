@@ -122,6 +122,7 @@ export function Stage() {
           selectedId={sel} onSelectSensor={select}
           fitKey={`${sensors.length > 0}|${drive.mode}`} fitTo={fitTo}
           padding={{ top: 80, right: 380, bottom: 40, left: 40 }} follow
+          floodZoneM={config?.flood_zone_m}
         />
         <div className="overlay tr"><Legend /></div>
         <div className="overlay br"><DemoPanel variant="stage" /></div>
@@ -147,6 +148,7 @@ export function Phone() {
   const [tab, setTab] = useState<PhoneTab>('drive')
   const [detail, setDetail] = useState<string | null>(null)     // sensor id shown full-screen
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const config = useStore((s) => s.config)
   const { sensors, hazards, routes, fitTo, drive } = useMapData(true)
 
   const go = (t: PhoneTab) => { setTab(t); setDetail(null); setSettingsOpen(false) }
@@ -160,6 +162,7 @@ export function Phone() {
         fitKey={`${sensors.length > 0}|${drive.active?.id ?? ''}`} fitTo={fitTo}
         padding={{ top: 90, right: 20, bottom: 110, left: 20 }}
         follow={tab === 'drive' && !detail}
+        floodZoneM={config?.flood_zone_m}
       />
 
       {/* Drive: only alerts and short notices on top of the map */}

@@ -30,6 +30,7 @@ export interface Sensor {
 export interface Config {
   thresholds: { caution_cm: number; flooded_cm: number }
   offline_after_s: number
+  flood_zone_m?: number   // roads within this of a flooded sensor are closed
   bounds: [number, number, number, number] | null
   demo: { from: LngLat; to: LngLat; destination_name: string; stall_lnglat: LngLat; sensor_id: string }
 }

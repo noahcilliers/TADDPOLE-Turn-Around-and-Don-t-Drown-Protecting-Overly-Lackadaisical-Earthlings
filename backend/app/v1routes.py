@@ -49,11 +49,17 @@ def build_routes(
 
     fastest = net.route(orig, dest)                      # ignores floods entirely
     f = _route_obj(net, fastest, "r_fast", "fastest", sensors, unsafe, hazard_edges)
-    if f["safe"]:
+    if not unsafe and not hazard_edges:
         return {"recommended": "r_fast", "routes": [f]}
+    # Something is flooded/offline somewhere: plan the preferred route with the closed zones
+    # removed, a cost buffer around them, and a nudge toward stretches sensors say are dry.
+    # Even a "safe" fastest route can skim the edge of a flood, so compare rather than assume.
+    mult = net.status_multipliers({sid: s["status"] for sid, s in sensors.items()}, unsafe)
     try:
-        safer = net.route(orig, dest, frozenset(unsafe), extra_blocked=hazard_edges)
+        safer = net.route(orig, dest, frozenset(unsafe), extra_blocked=hazard_edges, multipliers=mult)
     except NoRoute:
+        return {"recommended": "r_fast", "routes": [f]}
+    if safer.path == fastest.path:
         return {"recommended": "r_fast", "routes": [f]}
     s = _route_obj(net, safer, "r_safer", "safer", sensors, unsafe, hazard_edges)
     s["delta_vs_fastest_s"] = s["duration_s"] - f["duration_s"]

@@ -43,6 +43,7 @@ def config_payload(state) -> dict:
     return {
         "thresholds": {"caution_cm": cfg.caution_cm, "flooded_cm": cfg.flooded_cm},
         "offline_after_s": cfg.offline_after_s,
+        "flood_zone_m": cfg.flood_block_radius_m,   # roads within this of a flooded sensor are closed
         "bounds": list(net.bounds) if net else None,
         "demo": {**DEMO, "sensor_id": cfg.demo_sensor_id},
     }

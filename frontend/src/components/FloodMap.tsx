@@ -22,6 +22,8 @@ interface Props {
   fitTo?: LngLat[]
   padding?: { top: number; right: number; bottom: number; left: number }
   follow?: boolean
+  /** Radius (m) of the closed zone drawn around flooded sensors. */
+  floodZoneM?: number
 }
 
 const COLOR: Record<Status, string> = { clear: '#14A35A', caution: '#F2B300', flooded: '#E5243B', offline: '#8A93A0' }
@@ -59,7 +61,7 @@ const hazardIcon = L.divIcon({
   iconSize: [38, 38], iconAnchor: [19, 19],
 })
 
-interface SensorLayer { casing: L.Polyline; glow: L.Polyline; line: L.Polyline; marker: L.Marker; key: string; seg: string; loc: string }
+interface SensorLayer { zone: L.Circle; casing: L.Polyline; glow: L.Polyline; line: L.Polyline; marker: L.Marker; key: string; seg: string; loc: string }
 interface RouteLayers { casing: L.Polyline; active: L.Polyline; abandoned: L.Polyline; alt: L.Polyline }
 
 /* Everything on the map is created once and then updated in place (setLatLngs / setIcon /
@@ -169,6 +171,9 @@ export default function FloodMap(p: Props) {
         const marker = L.marker(ll(s.location.coordinates), { icon: pinIcon(st, selected), title: `${s.name}: ${st}`, keyboard: true, riseOnHover: true })
         marker.on('click', (e) => { L.DomEvent.stopPropagation(e); cb.current.onSelectSensor(s.id) })
         layer = {
+          // the closed zone around a flooded sensor: what the reroute goes around
+          zone: L.circle(ll(s.location.coordinates), { radius: p.floodZoneM ?? 300, pane: 'segments', renderer: renderers.current?.segments, interactive: false,
+            color: '#E5243B', weight: 1.5, dashArray: '4 6', opacity: 0, fillColor: '#E5243B', fillOpacity: 0 }).addTo(m),
           casing: L.polyline(lls(seg), { ...opt, color: '#fff', weight: 16, opacity: 0.95 }).addTo(m),
           glow: L.polyline(lls(seg), { ...opt, color: '#E5243B', weight: 22, opacity: 0 }).addTo(m),
           line: L.polyline(lls(seg), { ...opt, color: COLOR[st], weight: 10 }).addTo(m),
@@ -180,22 +185,24 @@ export default function FloodMap(p: Props) {
       if (layer.seg !== segKey) {
         layer.casing.setLatLngs(lls(seg)); layer.glow.setLatLngs(lls(seg)); layer.line.setLatLngs(lls(seg)); layer.seg = segKey
       }
-      if (layer.loc !== locKey) { layer.marker.setLatLng(ll(s.location.coordinates)); layer.loc = locKey }
+      if (layer.loc !== locKey) { layer.marker.setLatLng(ll(s.location.coordinates)); layer.zone.setLatLng(ll(s.location.coordinates)); layer.loc = locKey }
+      if (p.floodZoneM && layer.zone.getRadius() !== p.floodZoneM) layer.zone.setRadius(p.floodZoneM)
       if (layer.key !== key) {
         layer.marker.setIcon(pinIcon(st, selected))
         layer.marker.setZIndexOffset(selected ? 1000 : st === 'flooded' ? 500 : 0)
         layer.marker.options.title = `${s.name}: ${st}`
         layer.line.setStyle({ color: COLOR[st], dashArray: st === 'offline' ? '2 12' : undefined })
         layer.glow.setStyle({ opacity: st === 'flooded' ? 0.18 : 0 })
+        layer.zone.setStyle(st === 'flooded' ? { opacity: 0.55, fillOpacity: 0.08 } : { opacity: 0, fillOpacity: 0 })
         layer.key = key
       }
     }
     for (const [id, layer] of sensorLayers.current) {
       if (seen.has(id)) continue
-      layer.casing.remove(); layer.glow.remove(); layer.line.remove(); layer.marker.remove()
+      layer.zone.remove(); layer.casing.remove(); layer.glow.remove(); layer.line.remove(); layer.marker.remove()
       sensorLayers.current.delete(id)
     }
-  }, [p.sensors, p.selectedId])
+  }, [p.sensors, p.selectedId, p.floodZoneM])
 
   // routes: same four polylines, new coordinates
   useEffect(() => {

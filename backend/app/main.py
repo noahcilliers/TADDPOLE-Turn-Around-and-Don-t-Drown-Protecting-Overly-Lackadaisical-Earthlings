@@ -54,6 +54,7 @@ async def lifespan(app: FastAPI):
     graph = Path(cfg.graph_path)
     if graph.exists():
         hub.network = await asyncio.to_thread(RoadNetwork.from_graphml, graph)
+        hub.network.prefs.flood_buffer_m = cfg.flood_buffer_m
         log.info("road graph loaded: %d nodes, %d edges", hub.network.G.number_of_nodes(), hub.network.G.number_of_edges())
     else:
         log.warning("road graph %s not found: routing disabled (run scripts/build_graph.py)", graph)

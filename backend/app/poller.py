@@ -89,7 +89,8 @@ class Poller:
                 del self.hub.sensors[sid]
         if changed and self.hub.network is not None:
             dists = await asyncio.to_thread(
-                self.hub.network.map_sensors, [(r.sensor_id, r.lat, r.lon) for r in rows], self.cfg.flood_block_radius_m
+                self.hub.network.map_sensors, [(r.sensor_id, r.lat, r.lon) for r in rows], self.cfg.flood_block_radius_m,
+                max(self.cfg.flood_buffer_m, 200.0)
             )
             for sid, d in dists.items():
                 lvl = logging.WARNING if d > 75 else logging.INFO

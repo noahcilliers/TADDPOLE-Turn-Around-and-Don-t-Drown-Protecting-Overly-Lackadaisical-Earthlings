@@ -58,6 +58,16 @@ def _point_seg_dist(px, py, ax, ay, bx, by) -> float:
     return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
 
 
+@dataclass
+class RoutingPrefs:
+    flood_buffer_m: float = 700.0     # soft zone around a flooded/offline sensor
+    flood_buffer_mult: float = 4.0    # cost x4 right at the closed zone, fading to x1 at the buffer edge
+    caution_radius_m: float = 200.0
+    caution_mult: float = 2.0
+    clear_radius_m: float = 60.0
+    clear_mult: float = 0.85          # 15% discount on a stretch a sensor says is dry
+
+
 class RoadNetwork:
     def __init__(self, G: nx.MultiDiGraph):
         self.G = G
@@ -70,6 +80,9 @@ class RoadNetwork:
         self.bounds = (float(lons.min()), float(lats.min()), float(lons.max()), float(lats.max()))
         self.sensor_edges: dict[str, set[Edge]] = {}
         self.sensor_segment: dict[str, Edge] = {}   # the single snapped edge (for drawing)
+        # distance (m) from each sensor to every road segment within `near_radius_m` of it
+        self.sensor_near: dict[str, dict[Edge, float]] = {}
+        self.prefs = RoutingPrefs()
 
     # ---------- loading ----------
     @classmethod
@@ -120,28 +133,75 @@ class RoadNetwork:
                     out.add((v, u))
         return out
 
-    def map_sensors(self, sensors: list[tuple[str, float, float]], block_radius_m: float = 0.0) -> dict[str, float]:
+    def _edge_distances(self, lat: float, lon: float, radius_m: float) -> dict[Edge, float]:
+        """Distance from the point to every segment (both directions) within radius_m."""
+        px, py = self._proj(lon, lat)
+        out: dict[Edge, float] = {}
+        for u, v, data in self.G.edges(data=True):
+            pts = [self._proj(x, y) for x, y in self._edge_points(u, v, data)]
+            d = min(_point_seg_dist(px, py, ax, ay, bx, by) for (ax, ay), (bx, by) in zip(pts, pts[1:]))
+            if d <= radius_m:
+                for e in ((u, v), (v, u)) if self.G.has_edge(v, u) else ((u, v),):
+                    out[e] = min(d, out.get(e, math.inf))
+        return out
+
+    def map_sensors(self, sensors: list[tuple[str, float, float]], block_radius_m: float = 0.0,
+                    near_radius_m: float = 0.0) -> dict[str, float]:
         """sensors: [(sensor_id, lat, lon)]. Returns snap distance (m) per sensor.
 
         A sensor "owns" its snapped road segment plus, with block_radius_m > 0, every segment
         within that radius: water at a dip floods the low area around it, so closing a single
         150 m OSM edge would let routes slip past on the side street right next to the flood.
+        `near_radius_m` indexes segments further out for the soft routing preferences
+        (flood buffer, rising-water penalty, clear-sensor bonus).
         """
         dists: dict[str, float] = {}
         mapping: dict[str, set[Edge]] = {}
         seg: dict[str, Edge] = {}
+        near: dict[str, dict[Edge, float]] = {}
+        radius = max(block_radius_m, near_radius_m)
         for sid, lat, lon in sensors:
-            edges, d = self.nearest_segment(lat, lon)
-            if block_radius_m > 0 and edges:
-                edges = edges | self.edges_within(lat, lon, block_radius_m)
+            snapped, d = self.nearest_segment(lat, lon)
+            edges = set(snapped)
+            near[sid] = self._edge_distances(lat, lon, radius) if radius > 0 else {}
+            if block_radius_m > 0 and snapped:
+                edges |= {e for e, de in near[sid].items() if de <= block_radius_m}
             mapping[sid] = edges
             dists[sid] = d
-            snapped, _ = self.nearest_segment(lat, lon) if block_radius_m > 0 else (edges, d)
             if snapped:
                 seg[sid] = min(snapped)  # drawn segment = the snapped road edge (deterministic)
         self.sensor_edges = mapping
         self.sensor_segment = seg
+        self.sensor_near = near
         return dists
+
+    def status_multipliers(self, statuses: dict[str, str], unsafe: set[str]) -> dict[Edge, float]:
+        """Per-segment travel-time multipliers from live sensor status (used for the safer route).
+
+        - unsafe (flooded / offline / hazard): segments near it cost more, fading out over the
+          buffer, so the detour swings wide instead of skimming the closed zone
+        - caution (rising water): nearby segments cost more
+        - clear: the sensor's own stretch is slightly cheaper, so between two similar detours
+          we pick the one that's actually being watched and reads dry
+        - no sensor: neutral
+        """
+        p = self.prefs
+        mult: dict[Edge, float] = {}
+        for sid, near in self.sensor_near.items():
+            st = statuses.get(sid)
+            if sid in unsafe:
+                for e, d in near.items():
+                    if d < p.flood_buffer_m:
+                        mult[e] = mult.get(e, 1.0) * (1.0 + (p.flood_buffer_mult - 1.0) * (1.0 - d / p.flood_buffer_m))
+            elif st == "caution":
+                for e, d in near.items():
+                    if d <= p.caution_radius_m:
+                        mult[e] = mult.get(e, 1.0) * p.caution_mult
+            elif st == "clear":
+                for e, d in near.items():
+                    if d <= p.clear_radius_m:
+                        mult[e] = mult.get(e, 1.0) * p.clear_mult
+        return mult
 
     def segment_coords(self, sid: str) -> list[list[float]] | None:
         e = self.sensor_segment.get(sid)
@@ -204,14 +264,19 @@ class RoadNetwork:
         dest: tuple[float, float],
         flooded_sensor_ids: set[str] | frozenset[str] = frozenset(),
         extra_blocked: set[Edge] | frozenset[Edge] = frozenset(),
+        multipliers: dict[Edge, float] | None = None,
     ) -> Route:
         """orig/dest are (lat, lon). Raises NoRoute if flooding cuts every path."""
         o = self.nearest_node(*orig)
         t = self.nearest_node(*dest)
         blocked = self.blocked_edges(flooded_sensor_ids) | set(extra_blocked)
 
+        mult = multipliers or {}
+
         def w(u, v, d):  # returning None hides the edge from Dijkstra
-            return None if (u, v) in blocked else min(self._cost(e) for e in d.values())
+            if (u, v) in blocked:
+                return None
+            return min(self._cost(e) for e in d.values()) * mult.get((u, v), 1.0)
 
         try:
             path = nx.shortest_path(self.G, o, t, weight=w)
