@@ -29,8 +29,10 @@ type LeafletInternals = L.Map & {
 /** Safari's non-standard GestureEvent. */
 type GestureEvt = UIEvent & { scale: number; clientX: number; clientY: number }
 
-/** Returns a function that removes the listeners. `onUse` runs on every pinch event. */
-export function enableTrackpadPinch(map: L.Map, onUse: () => void): () => void {
+/** Returns a function that removes the listeners. `onUse` runs on every pinch event.
+ *  `anchor` (optional): a container point to zoom around instead of the cursor, e.g. the car
+ *  while the map is following it. */
+export function enableTrackpadPinch(map: L.Map, onUse: () => void, anchor?: () => L.Point | null): () => void {
   const m = map as LeafletInternals
   const container = m.getContainer()
   // Current pinch session; `center` is null when no pinch is in progress.
@@ -63,7 +65,9 @@ export function enableTrackpadPinch(map: L.Map, onUse: () => void): () => void {
       m._moveStart(true, false)
     }
     const rect = container.getBoundingClientRect()
-    offset = L.point(clientX - rect.left - rect.width / 2, clientY - rect.top - rect.height / 2)
+    const a = anchor?.()
+    offset = a ? a.subtract(L.point(rect.width / 2, rect.height / 2))
+      : L.point(clientX - rect.left - rect.width / 2, clientY - rect.top - rect.height / 2)
     const z = Math.min(m.getMaxZoom(), Math.max(m.getMinZoom(), target))
     center = centerFor(center, zoom, z)
     zoom = z

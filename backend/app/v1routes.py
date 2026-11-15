@@ -15,7 +15,7 @@ def _route_obj(net: RoadNetwork, r: Route, rid: str, kind: str, sensors: dict[st
             continue
         crosses.append({
             "sensor_id": sid, "name": s["name"], "status": s["status"], "depth_cm": s["depth_cm"],
-            "at_distance_m": round(net.at_distance(r, net.sensor_edges.get(sid, set())) or 0),
+            "at_distance_m": round(net.at_distance(r, net.core_edges(sid)) or 0),
         })
     crosses.sort(key=lambda c: c["at_distance_m"])
     safe = not any(c["sensor_id"] in unsafe_ids for c in crosses) and not (r.edges & hazard_edges)

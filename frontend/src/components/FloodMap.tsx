@@ -30,8 +30,12 @@ interface Props {
 const COLOR: Record<Status, string> = { clear: '#14A35A', caution: '#F2B300', flooded: '#E5243B', offline: '#8A93A0' }
 const ll = (p: LngLat): L.LatLngExpression => [p[1], p[0]]
 const lls = (c: LngLat[]) => c.map((p) => L.latLng(p[1], p[0]))
-/** After the user drags/zooms, don't auto-follow the car for this long. */
-const USER_HOLD_MS = 8000
+/** Map centre that puts `pos` in the middle of the area the overlays leave visible. */
+function followCenter(m: L.Map, pos: LngLat, z: number, pad?: Props['padding']): L.LatLng {
+  const p = pad ?? { top: 0, right: 0, bottom: 0, left: 0 }
+  const off = L.point((p.right - p.left) / 2, (p.bottom - p.top) / 2)
+  return m.unproject(m.project(ll(pos), z).add(off), z)
+}
 /** Heading changes smaller than this are route-line wobble, not a turn. */
 const TURN_DEADBAND_DEG = 12
 
@@ -80,8 +84,10 @@ export default function FloodMap(p: Props) {
   const carRot = useRef<number | null>(null)
   const recenterBtn = useRef<HTMLButtonElement | null>(null)
   const recenter = useRef(() => {})
-  const userAt = useRef(0)
-  const panning = useRef(false)
+  const setFollow = useRef<(on: boolean) => void>(() => {})
+  /** The view keeps the frog centred until the user drags the map; the frog button turns it back on. */
+  const following = useRef(true)
+  const pinchAt = useRef(0)
   const cb = useRef(p)
   cb.current = p
 
@@ -139,19 +145,47 @@ export default function FloodMap(p: Props) {
       if (cb.current.onMapClick) cb.current.onMapClick([e.latlng.lng, e.latlng.lat])
       else cb.current.onSelectSensor(null)
     })
-    // Remember when the user last touched the map, so auto-follow doesn't fight them.
-    const touched = () => { userAt.current = Date.now() }
     const c = el.current
-    c.addEventListener('pointerdown', touched)
-    c.addEventListener('wheel', touched, { passive: true })
-    c.addEventListener('touchstart', touched, { passive: true })
+    // ----- follow mode -----
+    // Dragging the map lets go of the frog. Zooming doesn't: while following, every kind of zoom
+    // (wheel, trackpad pinch, +/-, double-click, touch pinch) happens around the frog, so it stays put.
+    const carPoint = (): L.Point | null => {
+      const car = cb.current.car
+      return following.current && cb.current.follow && car ? m.latLngToContainerPoint(ll(car.pos)) : null
+    }
+    const setFollowing = (on: boolean) => {
+      following.current = on
+      m.options.touchZoom = on ? 'center' : true
+      m.options.doubleClickZoom = on ? 'center' : true
+      recenterBtn.current?.classList.toggle('following', on)
+    }
+    setFollow.current = setFollowing
+    setFollowing(true)
+    m.on('dragstart', () => setFollowing(false))
+    // Leaflet's wheel zoom anchors on the last mouse position; swap in the frog's position.
+    const swz = m.scrollWheelZoom as unknown as { _onWheelScroll: (e: Event) => void; _lastMousePos: L.Point }
+    m.scrollWheelZoom.disable()
+    const wheel = swz._onWheelScroll
+    swz._onWheelScroll = function (this: typeof swz, e: Event) {
+      wheel.call(this, e)
+      const a = carPoint()
+      if (a) this._lastMousePos = a
+    }
+    m.scrollWheelZoom.enable()
+    const zoomIn = m.zoomIn.bind(m), zoomOut = m.zoomOut.bind(m)
+    const step = (d?: number) => d ?? m.options.zoomDelta ?? 1
+    m.zoomIn = (d, o) => { const a = carPoint(); return a ? m.setZoomAround(a, m.getZoom() + step(d), o) : zoomIn(d, o) }
+    m.zoomOut = (d, o) => { const a = carPoint(); return a ? m.setZoomAround(a, m.getZoom() - step(d), o) : zoomOut(d, o) }
     // Laptop trackpad pinch: follow the fingers continuously, like touch pinch on phones.
-    const disablePinch = enableTrackpadPinch(m, touched)
+    const disablePinch = enableTrackpadPinch(m, () => { pinchAt.current = Date.now() }, carPoint)
+    // After any zoom, settle the frog back into its spot (the padding offset scales with zoom).
+    m.on('zoomend', () => {
+      const car = cb.current.car
+      if (following.current && cb.current.follow && car) m.panTo(followCenter(m, car.pos, m.getZoom(), cb.current.padding), { animate: true, duration: 0.25, easeLinearity: 1, noMoveStart: true })
+    })
     // The car glides between updates (CSS transition) but must snap during zoom.
     m.on('zoomstart', () => c.classList.add('fr-zooming'))
     m.on('zoomend', () => window.setTimeout(() => c.classList.remove('fr-zooming'), 50))
-    m.on('movestart', () => { panning.current = true })
-    m.on('moveend', () => { panning.current = false })
 
     map.current = m
     const ro = new ResizeObserver(() => m.invalidateSize({ pan: false }))
@@ -159,9 +193,6 @@ export default function FloodMap(p: Props) {
     const sensors = sensorLayers.current, hazards = hazardMarkers.current
     return () => {
       ro.disconnect()
-      c.removeEventListener('pointerdown', touched)
-      c.removeEventListener('wheel', touched)
-      c.removeEventListener('touchstart', touched)
       disablePinch()
       // Stop pan/zoom animations first: removing a map mid-zoom makes Leaflet's
       // transitionend handler touch a pane that no longer exists.
@@ -264,13 +295,9 @@ export default function FloodMap(p: Props) {
   recenter.current = () => {
     const m = map.current, car = cb.current.car
     if (!m || !car) return
-    const pad = cb.current.padding ?? { top: 0, right: 0, bottom: 0, left: 0 }
     const z = Math.max(m.getZoom(), 15)
-    // shift the centre so the car sits in the middle of the area not covered by overlays
-    const off = L.point((pad.right - pad.left) / 2, (pad.bottom - pad.top) / 2)
-    const target = m.unproject(m.project(ll(car.pos), z).add(off), z)
-    userAt.current = 0
-    m.setView(target, z, { animate: true, duration: 0.6 })
+    setFollow.current(true)
+    m.setView(followCenter(m, car.pos, z, cb.current.padding), z, { animate: true, duration: 0.6 })
   }
   useEffect(() => {
     recenterBtn.current?.classList.toggle('off', !p.car)
@@ -294,22 +321,24 @@ export default function FloodMap(p: Props) {
     const svg = carMarker.current.getElement()?.querySelector('svg')
     if (svg && carRot.current !== null) svg.style.transform = `rotate(${carRot.current}deg)`
 
-    // Follow the car only when it's about to leave the view, and never while the user
-    // is (or just was) moving the map themselves.
-    if (!p.follow || panning.current || Date.now() - userAt.current < USER_HOLD_MS) return
+    // Follow: glide the view along with the frog, at the same pace as the frog's own glide
+    // (.fr-car transition), so it stays steady in its spot. Never mid-zoom or mid-pinch.
+    if (!p.follow || !following.current) return
+    const mm = m as unknown as { _animatingZoom: boolean; touchZoom: { _zooming?: boolean } }
+    if (mm._animatingZoom || mm.touchZoom?._zooming || Date.now() - pinchAt.current < 250) return
+    const target = followCenter(m, p.car.pos, m.getZoom(), p.padding)
     const size = m.getSize()
-    const inset = p.padding ?? { top: 0, right: 0, bottom: 0, left: 0 }
-    const pt = m.latLngToContainerPoint(ll(p.car.pos))
-    const margin = 60
-    if (pt.x < inset.left + margin || pt.x > size.x - inset.right - margin || pt.y < inset.top + margin || pt.y > size.y - inset.bottom - margin) {
-      m.panTo(ll(p.car.pos), { animate: true, duration: 0.8, easeLinearity: 0.35 })
-    }
+    const off = m.latLngToContainerPoint(target).distanceTo(size.divideBy(2))
+    if (off < 0.5) return
+    if (off > Math.max(size.x, size.y)) m.setView(target, m.getZoom(), { animate: false })   // jumped (new trip): no long slide
+    else m.panTo(target, { animate: true, duration: 0.25, easeLinearity: 1, noMoveStart: true })
   }, [p.car, p.follow, p.padding])
 
   // fit
   useEffect(() => {
     const m = map.current
     if (!m || !p.fitTo || p.fitTo.length === 0) return
+    if (p.follow && following.current && p.car) return   // following the frog: it decides the view
     const b = L.latLngBounds(p.fitTo.map(ll))
     const pad = p.padding ?? { top: 40, right: 40, bottom: 40, left: 40 }
     m.fitBounds(b.pad(0.05), { paddingTopLeft: [pad.left, pad.top], paddingBottomRight: [pad.right, pad.bottom], maxZoom: 16, animate: true })

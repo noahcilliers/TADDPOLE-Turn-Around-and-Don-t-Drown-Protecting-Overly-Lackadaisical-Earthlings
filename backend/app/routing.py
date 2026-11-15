@@ -66,6 +66,10 @@ class RoutingPrefs:
     caution_mult: float = 2.0
     clear_radius_m: float = 60.0
     clear_mult: float = 0.85          # 15% discount on a stretch a sensor says is dry
+    # Roads in a flood's closed zone (but not the flooded segment itself) are not removed outright,
+    # just made this much slower. Any real detour still wins, but a car that is already inside the
+    # zone (stopped just short of the water) can always turn around and drive out of it.
+    zone_mult: float = 40.0
 
 
 class RoadNetwork:
@@ -80,6 +84,8 @@ class RoadNetwork:
         self.bounds = (float(lons.min()), float(lats.min()), float(lons.max()), float(lats.max()))
         self.sensor_edges: dict[str, set[Edge]] = {}
         self.sensor_segment: dict[str, Edge] = {}   # the single snapped edge (for drawing)
+        # the sensor's own road segment, both directions: driving this = driving through the water
+        self.sensor_core: dict[str, set[Edge]] = {}
         # distance (m) from each sensor to every road segment within `near_radius_m` of it
         self.sensor_near: dict[str, dict[Edge, float]] = {}
         self.prefs = RoutingPrefs()
@@ -158,11 +164,13 @@ class RoadNetwork:
         dists: dict[str, float] = {}
         mapping: dict[str, set[Edge]] = {}
         seg: dict[str, Edge] = {}
+        core: dict[str, set[Edge]] = {}
         near: dict[str, dict[Edge, float]] = {}
         radius = max(block_radius_m, near_radius_m)
         for sid, lat, lon in sensors:
             snapped, d = self.nearest_segment(lat, lon)
             edges = set(snapped)
+            core[sid] = set(snapped)
             near[sid] = self._edge_distances(lat, lon, radius) if radius > 0 else {}
             if block_radius_m > 0 and snapped:
                 edges |= {e for e, de in near[sid].items() if de <= block_radius_m}
@@ -172,6 +180,7 @@ class RoadNetwork:
                 seg[sid] = min(snapped)  # drawn segment = the snapped road edge (deterministic)
         self.sensor_edges = mapping
         self.sensor_segment = seg
+        self.sensor_core = core
         self.sensor_near = near
         return dists
 
@@ -242,10 +251,16 @@ class RoadNetwork:
             out |= self.sensor_edges.get(sid, set())
         return out
 
+    def core_edges(self, sid: str) -> set[Edge]:
+        """The sensor's own segment (falls back to its whole zone if it was never snapped)."""
+        c = self.sensor_core.get(sid)
+        return c if c else self.sensor_edges.get(sid, set())
+
     def sensors_on(self, edges: set[Edge], only: set[str] | None = None) -> list[str]:
+        """Sensors whose own road segment the route drives."""
         return sorted(
-            sid for sid, se in self.sensor_edges.items()
-            if (only is None or sid in only) and se & edges
+            sid for sid in self.sensor_edges
+            if (only is None or sid in only) and self.core_edges(sid) & edges
         )
 
     def _best_edge(self, u: int, v: int) -> dict:
@@ -270,13 +285,20 @@ class RoadNetwork:
         o = self.nearest_node(*orig)
         t = self.nearest_node(*dest)
         blocked = self.blocked_edges(flooded_sensor_ids) | set(extra_blocked)
+        # Never drive the flooded segment itself (or a stalled car's); the rest of the closed
+        # zone is a very expensive last resort, which is what lets a car stopped inside it get out.
+        hard = set(extra_blocked)
+        for sid in flooded_sensor_ids:
+            hard |= self.core_edges(sid)
+        zone_mult = self.prefs.zone_mult
 
         mult = multipliers or {}
 
         def w(u, v, d):  # returning None hides the edge from Dijkstra
-            if (u, v) in blocked:
+            if (u, v) in hard:
                 return None
-            return min(self._cost(e) for e in d.values()) * mult.get((u, v), 1.0)
+            c = min(self._cost(e) for e in d.values()) * mult.get((u, v), 1.0)
+            return c * zone_mult if (u, v) in blocked else c
 
         try:
             path = nx.shortest_path(self.G, o, t, weight=w)

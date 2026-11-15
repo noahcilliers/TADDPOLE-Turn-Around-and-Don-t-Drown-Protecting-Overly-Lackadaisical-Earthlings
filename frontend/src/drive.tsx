@@ -10,7 +10,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api } from './api'
 import { along, angleDiff, bearing, dist, headingAt, lineLength, project, sliceFrom } from './geo'
-import { feetHint } from './format'
+import { feetHint, fmtMiles } from './format'
 import { onDomainEvent, pushLocal, store, useStore } from './store'
 import type { DemoSession, Hazard, LngLat, Route, RoutesResponse, Sensor } from './types'
 
@@ -30,6 +30,15 @@ export interface DriveAlert {
   distance_m: number
   closing_s: number | null
   key: string
+}
+/** The one notice on screen (flood / stalled car / rising water ahead, or stopped short of it). */
+export interface Notice {
+  key: string
+  tone: 'red' | 'yellow'
+  title: string
+  detail: string
+  /** false for "stopped before …": that one stays until the driver reroutes or the water clears */
+  dismissible: boolean
 }
 export interface Toast { id: number; title: string; detail: string; tone: 'blue' | 'green' | 'red' }
 export interface TripSummary {
@@ -59,6 +68,9 @@ export interface DriveApi {
   blocked: { sensor: Sensor | null; hazard: Hazard | null } | null
   stopped: boolean
   rerouteNow: () => void
+  /** What the notice bar shows. Frozen while a reroute is in flight, so it never flickers. */
+  notice: Notice | null
+  rerouting: boolean
   toast: Toast | null
   arrived: TripSummary | null
   clearArrived: () => void
@@ -145,7 +157,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
   const [routeError, setRouteError] = useState<string | null>(null)
   const [gpsState, setGps] = useState<{ enabled: boolean; error: string | null; pos: LngLat | null; heading: number | null }>({ enabled: false, error: null, pos: null, heading: null })
-  const trip = useRef<{ startedS: number; reroutes: string[]; avoided: Map<string, number | null>; baseDuration: number | null; warned: Set<string>; drivenBefore_m: number }>({ startedS: 0, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), drivenBefore_m: 0 })
+  const trip = useRef<{ startedS: number; reroutes: string[]; avoided: Map<string, number | null>; baseDuration: number | null; warned: Set<string>; toasted: Set<string>; drivenBefore_m: number }>({ startedS: 0, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), toasted: new Set(), drivenBefore_m: 0 })
   const lastDemoS = useRef(0)
   const toastId = useRef(0)
 
@@ -200,7 +212,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     let cancelled = false
     if (!origin || !destination) return
     setAbandoned(null); setArrived(null); setDismissed(new Set())
-    trip.current = { startedS: demoS, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), drivenBefore_m: 0 }
+    trip.current = { startedS: demoS, reroutes: [], avoided: new Map(), baseDuration: null, warned: new Set(), toasted: new Set(), drivenBefore_m: 0 }
     void fetchRoutes(origin, destination.lnglat).then((r) => {
       if (cancelled || !r) return
       setRoutes(r)
@@ -260,16 +272,18 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const v = NAV_SPEED_M_PER_DEMO_S
       const fresh = p.ver !== activeVer
       const prevD = fresh ? 0 : p.d
-      if (!fresh && holdRef.current) {
-        return p.s === demoS && p.stopped ? p : { ...p, s: demoS, stopped: true }
-      }
+      // Paused for the driver's decision. Not "stopped before the water": that's only once the
+      // car is actually parked at the stop point, so dismissing can't flash the stopped bar.
+      if (!fresh && holdRef.current) return p.s === demoS ? p : { ...p, s: demoS }
       let d = fresh ? (pendingInit.current === 'catchup' ? demoS * v : 0) : p.d + Math.max(0, demoS - p.s) * v
       let limit = pathLen
       // Never drive into water or a stalled car: hold short of it (or where we already are).
       const b = firstBlocker(prevD)
       if (b) limit = Math.min(limit, Math.max(prevD, b.along_m - STOP_BEFORE_HAZARD_M))
-      const stopped = d > limit + 0.5 && limit < pathLen
       d = Math.max(prevD, Math.min(d, limit))
+      // Stopped = parked at a stop point short of the water. Judged from where the car *is*, not
+      // from whether it tried to move this tick, so it can't blink off between demo ticks.
+      const stopped = limit < pathLen && d >= limit - 0.5
       if (!fresh && d === p.d && demoS === p.s && stopped === p.stopped) return p
       return { ver: activeVer, d, s: demoS, stopped }
     })
@@ -304,12 +318,14 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const activeRef = useRef(active); activeRef.current = active
   const traveledRef = useRef(traveled); traveledRef.current = traveled
   const rerouting = useRef(false)
+  const [reroutingNow, setReroutingNow] = useState(false)
 
   const reroute = useCallback(async (reason: Sensor | Hazard | null, forceToast = false) => {
     if (rerouting.current || !destination) return
     const from = carRef.current?.pos ?? origin
     if (!from) return
     rerouting.current = true
+    setReroutingNow(true)
     try {
       const r = await fetchRoutes(from, destination.lnglat)
       if (!r) return
@@ -342,7 +358,7 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       } else if (prev && prev.kind === 'safer' && next.kind === 'fastest') {
         showToast('Road reopened', 'Back on the fastest route', 'green')
       }
-    } finally { rerouting.current = false }
+    } finally { rerouting.current = false; setReroutingNow(false) }
   }, [destination, origin, fetchRoutes, showToast])
 
   // Before the car has moved, the trip is just a plan: re-plan on any status change so a
@@ -360,6 +376,11 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const pr = project(route.geometry.coordinates, e.sensor.location.coordinates)
       if (pr.off_m < ON_ROUTE_M && pr.along_m >= traveledRef.current - 5) return
     }
+    // Once per sensor per trip: a noisy sensor flapping in and out of 'flooded' shouldn't
+    // keep popping the same notice, nor should one we've already warned about or routed around.
+    const t = trip.current
+    if (t.toasted.has(e.sensor.id) || t.warned.has(`flooded:${e.sensor.id}`) || t.avoided.has(e.sensor.id)) return
+    t.toasted.add(e.sensor.id)
     const d = e.sensor.current.depth_cm
     showToast(`Flooding at ${e.sensor.name}`, `${d != null ? `${Math.round(d)} cm deep · ` : ''}not on your route`, 'red')
   }), [showToast])
@@ -410,10 +431,41 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     return best
   }, [car, sensorsMap, hazardsMap, path, traveled, settings, demoActive, moving, demo?.speed, isFlooded])
 
-  const visibleAlert = alert && !dismissed.has(alert.key) ? alert : null
-  holdRef.current = !!visibleAlert && visibleAlert.level !== 'caution' && demoActive
+  // Dismissing a flood also silences that sensor's 'rising' card, so water hovering around the
+  // threshold can't flip the notice back and forth.
+  const visibleAlert = alert && !dismissed.has(alert.key) &&
+    !(alert.level === 'caution' && alert.sensor && dismissed.has(`flooded:${alert.sensor.id}`)) ? alert : null
+  // The car also waits while a reroute is being worked out, so it doesn't creep toward the water.
+  holdRef.current = (!!visibleAlert && visibleAlert.level !== 'caution' && demoActive) || reroutingNow
   const blocker = prog.stopped && demoActive ? firstBlocker(traveled) : null
   const blocked = !visibleAlert && blocker ? { sensor: blocker.sensor, hazard: blocker.hazard } : null
+
+  // ---------- the notice bar ----------
+  let live: Notice | null = null
+  if (visibleAlert) {
+    const a = visibleAlert, sn = a.sensor, d = sn?.current.depth_cm
+    const parts = [`${fmtMiles(a.distance_m)} mi`, a.level !== 'stalled' && d != null ? `${Math.round(d)} cm${a.level === 'flooded' ? ' deep' : ''}` : null, sn?.name]
+    live = {
+      key: a.key,
+      tone: a.level === 'caution' ? 'yellow' : 'red',
+      title: a.level === 'stalled' ? 'Car stalled ahead' : a.level === 'flooded' ? 'Flooded ahead' : 'Water rising ahead',
+      detail: parts.filter(Boolean).join(' · '),
+      dismissible: true,
+    }
+  } else if (blocked) {
+    live = {
+      key: `blocked:${blocked.hazard?.id ?? blocked.sensor?.id ?? ''}`,
+      tone: 'red',
+      title: `Stopped before ${blocked.hazard ? 'a stalled car' : 'flooded road'}`,
+      detail: blocked.sensor?.name ?? 'the road ahead',
+      dismissible: false,
+    }
+  }
+  // Between tapping Reroute and the new route arriving, keep showing exactly what was tapped:
+  // otherwise the alert would vanish, the "stopped" bar flash up, then the result toast appear.
+  const noticeRef = useRef<Notice | null>(null)
+  const notice = reroutingNow ? noticeRef.current : live
+  noticeRef.current = notice
 
   // side effects of a new alert: sound, vibration, feed entries
   const lastAlertKey = useRef<string | null>(null)
@@ -468,7 +520,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       // Reroute from where the car is now.
       void reroute(visibleAlert?.sensor ?? visibleAlert?.hazard ?? blocked?.hazard ?? blocked?.sensor ?? null, true)
     },
-    toast, arrived, clearArrived: () => setArrived(null),
+    notice, rerouting: reroutingNow,
+    toast: notice ? null : toast, arrived, clearArrived: () => setArrived(null),
     demoActive, demoS, routeError,
     gps: { enabled: gpsState.enabled, error: gpsState.error }, enableGps,
   }

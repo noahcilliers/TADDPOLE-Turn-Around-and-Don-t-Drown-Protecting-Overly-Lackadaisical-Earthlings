@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { api, ApiError, getDemoKey, setDemoKey } from '../api'
-import { alertHeadline, useDrive, type DriveAlert } from '../drive'
+import { useDrive } from '../drive'
 import { ago, clock, fmtDuration, fmtMiles, STATUS_LABEL } from '../format'
 import { reconnectNow, setDemo, useStore } from '../store'
 import type { Status } from '../types'
@@ -42,81 +42,43 @@ export function Legend() {
   )
 }
 
-function MiniMap() {
+/** Every notice uses this one bar shape (same height, padding and type), in its own colour:
+ *  red for flooding / a stalled car, yellow for rising water, white for everything else. */
+function Bar({ tone, icon, title, detail, children }: {
+  tone: 'red' | 'yellow' | 'white'; icon: React.ReactNode; title: string; detail: string; children?: React.ReactNode
+}) {
   return (
-    <svg width="92" height="92" viewBox="0 0 92 92" aria-hidden>
-      <rect width="92" height="92" fill="#EEF1F5" />
-      <path d="M46 0v92M0 34h92" stroke="#fff" strokeWidth="10" />
-      <path d="M46 20v40" stroke="#E5243B" strokeWidth="8" strokeLinecap="round" opacity=".85" />
-      <g transform="translate(34 32)"><path d="M7 0h10l7 7v10l-7 7H7L0 17V7z" fill="#E5243B" stroke="#fff" strokeWidth="2" /><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></g>
-    </svg>
+    <div className={`notice-bar ${tone}`} role={tone === 'white' ? 'status' : 'alert'} aria-live={tone === 'white' ? 'polite' : 'assertive'}>
+      <span className="nb-ic">{icon}</span>
+      <div className="grow" style={{ minWidth: 0 }}>
+        <div className="t ellipsis">{title}</div>
+        <div className="d ellipsis">{detail}</div>
+      </div>
+      {children}
+    </div>
   )
 }
 
-export function AlertOverlay({ alert }: { alert: DriveAlert }) {
+/** The flood / rising-water notice: stays put until the driver taps Reroute or ×. */
+export function NoticeBar() {
   const drive = useDrive()
-  const units = useStore((s) => s.settings.units)
-  const { title, sub } = alertHeadline(alert)
-  const depth = alert.sensor?.current.depth_cm
-  const mi = fmtMiles(alert.distance_m)
-  if (alert.level === 'caution') {
-    const s = alert.sensor!
-    const rate = s.current.rate_cm_per_min
-    return (
-      <div className="alert-yellow" role="alert">
-        <div className="kicker"><StatusIcon status="caution" size={18} /> Water rising ahead</div>
-        <div className="body">
-          <div className="grow">
-            <div className="name">{s.name}</div>
-            <div className="meta">{depth != null ? `${Math.round(depth)} cm${units !== 'cm' ? ` · ${(depth / 2.54).toFixed(1)} in` : ''}` : ''}{rate != null && rate > 0.3 ? ` · rising ${rate.toFixed(1)} cm/min` : ''}</div>
-          </div>
-          <div className="num">{mi}<small>mi ahead</small></div>
-        </div>
-        <div className="actions">
-          <button className="btn btn-dark" onClick={drive.rerouteNow}><Icon.Reroute size={19} />Find another way</button>
-          <button className="btn btn-ghost" onClick={drive.dismissAlert}>Got it</button>
-        </div>
-      </div>
-    )
-  }
-  const closing = alert.closing_s != null ? `closing · ~${Math.max(1, Math.round(alert.closing_s))} s`
-    : alert.distance_m > 150 ? 'car paused · choose below' : 'stopped'
+  const n = drive.notice
+  if (!n) return null
   return (
-    <div className="alert-red" role="alert" aria-live="assertive">
-      <div className="kicker">
-        <StatusIcon status="flooded" size={24} />{alert.level === 'stalled' ? `Reported by the car ahead · ${alert.hazard ? ago(alert.hazard.created_at) : 'just now'}` : 'Flood alert'}
-        <span style={{ marginLeft: 'auto', display: 'flex', gap: 10 }} aria-hidden><Icon.Sound size={20} /><Icon.Vibrate size={20} /></span>
-      </div>
-      <h2>{title}</h2>
-      <div className="sub">{sub}</div>
-      <div className="dist">
-        <div>
-          <div className="n">{mi}<small>mi</small></div>
-          <div className="meta">{closing}{depth != null ? ` · ${Math.round(depth)} cm deep` : ''}</div>
-        </div>
-        <div className="mini"><MiniMap /></div>
-      </div>
-      {alert.level === 'stalled' && alert.distance_m > 1000 && <div style={{ fontWeight: 600, marginBottom: 10, opacity: .95 }}>Warned early, outside the usual 1 km zone.</div>}
-      <div className="slogan">Turn around, don't drown.</div>
-      <div className="actions">
-        <button className="btn btn-white" onClick={drive.rerouteNow}><Icon.Reroute size={20} />Reroute</button>
-        <button className="btn btn-dismiss" onClick={drive.dismissAlert}>Dismiss</button>
-      </div>
-    </div>
+    <Bar tone={n.tone} icon={<StatusIcon status={n.tone === 'yellow' ? 'caution' : 'flooded'} size={26} />} title={n.title} detail={n.detail}>
+      <button className="btn btn-sm nb-go" onClick={drive.rerouteNow} disabled={drive.rerouting}>
+        <Icon.Reroute size={18} />{drive.rerouting ? 'Rerouting…' : 'Reroute'}
+      </button>
+      {n.dismissible && <button className="nb-x" onClick={drive.dismissAlert} disabled={drive.rerouting} aria-label="Dismiss"><Icon.Close size={18} /></button>}
+    </Bar>
   )
 }
 
 export function ToastView() {
   const { toast } = useDrive()
   if (!toast) return null
-  return (
-    <div className="toast" role="status" aria-live="polite">
-      <div className="ic" style={toast.tone === 'green' ? { background: 'var(--green)' } : toast.tone === 'red' ? { background: 'var(--red)' } : undefined}>
-        {toast.tone === 'green' ? <Icon.Flag size={26} /> : toast.tone === 'red' ? <StatusIcon status="flooded" size={30} /> : <Icon.Shield size={26} />}
-      </div>
-      <div><div className="t">{toast.title}</div><div className="d">{toast.detail}</div></div>
-    </div>
-  )
+  const icon = toast.tone === 'green' ? <Icon.Flag size={16} /> : toast.tone === 'red' ? <Icon.Close size={16} /> : <Icon.Shield size={16} />
+  return <Bar tone="white" icon={<span className={`nb-dot ${toast.tone}`}>{icon}</span>} title={toast.title} detail={toast.detail} />
 }
 
 export function RouteCard() {
@@ -286,18 +248,3 @@ export function TripStats() {
 }
 
 /** Car is holding before water/a stalled car and the big alert was dismissed: keep offering the reroute. */
-export function BlockedBar() {
-  const drive = useDrive()
-  if (!drive.blocked) return null
-  const name = drive.blocked.sensor?.name ?? 'the road ahead'
-  return (
-    <div className="blocked-bar" role="status">
-      <StatusIcon status="flooded" size={26} />
-      <div className="grow">
-        <div className="t">Stopped before {drive.blocked.hazard ? 'a stalled car' : 'flooded road'}</div>
-        <div className="d ellipsis">{name}</div>
-      </div>
-      <button className="btn btn-white btn-sm" onClick={drive.rerouteNow}><Icon.Reroute size={18} />Reroute</button>
-    </div>
-  )
-}

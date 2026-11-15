@@ -123,3 +123,15 @@ def test_caution_costs_more_than_clear():
     up = net.status_multipliers({"s": "caution"}, unsafe=set())
     down = net.status_multipliers({"s": "clear"}, unsafe=set())
     assert up[(0, 1)] > 1 > down[(0, 1)]
+
+
+def test_car_stopped_inside_closed_zone_can_drive_out():
+    # The demo car holds ~90 m short of the water, i.e. inside the closed zone. Every road around
+    # it is in the zone, but it must still get a route out that doesn't use the flooded segment.
+    net, node_ll = _grid3()
+    mid_45 = tuple((a + b) / 2 for a, b in zip(node_ll(4), node_ll(5)))
+    net.map_sensors([("s_45", *mid_45)], block_radius_m=250)
+    assert {(1, 4), (3, 4), (4, 7)} <= net.sensor_edges["s_45"]   # node 4 is boxed in by the zone
+    r = net.route(node_ll(4), node_ll(2), flooded_sensor_ids={"s_45"})
+    assert (4, 5) not in r.edges and (5, 4) not in r.edges
+    assert r.sensors_on_route == []                                # escaping the zone isn't "crossing" the flood

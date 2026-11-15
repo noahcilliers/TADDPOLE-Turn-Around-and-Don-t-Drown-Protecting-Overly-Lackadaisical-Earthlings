@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import FloodMap, { type MapRoute } from './components/FloodMap'
 import { AlertFeed, SensorList } from './components/Lists'
-import { AlertOverlay, BlockedBar, ConnBanner, DemoPanel, Legend, LivePill, ToastView } from './components/Overlays'
+import { ConnBanner, DemoPanel, Legend, LivePill, NoticeBar, ToastView } from './components/Overlays'
 import { SettingsPage } from './components/Screens'
 import SensorPanel from './components/SensorPanel'
 import { Brand, Icon } from './components/icons'
@@ -126,14 +126,10 @@ export function Stage() {
         />
         <div className="overlay tr"><Legend /></div>
         <div className="overlay br"><DemoPanel variant="stage" /></div>
-        {drive.alert
-          ? <div className="overlay alert-slot"><AlertOverlay alert={drive.alert} /></div>
-          : (drive.blocked || drive.toast) && (
-            <div className="overlay alert-slot" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <BlockedBar />
-              <ToastView />
-            </div>
-          )}
+        {/* One notice at a time, always the same bar: the flood/rising-water notice, else a toast. */}
+        {(drive.notice || drive.toast) && (
+          <div className="overlay alert-slot">{drive.notice ? <NoticeBar /> : <ToastView />}</div>
+        )}
       </div>
     </div>
   )
@@ -167,16 +163,11 @@ export function Phone() {
 
       {/* Drive: only alerts and short notices on top of the map */}
       {tab === 'drive' && !detail && (
-        drive.alert ? (
-          <div className="alert-top"><AlertOverlay alert={drive.alert} /></div>
-        ) : (
-          <div className="top">
-            <div className="row" style={{ justifyContent: 'space-between' }}><Brand /><LivePill /></div>
-            <ConnBanner />
-            <ToastView />
-            <BlockedBar />
-          </div>
-        )
+        <div className="top">
+          <div className="row" style={{ justifyContent: 'space-between' }}><Brand /><LivePill /></div>
+          <ConnBanner />
+          {drive.notice ? <NoticeBar /> : <ToastView />}
+        </div>
       )}
 
       {tab === 'sensors' && !detail && (
